@@ -568,7 +568,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               <button 
                 onClick={(e) => {
                   e.stopPropagation();
-                  setIsFullscreen(false);
+                  toggleFullscreen();
                 }}
                 className="absolute top-4 left-4 z-[110] bg-black/60 hover:bg-black/80 text-white p-3 rounded-full md:hidden flex items-center justify-center border border-white/20 shadow-xl"
               >
