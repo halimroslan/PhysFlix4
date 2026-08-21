@@ -18,6 +18,7 @@ import {
   Settings,
   X
 } from "lucide-react";
+import QuizComponent from "./QuizComponent";
 import { useLanguage } from "@/context/LanguageContext";
 import { VideoLesson, allVideoLessons } from "@/data/physicsData";
 import { conceptDefinitions } from "@/data/conceptDefinitions";
@@ -341,7 +342,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     };
   }, [showCover, totalSeconds, currentStartSeconds]);
 
-  const [activeTab, setActiveTab] = useState<"overview" | "notes" | "qa">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "notes" | "qa" | "quiz">("overview");
   const [sidebarTab, setSidebarTab] = useState<"playlist" | "tools">("playlist");
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
@@ -1124,6 +1125,16 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               >
                 {t("tabQA")}
               </button>
+              <button
+                onClick={() => setActiveTab("quiz")}
+                className={`pb-3 whitespace-nowrap transition flex items-center gap-1.5 ${
+                  activeTab === "quiz"
+                    ? "border-b-2 border-red-500 text-white"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                Uji Minda
+              </button>
             </div>
 
             {/* Tab Content */}
@@ -1342,6 +1353,10 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                   })}
                 </div>
               </div>
+            )}
+
+            {activeTab === "quiz" && (
+              <QuizComponent key={currentLesson.titleBm} currentLesson={currentLesson} />
             )}
           </div>
         </div>
