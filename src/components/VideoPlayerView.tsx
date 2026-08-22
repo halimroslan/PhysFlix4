@@ -16,7 +16,8 @@ import {
   Bookmark,
   Maximize,
   Settings,
-  X
+  X,
+  Brain
 } from "lucide-react";
 import QuizComponent from "./QuizComponent";
 import { useLanguage } from "@/context/LanguageContext";
@@ -1125,16 +1126,6 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               >
                 {t("tabQA")}
               </button>
-              <button
-                onClick={() => setActiveTab("quiz")}
-                className={`pb-3 whitespace-nowrap transition flex items-center gap-1.5 ${
-                  activeTab === "quiz"
-                    ? "border-b-2 border-red-500 text-white"
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                Uji Minda
-              </button>
             </div>
 
             {/* Tab Content */}
@@ -1270,23 +1261,23 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               </button>
             </div>
 
-            {/* Protected Learning Notes Section */}
+            {/* Uji Minda Quiz Section */}
             <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-900/40 via-indigo-950/40 to-slate-900 border border-purple-800/40 space-y-3">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300">
-                  <FileText className="w-5 h-5" />
+                  <Brain className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white">{t("downloadNotesTitle")}</h4>
-                  <p className="text-[10px] text-slate-400">Modul pembacaan digital dalam web</p>
+                  <h4 className="text-xs font-bold text-white">Uji Minda</h4>
+                  <p className="text-[10px] text-slate-400">Latihan Kuiz Interaktif Fizik</p>
                 </div>
               </div>
 
               <button
-                onClick={() => setActiveTab("notes")}
+                onClick={() => setActiveTab("quiz")}
                 className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition shadow-lg shadow-purple-950"
               >
-                <span>Buka Reader Digital</span>
+                <span>Mula Kuiz</span>
               </button>
             </div>
 
