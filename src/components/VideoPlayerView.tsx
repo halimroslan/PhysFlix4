@@ -343,8 +343,8 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     };
   }, [showCover, totalSeconds, currentStartSeconds]);
 
-  const [activeTab, setActiveTab] = useState<"overview" | "notes" | "qa" | "quiz">("overview");
-  const [sidebarTab, setSidebarTab] = useState<"playlist" | "tools">("playlist");
+  const [activeTab, setActiveTab] = useState<"overview" | "notes" | "qa">("overview");
+  const [sidebarTab, setSidebarTab] = useState<"playlist" | "tools" | "quiz">("playlist");
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [shareText, setShareText] = useState("Kongsi");
@@ -1274,12 +1274,20 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               </div>
 
               <button
-                onClick={() => setActiveTab("quiz")}
-                className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition shadow-lg shadow-purple-950"
+                onClick={() => setSidebarTab(sidebarTab === "quiz" ? "playlist" : "quiz")}
+                className={`w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl text-white font-bold text-xs transition shadow-lg ${
+                  sidebarTab === "quiz"
+                    ? "bg-slate-700 hover:bg-slate-600 shadow-slate-900"
+                    : "bg-purple-600 hover:bg-purple-500 shadow-purple-950"
+                }`}
               >
-                <span>Mula Kuiz</span>
+                <span>{sidebarTab === "quiz" ? "Tutup Kuiz" : "Mula Kuiz"}</span>
               </button>
             </div>
+
+            {sidebarTab === "quiz" && (
+              <QuizComponent key={currentLesson.titleBm} currentLesson={currentLesson} />
+            )}
 
             {/* Chapters / Videos Playlist */}
             {sidebarTab === "playlist" && (
@@ -1346,9 +1354,6 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               </div>
             )}
 
-            {activeTab === "quiz" && (
-              <QuizComponent key={currentLesson.titleBm} currentLesson={currentLesson} />
-            )}
           </div>
         </div>
       </div>
