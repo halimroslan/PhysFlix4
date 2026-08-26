@@ -350,8 +350,8 @@ function MainDashboard() {
                   onPlay={handlePlayLesson}
                 />
               )}
-              {/* Top Picks for You Categories */}
-              <TopPicks onSelectTopic={handleSelectTopic} />
+              {/* Top Picks for You Categories (DSKP Thematic Explorer) */}
+              <TopPicks onPlay={handlePlayLesson} />
             </>
           )}
         </main>
