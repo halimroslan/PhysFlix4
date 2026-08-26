@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { 
   Compass, 
   Flame, 
@@ -186,12 +186,32 @@ export const TopPicks: React.FC<TopPicksProps> = ({ onPlay }) => {
 
   const displayedVideos = getChapterVideos(activeForm, activeChapterNum);
 
+  const contentSectionRef = useRef<HTMLDivElement>(null);
+
+  const scrollToContent = () => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setTimeout(() => {
+        if (contentSectionRef.current) {
+          const yOffset = -75;
+          const y = contentSectionRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }, 100);
+    }
+  };
+
   const handleSelectTheme = (theme: DSKPTheme) => {
     setSelectedThemeId(theme.id);
     if (theme.chapters.length > 0) {
       const firstCh = theme.chapters[0];
       setSelectedChapterKey(`${firstCh.form}-${firstCh.chapterNum}`);
     }
+    scrollToContent();
+  };
+
+  const handleSelectChapter = (chKey: string) => {
+    setSelectedChapterKey(chKey);
+    scrollToContent();
   };
 
   return (
@@ -288,7 +308,11 @@ export const TopPicks: React.FC<TopPicksProps> = ({ onPlay }) => {
       </div>
 
       {/* LEVEL 2: Main Topics / Chapters (Bidang Pembelajaran) */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-[#0e1320] border border-slate-800 shadow-xl space-y-4">
+      <div 
+        ref={contentSectionRef} 
+        id="dskp-topics-section"
+        className="p-4 sm:p-5 rounded-3xl bg-[#0e1320] border border-slate-800 shadow-xl space-y-4 scroll-mt-24"
+      >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center space-x-2">
             <BookOpen className="w-4 h-4 text-amber-400" />
@@ -313,7 +337,7 @@ export const TopPicks: React.FC<TopPicksProps> = ({ onPlay }) => {
             return (
               <button
                 key={chKey}
-                onClick={() => setSelectedChapterKey(chKey)}
+                onClick={() => handleSelectChapter(chKey)}
                 className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
                   isChSelected
                     ? "bg-gradient-to-r from-red-600 to-red-700 text-white border-red-500 shadow-lg shadow-red-950/80 scale-105"
