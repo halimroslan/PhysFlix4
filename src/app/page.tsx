@@ -338,12 +338,9 @@ function MainDashboard() {
             </div>
           ) : (
             <>
-              {/* Hero Spotlight */}
+              {/* Hero Spotlight (Form 4 only) */}
               <HeroSpotlight
-                featuredLessons={allVideoLessons.filter((l) => {
-                  const text = `${l.titleBm} ${l.titleDlp} ${l.week}`.toLowerCase();
-                  return !text.includes("ulangkaji") && !text.includes("homework") && !text.includes("tips");
-                })}
+                featuredLessons={form4VideoLessons}
                 onPlay={handlePlayLesson}
               />
               {/* Continue Watching Row */}

@@ -337,6 +337,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ onPlay, featuredLe
 
   const [cleanLessons, setCleanLessons] = useState<VideoLesson[]>(() => {
     const filtered = (featuredLessons || []).filter((lesson) => {
+      if (lesson.form === 5 || lesson.isPendingUpload) return false;
       const text = `${lesson.titleBm} ${lesson.titleDlp} ${lesson.week}`.toLowerCase();
       return !text.includes("ulangkaji") && !text.includes("homework") && !text.includes("tips");
     });
