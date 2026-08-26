@@ -5,6 +5,7 @@ export interface VideoLesson {
   driveId: string;
   youtubeId?: string;
   isPendingUpload?: boolean;
+  thumbnailUrl?: string;
   week: string;
   weekNum: number;
   titleBm: string;
@@ -62,7 +63,8 @@ export const rawForm4Videos = [
       "Vector Quantities",
       "Base Quantities",
       "SI Units"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/HifOFbw3gDk.webp"
   },
   {
     "driveId": "MrRD2TOnp54",
@@ -89,7 +91,8 @@ export const rawForm4Videos = [
       "Standard Form",
       "Precision",
       "Accuracy"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/MrRD2TOnp54.webp"
   },
   {
     "driveId": "90mxEb59yZI",
@@ -116,7 +119,8 @@ export const rawForm4Videos = [
       "Standard Form",
       "Precision",
       "Accuracy"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/90mxEb59yZI.webp"
   },
   {
     "driveId": "2OeHdtXaeyM",
@@ -143,7 +147,8 @@ export const rawForm4Videos = [
       "Displacement",
       "Acceleration",
       "Velocity"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/2OeHdtXaeyM.webp"
   },
   {
     "driveId": "l1aYWXec21Q",
@@ -170,7 +175,8 @@ export const rawForm4Videos = [
       "Acceleration",
       "Linear Motion Equations",
       "Impact Time"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/l1aYWXec21Q.webp"
   },
   {
     "driveId": "uQwyU34HH28",
@@ -195,7 +201,8 @@ export const rawForm4Videos = [
       "Newton First Law of Motion",
       "Mass",
       "Effects of Inertia"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/uQwyU34HH28.webp"
   },
   {
     "driveId": "gqbZ3grngvg",
@@ -222,7 +229,8 @@ export const rawForm4Videos = [
       "Elastic Collision",
       "Inelastic Collision",
       "Explosion"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/gqbZ3grngvg.webp"
   },
   {
     "driveId": "QZtocJnhel4",
@@ -247,7 +255,8 @@ export const rawForm4Videos = [
       "Force F = ma",
       "Rate of Change of Momentum",
       "Acceleration"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/QZtocJnhel4.webp"
   },
   {
     "driveId": "m90zg3HyU_8",
@@ -274,7 +283,8 @@ export const rawForm4Videos = [
       "Weight W = mg",
       "Impact Time",
       "Vehicle Safety"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/m90zg3HyU_8.webp"
   },
   {
     "driveId": "hsjQe4dnpl0",
@@ -299,7 +309,8 @@ export const rawForm4Videos = [
       "Gravitational Force",
       "Gravitational Constant G",
       "Gravitational Acceleration g"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/hsjQe4dnpl0.webp"
   },
   {
     "driveId": "x-wilmj9cxE",
@@ -324,7 +335,8 @@ export const rawForm4Videos = [
       "Gravitational Acceleration",
       "Mass of Earth",
       "Mass of Sun"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/x-wilmj9cxE.webp"
   },
   {
     "driveId": "i4WgQ_Azegc",
@@ -349,7 +361,8 @@ export const rawForm4Videos = [
       "Centripetal Acceleration",
       "Circular Motion",
       "Satellite Orbit"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/i4WgQ_Azegc.webp"
   },
   {
     "driveId": "snbt6GpD0C4",
@@ -376,7 +389,8 @@ export const rawForm4Videos = [
       "Kepler's Third Law T2 \u221d r3",
       "Elliptical Orbit",
       "Orbital Period"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/snbt6GpD0C4.webp"
   },
   {
     "driveId": "09jX9qGHwSQ",
@@ -401,7 +415,8 @@ export const rawForm4Videos = [
       "Non-geostationary Satellite",
       "Linear Speed of Satellite",
       "Escape Velocity v"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/09jX9qGHwSQ.webp"
   },
   {
     "driveId": "XzSTapojxMU",
@@ -426,7 +441,8 @@ export const rawForm4Videos = [
       "Temperature",
       "Heat",
       "Thermometer Calibration"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/XzSTapojxMU.webp"
   },
   {
     "driveId": "GK4PZO-9hos",
@@ -451,7 +467,8 @@ export const rawForm4Videos = [
       "Specific Heat Capacity c = Q/m\u0394\u03b8",
       "Applications of Specific Heat Capacity",
       "Sea Breeze & Land Breeze"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/GK4PZO-9hos.webp"
   },
   {
     "driveId": "BSKVOMr_NWU",
@@ -474,7 +491,8 @@ export const rawForm4Videos = [
       "Problem Solving Q = mc\u0394\u03b8",
       "Electrical Heater Pt = mc\u0394\u03b8",
       "Mixture of Substances"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/BSKVOMr_NWU.webp"
   },
   {
     "driveId": "nLaJH-EH3Ko",
@@ -499,7 +517,8 @@ export const rawForm4Videos = [
       "Specific Latent Heat of Vaporisation lv",
       "Heating & Cooling Curves",
       "Formula Q = ml"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/nLaJH-EH3Ko.webp"
   },
   {
     "driveId": "BqZIb-bVYk0",
@@ -522,7 +541,8 @@ export const rawForm4Videos = [
       "Applications of Specific Latent Heat",
       "Problem Solving Pt = ml",
       "Phase Change of Matter"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/BqZIb-bVYk0.webp"
   },
   {
     "driveId": "Lrq-a0624Y8",
@@ -547,7 +567,8 @@ export const rawForm4Videos = [
       "Charles's Law V1/T1 = V2/T2",
       "Gay-Lussac's Law P1/T1 = P2/T2",
       "Absolute Temperature Kelvin"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/Lrq-a0624Y8.webp"
   },
   {
     "driveId": "FoOtEc3jlts",
@@ -576,7 +597,8 @@ export const rawForm4Videos = [
       "Frequency f",
       "Wavelength \u03bb",
       "Wave Speed v = f\u03bb"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/FoOtEc3jlts.webp"
   },
   {
     "driveId": "LwJhb5ey-q8",
@@ -601,7 +623,8 @@ export const rawForm4Videos = [
       "Natural Frequency",
       "Resonance",
       "Barton's Pendulum"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/LwJhb5ey-q8.webp"
   },
   {
     "driveId": "Y7yT4-9R6do",
@@ -624,7 +647,8 @@ export const rawForm4Videos = [
       "Law of Reflection",
       "Plane & Curved Wavefronts",
       "Characteristics of Reflection (\u03bb, f, v remain unchanged)"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/Y7yT4-9R6do.webp"
   },
   {
     "driveId": "GIbs4ZhEPVY",
@@ -649,7 +673,8 @@ export const rawForm4Videos = [
       "Deep & Shallow Regions",
       "Changes in \u03bb and v (f constant)",
       "Headlands and Bays"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/GIbs4ZhEPVY.webp"
   },
   {
     "driveId": "jbBMpSkhVbE",
@@ -672,7 +697,8 @@ export const rawForm4Videos = [
       "Diffraction Effect",
       "Slit Size vs Wavelength",
       "Diffraction of Sound & Light"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/jbBMpSkhVbE.webp"
   },
   {
     "driveId": "hgnSRVa-lcY",
@@ -697,7 +723,8 @@ export const rawForm4Videos = [
       "Coherent Sources",
       "Constructive Interference (Antinode)",
       "Destructive Interference (Node)"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/hgnSRVa-lcY.webp"
   },
   {
     "driveId": "oyweI4GDIsM",
@@ -720,7 +747,8 @@ export const rawForm4Videos = [
       "Formula \u03bb = ax/D",
       "Young Two-slit Light Interference",
       "Sound Wave Interference"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/oyweI4GDIsM.webp"
   },
   {
     "driveId": "4v3ygAyaP68",
@@ -743,7 +771,8 @@ export const rawForm4Videos = [
       "Electromagnetic Spectrum",
       "Radio Waves to Gamma Rays",
       "Applications of EM Waves"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/4v3ygAyaP68.webp"
   },
   {
     "driveId": "3Wy8-kNGrcc",
@@ -766,7 +795,8 @@ export const rawForm4Videos = [
       "Snell's Law n1 sin \u03b81 = n2 sin \u03b82",
       "Refractive Index n = c/v",
       "Real Depth H & Apparent Depth h (n = H/h)"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/3Wy8-kNGrcc.webp"
   },
   {
     "driveId": "bViYGWMIHoI",
@@ -793,7 +823,8 @@ export const rawForm4Videos = [
       "Mirage",
       "Optical Fibre",
       "Prism Periscope"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/bViYGWMIHoI.webp"
   },
   {
     "driveId": "9sJ9a5rToVs",
@@ -818,7 +849,8 @@ export const rawForm4Videos = [
       "Ray Diagrams of Lenses",
       "Image Characteristics (Real/Virtual, Inverted/Upright, Magnified/Diminished)",
       "Linear Magnification m = v/u"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/9sJ9a5rToVs.webp"
   },
   {
     "driveId": "BRgIHlXbr_k",
@@ -841,7 +873,8 @@ export const rawForm4Videos = [
       "Thin Lens Formula 1/f = 1/u + 1/v",
       "Sign Convention (+/-)",
       "Lens Problem Solving"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/BRgIHlXbr_k.webp"
   },
   {
     "driveId": "yuY1N9zgEEc",
@@ -866,7 +899,8 @@ export const rawForm4Videos = [
       "Compound Microscope",
       "Astronomical Telescope",
       "Normal Adjustment"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/yuY1N9zgEEc.webp"
   },
   {
     "driveId": "AceZCzCckqc",
@@ -891,7 +925,8 @@ export const rawForm4Videos = [
       "Convex Mirror",
       "Focal Point F & Centre of Curvature C",
       "Ray Diagrams of Spherical Mirrors"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/AceZCzCckqc.webp"
   },
   {
     "driveId": "8Ci_wF-Pvps",
@@ -914,7 +949,8 @@ export const rawForm4Videos = [
       "Applications of Concave & Convex Mirrors",
       "Mirror Formula 1/f = 1/u + 1/v",
       "Road Safety & Dental Mirrors"
-    ]
+    ],
+    "thumbnailUrl": "/thumbnails/8Ci_wF-Pvps.webp"
   }
 ];
 
@@ -1719,6 +1755,7 @@ export const form4VideoLessons: VideoLesson[] = rawForm4Videos.map((v, index) =>
   return {
     ...v,
     id: v.driveId,
+    thumbnailUrl: (v as any).thumbnailUrl || `/thumbnails/${v.driveId}.webp`,
     thumbnailBg: index % 5 === 0 ? "from-purple-900 via-indigo-950 to-slate-900" :
                  index % 5 === 1 ? "from-blue-950 via-slate-900 to-indigo-950" :
                  index % 5 === 2 ? "from-red-950 via-slate-900 to-amber-950" :

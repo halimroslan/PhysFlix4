@@ -1344,13 +1344,22 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                         }`}
                       >
                         {/* Mini Thumbnail */}
-                        <div className="relative w-16 h-12 rounded-xl bg-slate-800 flex items-center justify-center overflow-hidden shrink-0">
-                          {isCurrent ? (
-                            <div className="w-6 h-6 rounded-full bg-red-600 flex items-center justify-center text-white">
-                              <Play className="w-3 h-3 fill-white ml-0.5" />
-                            </div>
+                        <div className="relative w-20 h-12 rounded-xl bg-slate-800 flex items-center justify-center overflow-hidden shrink-0 border border-white/5">
+                          {lesson.thumbnailUrl ? (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img
+                              src={lesson.thumbnailUrl}
+                              alt={lesson.titleBm}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
                           ) : (
                             <span className="text-[10px] font-bold text-slate-400">{idx + 1}</span>
+                          )}
+                          {isCurrent && (
+                            <div className="absolute inset-0 bg-red-950/60 flex items-center justify-center">
+                              <Play className="w-3.5 h-3.5 fill-white text-white" />
+                            </div>
                           )}
                         </div>
 

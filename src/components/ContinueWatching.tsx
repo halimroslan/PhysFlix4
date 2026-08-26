@@ -39,17 +39,27 @@ export const ContinueWatching: React.FC<ContinueWatchingProps> = ({ lessons, onP
             className="group cursor-pointer rounded-2xl bg-[#121622] border border-slate-800/80 hover:border-red-500/50 transition duration-300 overflow-hidden shadow-lg flex flex-col"
           >
             {/* Thumbnail Header */}
-            <div className={`relative w-full h-32 bg-gradient-to-br ${item.thumbnailBg} flex items-center justify-center p-3 overflow-hidden`}>
-              {/* Physics grid artwork */}
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"></div>
+            <div className={`relative w-full aspect-video bg-gradient-to-br ${item.thumbnailBg} flex items-center justify-center overflow-hidden`}>
+              {item.thumbnailUrl ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={item.thumbnailUrl}
+                  alt={item.titleBm}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+              ) : (
+                /* Physics grid artwork */
+                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"></div>
+              )}
 
               {/* Play Button Overlay */}
-              <div className="w-10 h-10 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-red-600 transition duration-300 shadow-xl">
+              <div className="w-10 h-10 rounded-full bg-black/60 border border-white/20 flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-red-600 transition duration-300 shadow-xl z-10 opacity-0 group-hover:opacity-100">
                 <Play className="w-4 h-4 fill-white ml-0.5" />
               </div>
 
               {/* Duration Badge */}
-              <div className="absolute bottom-2 right-2 px-2 py-0.5 text-[10px] font-bold text-white bg-black/75 rounded backdrop-blur-sm border border-white/10">
+              <div className="absolute bottom-2 right-2 px-2 py-0.5 text-[10px] font-bold text-white bg-black/80 rounded backdrop-blur-sm border border-white/10 z-10">
                 {item.duration}
               </div>
             </div>

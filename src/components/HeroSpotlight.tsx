@@ -378,21 +378,63 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ onPlay, featuredLe
 
   return (
     <div
-      className={`relative w-full h-[380px] md:h-[420px] rounded-3xl overflow-hidden bg-gradient-to-r ${config.gradientBg} border border-slate-800/80 shadow-2xl p-6 md:p-10 flex flex-col justify-between transition-all duration-700`}
+      className={`relative w-full h-[380px] md:h-[440px] rounded-3xl overflow-hidden bg-gradient-to-r ${config.gradientBg} border border-slate-800/80 shadow-2xl p-6 md:p-10 flex flex-col justify-between transition-all duration-700`}
     >
-      {/* Dynamic Physics Vector Backdrop Art */}
+      {/* Immersive Thumbnail Backdrop Layer */}
       <AnimatePresence mode="wait">
-        <motion.div
-          key={categoryKey}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 0.75, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.05 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="absolute right-0 top-0 bottom-0 w-full md:w-2/3 pointer-events-none overflow-hidden"
-        >
-          {config.renderSvg()}
-        </motion.div>
+        {currentLesson.thumbnailUrl ? (
+          <motion.div
+            key={currentLesson.id}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 0.35, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="absolute right-0 top-0 bottom-0 w-full md:w-3/5 pointer-events-none overflow-hidden"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={currentLesson.thumbnailUrl}
+              alt={currentLesson.titleBm}
+              className="w-full h-full object-cover object-center filter saturate-125 brightness-90"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#07090e] via-[#07090e]/80 to-transparent"></div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key={categoryKey}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 0.75, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="absolute right-0 top-0 bottom-0 w-full md:w-2/3 pointer-events-none overflow-hidden"
+          >
+            {config.renderSvg()}
+          </motion.div>
+        )}
       </AnimatePresence>
+
+      {/* Floating HD Thumbnail Card on Desktop */}
+      {currentLesson.thumbnailUrl && (
+        <div 
+          onClick={() => onPlay(currentLesson)}
+          className="hidden lg:flex absolute right-10 top-1/2 -translate-y-1/2 w-80 md:w-96 aspect-video rounded-2xl overflow-hidden border border-white/15 shadow-[0_12px_45px_rgba(0,0,0,0.85)] z-20 group cursor-pointer hover:scale-105 hover:border-red-500/60 transition-all duration-300 bg-slate-950"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={currentLesson.thumbnailUrl}
+            alt={currentLesson.titleBm}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+              <Play className="w-5 h-5 fill-white ml-0.5" />
+            </div>
+          </div>
+          <span className="absolute bottom-2.5 right-2.5 px-2 py-0.5 text-[10px] font-bold text-white bg-black/80 rounded backdrop-blur-md border border-white/10">
+            {currentLesson.duration}
+          </span>
+        </div>
+      )}
 
       {/* Hero Badge */}
       <div className="relative z-10 flex items-center space-x-3">
@@ -408,7 +450,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ onPlay, featuredLe
       </div>
 
       {/* Main Content Info */}
-      <div className="relative z-10 max-w-xl flex-1 flex flex-col justify-center overflow-hidden my-2">
+      <div className="relative z-10 max-w-lg md:max-w-xl flex-1 flex flex-col justify-center overflow-hidden my-2">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentLesson.id}
@@ -421,7 +463,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ onPlay, featuredLe
             <span className="text-xs font-bold text-red-400 uppercase tracking-widest block">
               {lang === "bm" ? `Bab ${currentLesson.chapterNum}: ${currentLesson.chapterBm}` : `Ch ${currentLesson.chapterNum}: ${currentLesson.chapterDlp}`}
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-5xl font-black text-white tracking-tight leading-tight drop-shadow-md">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight drop-shadow-md">
               {lang === "bm" ? currentLesson.titleBm : currentLesson.titleDlp}
             </h2>
             <p className="text-xs md:text-sm text-slate-300 line-clamp-2 leading-relaxed font-medium">

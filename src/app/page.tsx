@@ -99,26 +99,38 @@ function MainDashboard() {
         onClick={() => handlePlayLesson(item)}
         className="group cursor-pointer rounded-2xl bg-[#121622] border border-slate-800/90 hover:border-red-500/60 p-3.5 space-y-3 transition-all duration-300 shadow-xl flex flex-col justify-between hover:-translate-y-1 relative overflow-hidden"
       >
-        <div className={`w-full h-34 rounded-xl bg-gradient-to-br ${item.thumbnailBg} flex items-center justify-center relative overflow-hidden shadow-inner`}>
-          {/* Subtle physics grid overlay */}
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"></div>
+        <div className={`w-full aspect-video rounded-xl bg-gradient-to-br ${item.thumbnailBg} flex items-center justify-center relative overflow-hidden shadow-inner`}>
+          {item.thumbnailUrl ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={item.thumbnailUrl}
+              alt={lang === "bm" ? item.titleBm : item.titleDlp}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+            />
+          ) : (
+            <>
+              {/* Subtle physics grid overlay */}
+              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"></div>
 
-          {/* Large background icon for visual interest */}
-          <CategoryIcon className="absolute -right-4 -bottom-4 w-28 h-28 text-white opacity-[0.08] rotate-12 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 group-hover:opacity-[0.15]" />
+              {/* Large background icon for visual interest */}
+              <CategoryIcon className="absolute -right-4 -bottom-4 w-28 h-28 text-white opacity-[0.08] rotate-12 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 group-hover:opacity-[0.15]" />
+            </>
+          )}
 
           {/* Mini Category Icon Badge */}
-          <div className="absolute top-2 left-2 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 flex items-center space-x-1 text-[9px] font-bold text-slate-200">
+          <div className="absolute top-2 left-2 px-2 py-1 rounded-lg bg-black/70 backdrop-blur-md border border-white/10 flex items-center space-x-1 text-[9px] font-bold text-slate-200 z-10">
             <CategoryIcon className="w-3 h-3 text-red-400" />
             <span>T{item.form} • Bab {item.chapterNum}</span>
           </div>
 
           {/* Play Button Overlay */}
-          <div className="w-10 h-10 rounded-full bg-black/70 border border-white/20 flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-red-600 transition-all duration-300 shadow-2xl z-10">
+          <div className="w-10 h-10 rounded-full bg-black/70 border border-white/20 flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-red-600 transition-all duration-300 shadow-2xl z-10 opacity-0 group-hover:opacity-100">
             <Play className="w-4 h-4 fill-white ml-0.5" />
           </div>
 
           {/* Duration Badge */}
-          <span className="absolute bottom-2 right-2 px-2 py-0.5 text-[9px] font-bold text-white bg-black/80 rounded backdrop-blur-sm border border-white/10">
+          <span className="absolute bottom-2 right-2 px-2 py-0.5 text-[9px] font-bold text-white bg-black/85 rounded backdrop-blur-sm border border-white/10 z-10">
             {item.duration}
           </span>
         </div>
