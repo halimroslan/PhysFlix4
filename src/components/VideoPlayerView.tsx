@@ -6,27 +6,22 @@ import {
   ThumbsUp,
   ThumbsDown,
   Share2,
-  Plus,
+  Bookmark,
+  Maximize,
+  Brain,
+  Video,
+  Sparkles,
   CheckCircle2,
   Circle,
   FileText,
   Play,
-  ShieldAlert,
-  Lock,
-  Bookmark,
-  Maximize,
-  Settings,
-  X,
-  Brain,
-  Video,
-  Clock,
-  Sparkles
+  Lock
 } from "lucide-react";
 import QuizComponent from "./QuizComponent";
 import { useLanguage } from "@/context/LanguageContext";
 import { VideoLesson, allVideoLessons } from "@/data/physicsData";
 import { conceptDefinitions } from "@/data/conceptDefinitions";
-import { useDRMProtection, deobfuscateId } from "@/utils/security";
+import { deobfuscateId } from "@/utils/security";
 import { useUserActivity } from "@/context/UserActivityContext";
 import { useAuth } from "@/context/AuthContext";
 import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
@@ -44,48 +39,18 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
   onSelectLesson
 }) => {
   const { lang, t } = useLanguage();
-  const { isBookmarked, toggleBookmark, addToHistory, updateVideoProgress, incrementRepeat, videoStats, updateResumeTime } = useUserActivity();
+  const { isBookmarked, toggleBookmark, addToHistory, videoStats, updateResumeTime } = useUserActivity();
   const { user } = useAuth();
-  const email = user?.email?.toLowerCase() || "";
-  const isDev = email.includes("abdulhalimroslan") || email.includes("halimroslan");
-
-  // Developer Toggles
-  const [devShowGrid, setDevShowGrid] = useState(false);
-  const [devShowFullScreenGrid, setDevShowFullScreenGrid] = useState(false);
-  const [devShow45Watermark, setDevShow45Watermark] = useState(false);
-  const [devShowShields, setDevShowShields] = useState(true);
-  const [devShowControllerShield, setDevShowControllerShield] = useState(true);
-  const [devBypassAllShields, setDevBypassAllShields] = useState(true);
-  const [devShowJump, setDevShowJump] = useState(false);
-  const [devPanelOpen, setDevPanelOpen] = useState(false);
-
-  const bypassShields = isDev && devBypassAllShields;
-
-  useDRMProtection(); // Activates DRM anti-inspect & anti-shortcut hook
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const playTimerRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const coverMountedAt = useRef<number>(Date.now());
   const videoOpenedAt = useRef<number>(Date.now());
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isMobileDevice, setIsMobileDevice] = useState(false);
-  const [shieldStyle, setShieldStyle] = useState({ bottom: '19.2%', height: '7.7%' });
   const [iframeSrc, setIframeSrc] = useState("");
-
-  useEffect(() => {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    setIsMobileDevice(isMobile);
-    if (!isMobile && currentLesson?.youtubeId) {
-      setShowCover(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const toggleFullscreen = () => {
     if (!containerRef.current) return;
     
-    // Check if browser supports native fullscreen API
     if ('requestFullscreen' in document.documentElement) {
       if (!document.fullscreenElement) {
         containerRef.current.requestFullscreen().catch(err => {
@@ -97,32 +62,15 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
         setIsFullscreen(false);
       }
     } else if ((containerRef.current as any).webkitRequestFullscreen) {
-      // Safari specific native
       if (!(document as any).webkitFullscreenElement) {
         (containerRef.current as any).webkitRequestFullscreen();
       } else {
         (document as any).webkitExitFullscreen();
       }
     } else {
-      // Complete fallback (iOS iPhone)
       setIsFullscreen(!isFullscreen);
     }
   };
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const observer = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        if (entry.contentRect.height >= 600) {
-          setShieldStyle({ bottom: '3.8%', height: '11.6%' }); // V-X extended down
-        } else {
-          setShieldStyle({ bottom: '15.3%', height: '11.6%' }); // S-U extended down
-        }
-      }
-    });
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -148,54 +96,37 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     return 0;
   })();
 
-  const minStartSecs = 0;
   const watchableDuration = Math.max(1, totalSeconds > 0 ? totalSeconds : 600);
-
-  const [showCover, setShowCover] = useState(true);
-  const [showEndCover, setShowEndCover] = useState(false);
-  const [currentStartSeconds, setCurrentStartSeconds] = useState(600);
-  const [prevLessonId, setPrevLessonId] = useState(currentLesson?.id);
-
-  // Derived state to INSTANTLY reset covers when lesson changes (prevents flash of background)
-  if (currentLesson && currentLesson.id !== prevLessonId) {
-    setPrevLessonId(currentLesson.id);
-    setShowCover(!isMobileDevice && currentLesson.youtubeId ? false : true);
-    setShowEndCover(false);
-  }
+  const [currentStartSeconds, setCurrentStartSeconds] = useState(0);
 
   useEffect(() => {
     if (currentLesson && currentLesson.id) {
       addToHistory(currentLesson.id);
       videoOpenedAt.current = Date.now();
-      coverMountedAt.current = Date.now(); // Reset cover mount timestamp
       
-      // 1. Determine absolute minimum start time (skip Tavis intro)
-      // 2. Get saved progress if any
       const localSavedTime = localStorage.getItem(`physflix_resume_${currentLesson.id}`);
       const firebaseSavedTime = videoStats[currentLesson.id]?.lastWatchedSeconds;
       
-      let startSecs = minStartSecs;
-      
-      // If the saved time is near or past the session end (which is 5 mins before video end), ignore it and restart from skip time
-      const threshold = totalSeconds > 0 ? totalSeconds - 305 : Infinity;
+      let startSecs = 0;
+      const threshold = totalSeconds > 0 ? totalSeconds - 30 : Infinity;
 
-      if (localSavedTime && parseInt(localSavedTime) > minStartSecs && parseInt(localSavedTime) < threshold) {
+      if (localSavedTime && parseInt(localSavedTime) > 0 && parseInt(localSavedTime) < threshold) {
         startSecs = parseInt(localSavedTime);
-      } else if (firebaseSavedTime && firebaseSavedTime > minStartSecs && firebaseSavedTime < threshold) {
+      } else if (firebaseSavedTime && firebaseSavedTime > 0 && firebaseSavedTime < threshold) {
         startSecs = firebaseSavedTime;
       }
       
-      setCurrentStartSeconds(startSecs); // Reset timer tracking
+      setCurrentStartSeconds(startSecs);
       
       if (currentLesson.youtubeId) {
-        setIframeSrc(`https://www.youtube.com/embed/${currentLesson.youtubeId}?start=${startSecs}&rel=0&modestbranding=1&autoplay=1&controls=1&disablekb=1&fs=0&cc_load_policy=1&cc_lang_pref=ms`);
-      } else {
+        setIframeSrc(`https://www.youtube.com/embed/${currentLesson.youtubeId}?start=${startSecs}&rel=0&modestbranding=1&autoplay=1&controls=1`);
+      } else if (currentLesson.driveId) {
         const driveUrl = `https://drive.google.com/file/d/${deobfuscateId(currentLesson.driveId)}/preview`;
-        setIframeSrc(`${driveUrl}?t=${startSecs}s`); // Auto start based on lesson in seconds, no extra params
+        setIframeSrc(`${driveUrl}?t=${startSecs}s`);
       }
     }
     
-    // Auto-scroll screen to video player (useful for mobile when selecting a video)
+    // Auto-scroll screen to video player
     const screenTimer = setTimeout(() => {
       if (window.innerWidth < 768 && containerRef.current) {
         containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -207,152 +138,68 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     return () => clearTimeout(screenTimer);
   }, [currentLesson]);
 
-  // Detect clicks on the iframe when it gains focus
+  // Track and save video progress continuously for Auto-Resume
   useEffect(() => {
-    const handleBlur = () => {
-      setTimeout(() => {
-        if (document.activeElement === iframeRef.current) {
-          setShowCover(false);
-          videoOpenedAt.current = Date.now(); // Reset the timer exactly when they hit play
-          
-          // Auto-activate fullscreen on mobile
-          if (window.innerWidth < 768) {
-            if (containerRef.current) {
-              if ('requestFullscreen' in document.documentElement) {
-                containerRef.current.requestFullscreen().catch(() => {
-                  // Fallback to CSS fullscreen if native fails (e.g. due to lack of direct user gesture)
-                  setIsFullscreen(true);
-                });
-              } else if ((containerRef.current as any).webkitRequestFullscreen) {
-                (containerRef.current as any).webkitRequestFullscreen();
-                // Safari might not return a promise, so we also set CSS fallback just in case
-                setIsFullscreen(true);
-              } else {
-                setIsFullscreen(true);
-              }
-            }
-          }
-        }
-      }, 50);
-    };
-    window.addEventListener("blur", handleBlur);
-    return () => {
-      window.removeEventListener("blur", handleBlur);
-    };
-  }, []);
-
-  // Track and update video progress on unmount or when currentLesson changes
-  useEffect(() => {
-    return () => {
-      if (currentLesson && currentLesson.id) {
-        const timeSpent = Math.floor((Date.now() - videoOpenedAt.current) / 1000);
-        // Save exact resume time to Firebase on unmount
-        const currentProgress = currentStartSeconds + timeSpent;
-        updateResumeTime(currentLesson.id, currentProgress, minStartSecs, watchableDuration);
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentLesson, currentStartSeconds]);
-
-  // Track and save video progress continuously every 5 seconds for Auto-Resume
-  useEffect(() => {
-    if (!currentLesson || !currentLesson.id) return;
-    
-    // Only track if cover is removed (playing)
-    if (showCover) return;
+    if (!currentLesson || !currentLesson.id || currentLesson.isPendingUpload) return;
     
     let ticks = 0;
     const interval = setInterval(() => {
-       ticks++;
-       const elapsedSecs = Math.floor((Date.now() - videoOpenedAt.current) / 1000);
-       const currentProgress = currentStartSeconds + elapsedSecs;
-       
-       // 1. Save to localStorage instantly (backup)
-       localStorage.setItem(`physflix_resume_${currentLesson.id}`, currentProgress.toString());
-       
-       // 2. Sync to Firebase (via context) every 12 ticks (60 seconds)
-       if (ticks >= 12) {
-         updateResumeTime(currentLesson.id, currentProgress, minStartSecs, watchableDuration);
-         ticks = 0;
-       }
+      ticks++;
+      const elapsedSecs = Math.floor((Date.now() - videoOpenedAt.current) / 1000);
+      const currentProgress = currentStartSeconds + elapsedSecs;
+      
+      localStorage.setItem(`physflix_resume_${currentLesson.id}`, currentProgress.toString());
+      
+      if (ticks >= 12) {
+        updateResumeTime(currentLesson.id, currentProgress, 0, watchableDuration);
+        ticks = 0;
+      }
     }, 5000);
     
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentLesson, showCover, currentStartSeconds]);
-
-  // Manage end cover timer based on playback state (showCover)
-  useEffect(() => {
-    if (!showCover) {
-      // Calculate time remaining from the start point to 5 minutes BEFORE the end of the video.
-      let watchTimeSeconds = totalSeconds - currentStartSeconds - 300;
-      
-      // If the jump start time is already within the last 5 minutes, 
-      // they explicitly jumped here, so let them watch the remainder of the video.
-      if (watchTimeSeconds <= 0 && totalSeconds > currentStartSeconds) {
-        watchTimeSeconds = totalSeconds - currentStartSeconds;
-      }
-      
-      if (watchTimeSeconds > 0) {
-        playTimerRef.current = setTimeout(() => {
-          setShowEndCover(true);
-          setIframeSrc(""); // Auto mute by destroying iframe
-          if (currentLesson?.id) {
-            localStorage.removeItem(`physflix_resume_${currentLesson.id}`);
-          }
-        }, watchTimeSeconds * 1000);
-      } else if (totalSeconds > 0) {
-        // If somehow they jumped past the very end
-        setShowEndCover(true);
-        setIframeSrc("");
-      }
-    } else {
-      setShowEndCover(false);
-      if (playTimerRef.current) clearTimeout(playTimerRef.current);
-    }
     return () => {
-      if (playTimerRef.current) clearTimeout(playTimerRef.current);
+      clearInterval(interval);
+      if (currentLesson && currentLesson.id) {
+        const timeSpent = Math.floor((Date.now() - videoOpenedAt.current) / 1000);
+        const currentProgress = currentStartSeconds + timeSpent;
+        updateResumeTime(currentLesson.id, currentProgress, 0, watchableDuration);
+      }
     };
-  }, [showCover, totalSeconds, currentStartSeconds]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentLesson, currentStartSeconds, watchableDuration]);
 
   const [activeTab, setActiveTab] = useState<"overview" | "notes" | "qa">("overview");
   const [sidebarTab, setSidebarTab] = useState<"playlist" | "tools" | "quiz">("playlist");
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [shareText, setShareText] = useState("Kongsi");
-  const [saved, setSaved] = useState(false);
   const [selectedConcept, setSelectedConcept] = useState<string | null>(null);
 
   // Auto-scroll to currently playing video in playlist
   useEffect(() => {
     if (sidebarTab === "playlist") {
-      // Small timeout to ensure DOM is updated
       const scrollTimer = setTimeout(() => {
         const el = document.getElementById("current-playing-video");
         const container = document.getElementById("playlist-container");
         if (el && container) {
-          // Scroll only the container, not the entire page window
           container.scrollTo({
-            top: el.offsetTop - container.offsetTop - 20, // 20px padding
+            top: el.offsetTop - container.offsetTop - 20,
             behavior: 'smooth'
           });
         }
-      }, 200); // Slightly longer timeout to allow page-level scroll to take precedence
+      }, 200);
       return () => clearTimeout(scrollTimer);
     }
   }, [sidebarTab, currentLesson.id]);
 
-  // Helper to generate a stable, realistic number of likes based on video ID
   const getBaseLikes = (id: string) => {
     let hash = 0;
     for (let i = 0; i < id.length; i++) hash = id.charCodeAt(i) + ((hash << 5) - hash);
-    return 1200 + (Math.abs(hash) % 4000); // Generates a number between 1200 and 5200
+    return 1200 + (Math.abs(hash) % 4000);
   };
 
   useEffect(() => {
     if (!currentLesson?.id) return;
     
-    // Check local storage for like state
     const localLiked = localStorage.getItem(`liked_${currentLesson.id}`) === "true";
     setLiked(localLiked);
 
@@ -364,12 +211,10 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
         if (docSnap.exists()) {
           setLikeCount(docSnap.data().likes);
         } else {
-          // Initialize document with base likes
           await setDoc(docRef, { likes: baseLikes });
           setLikeCount(baseLikes + (localLiked ? 1 : 0));
         }
       } catch (e) {
-        console.warn("Firestore likes unavailable, using fallback.", e);
         setLikeCount(baseLikes + (localLiked ? 1 : 0));
       }
     };
@@ -377,23 +222,18 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
   }, [currentLesson]);
 
   const [comments, setComments] = useState([
-    { name: "Ahmad Rizky", text: "Terbaik Sir! Baru faham melukis sinar selari dan sinar fokus.", time: "2 jam lepas" },
-    { name: "Siti Sarah", text: "Fast explanation and clear graphics for DLP students!", time: "5 jam lepas" },
-    { name: "Cikgu Tan", text: "Sangat membantu untuk ulangkaji SPM murid.", time: "1 hari lepas" }
+    { name: "Ahmad Rizky", text: "Terbaik Cikgu! Sangat jelas dan mudah difahami.", time: "2 jam lepas" },
+    { name: "Siti Sarah", text: "Penerangan padat dan contoh soalan SPM sangat membantu!", time: "5 jam lepas" },
+    { name: "Cikgu Tan", text: "Sangat sesuai untuk ulangkaji murid SPM.", time: "1 hari lepas" }
   ]);
   const [newComment, setNewComment] = useState("");
-
-  const rawDriveId = deobfuscateId(currentLesson.driveId);
 
   const handleLike = async () => {
     const newLikedState = !liked;
     setLiked(newLikedState);
-    
-    // Update local UI immediately
     setLikeCount((c) => newLikedState ? c + 1 : c - 1);
     localStorage.setItem(`liked_${currentLesson.id}`, newLikedState ? "true" : "false");
     
-    // Update Firestore
     try {
       const docRef = doc(db, "videoStats", currentLesson.id);
       await updateDoc(docRef, {
@@ -407,7 +247,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
   const handleShare = async () => {
     const shareData = {
       title: currentLesson.titleBm,
-      text: "Jom tonton video pengajaran Fizik ini di Physics SPM Flix!",
+      text: "Jom tonton video pengajaran Fizik ini di PhysFlix!",
       url: window.location.href,
     };
     try {
@@ -430,93 +270,26 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     setNewComment("");
   };
 
-  const { showTavisM1toM20, showTavisM21Plus } = (() => {
-    const formStr = String(currentLesson.form);
-    if (formStr !== "4" && formStr !== "5") return { showTavisM1toM20: false, showTavisM21Plus: false };
-    
-    const match = String(currentLesson.week).match(/M(\d+)/i);
-    if (match) {
-      const num = parseInt(match[1], 10);
-      if (num >= 1 && num <= 20) return { showTavisM1toM20: true, showTavisM21Plus: false };
-      if (num >= 21) return { showTavisM1toM20: false, showTavisM21Plus: true };
-    }
-    return { showTavisM1toM20: false, showTavisM21Plus: false };
-  })();
   return (
     <div className="w-full space-y-4 md:space-y-6 select-none">
       {/* Top Bar Navigation */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+      <div className="flex items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
         <button
           onClick={onBack}
-          className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-[#121622] hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white transition"
+          className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-[#121622] hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white transition cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 text-red-500" />
-          <span className="font-bold text-slate-200">Back</span>
+          <span className="font-bold text-slate-200">Kembali</span>
         </button>
 
-
-
-        {isDev && (
-          <div className="relative">
-            <button 
-              onClick={() => setDevPanelOpen(!devPanelOpen)}
-              className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-full border border-sky-600/50 transition-all hover:scale-105 active:scale-95"
-            >
-              {devPanelOpen ? <X className="w-4 h-4 text-red-500" /> : <Settings className="w-4 h-4 text-sky-400" />}
-              <span className="text-xs font-bold text-sky-400">Dev Panel</span>
-            </button>
-            
-            {devPanelOpen && (
-              <div className="absolute top-12 left-0 z-50 bg-slate-900 border border-slate-700/50 rounded-xl shadow-2xl p-4 w-64 space-y-4 animate-in fade-in duration-200">
-                <h3 className="text-sm font-bold text-sky-400 uppercase tracking-wider mb-2 border-b border-slate-800 pb-2">Developer Tools</h3>
-                
-                <label className="flex items-center justify-between cursor-pointer">
-                  <span className="text-sm text-slate-300">Tunjuk Grid Koordinat</span>
-                  <input type="checkbox" checked={devShowGrid} onChange={(e) => setDevShowGrid(e.target.checked)} className="rounded text-sky-500 focus:ring-sky-500 bg-slate-800 border-slate-600" />
-                </label>
-
-                <label className="flex items-center justify-between cursor-pointer">
-                  <span className="text-sm text-slate-300">Tunjuk Grid Skrin Penuh (Biru)</span>
-                  <input type="checkbox" checked={devShowFullScreenGrid} onChange={(e) => setDevShowFullScreenGrid(e.target.checked)} className="rounded text-blue-500 focus:ring-blue-500 bg-slate-800 border-slate-600" />
-                </label>
-
-                <label className="flex items-center justify-between cursor-pointer">
-                  <span className="text-sm text-slate-300">Watermark 27° (Hijau)</span>
-                  <input type="checkbox" checked={devShow45Watermark} onChange={(e) => setDevShow45Watermark(e.target.checked)} className="rounded text-green-500 focus:ring-green-500 bg-slate-800 border-slate-600" />
-                </label>
-                
-                <label className="flex items-center justify-between cursor-pointer">
-                  <span className="text-sm text-slate-300">Aktifkan Cermin Ghaib</span>
-                  <input type="checkbox" checked={devShowShields} onChange={(e) => setDevShowShields(e.target.checked)} className="rounded text-sky-500 focus:ring-sky-500 bg-slate-800 border-slate-600" />
-                </label>
-                
-                <label className="flex items-center justify-between cursor-pointer">
-                  <span className="text-sm text-slate-300">Pelindung Controller (PC)</span>
-                  <input type="checkbox" checked={devShowControllerShield} onChange={(e) => setDevShowControllerShield(e.target.checked)} className="rounded text-sky-500 focus:ring-sky-500 bg-slate-800 border-slate-600" />
-                </label>
-
-                <label className="flex items-center justify-between cursor-pointer">
-                  <span className="text-sm text-green-400 font-bold">BYPASS Semua Pelindung</span>
-                  <input type="checkbox" checked={devBypassAllShields} onChange={(e) => setDevBypassAllShields(e.target.checked)} className="rounded text-green-500 focus:ring-green-500 bg-slate-800 border-slate-600" />
-                </label>
-
-                <label className="flex items-center justify-between cursor-pointer">
-                  <span className="text-sm text-slate-300">Tunjuk Kotak Lompat</span>
-                  <input type="checkbox" checked={devShowJump} onChange={(e) => setDevShowJump(e.target.checked)} className="rounded text-sky-500 focus:ring-sky-500 bg-slate-800 border-slate-600" />
-                </label>
-              </div>
-            )}
-          </div>
-        )}
-
         {user?.email && (
-          <span className="text-[10px] text-slate-500 opacity-30 select-all">{user.email}</span>
+          <span className="text-[10px] text-slate-500 opacity-40 select-all hidden sm:inline">{user.email}</span>
         )}
 
         <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-slate-400">
           <span className="flex items-center space-x-1 text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-800/50">
             <Lock className="w-3 h-3" />
-            <span>DRM Encrypted Stream</span>
+            <span>HD Stream</span>
           </span>
           <span>•</span>
           <span className="text-red-400">
@@ -527,12 +300,11 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
 
       {/* Main Grid: Player on Left, Playlist/Tools on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column - Protected Video Player & Details */}
+        {/* Left Column - Video Player & Details */}
         <div className="lg:col-span-8 space-y-6">
-          {/* DRM Video Outer Wrapper */}
+          {/* Video Outer Wrapper */}
           <div
             ref={containerRef}
-            onContextMenu={(e) => e.preventDefault()}
             className={`mx-auto bg-black flex items-center justify-center shadow-2xl ${
               isFullscreen ? "fixed inset-0 z-[100] h-[100dvh] w-screen rounded-none" : "relative w-full border border-slate-800 rounded-xl overflow-hidden aspect-[4/3] md:aspect-video"
             }`}
@@ -544,43 +316,15 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                   e.stopPropagation();
                   toggleFullscreen();
                 }}
-                className="absolute top-4 left-4 z-[110] bg-black/60 hover:bg-black/80 text-white p-3 rounded-full md:hidden flex items-center justify-center border border-white/20 shadow-xl"
+                className="absolute top-4 left-4 z-[110] bg-black/60 hover:bg-black/80 text-white p-3 rounded-full md:hidden flex items-center justify-center border border-white/20 shadow-xl cursor-pointer"
               >
                 <ArrowLeft className="w-6 h-6" />
               </button>
             )}
 
-            {/* FULL SCREEN DEV GRID (BLUE) */}
-            {devShowFullScreenGrid && (
-              <div 
-                className="absolute inset-0 z-[120] pointer-events-none grid"
-                style={{ 
-                  gridTemplateColumns: 'repeat(15, minmax(0, 1fr))',
-                  gridTemplateRows: 'repeat(26, minmax(0, 1fr))'
-                }}
-              >
-                {Array.from({ length: 26 * 15 }).map((_, i) => {
-                  const row = Math.floor(i / 15);
-                  const col = i % 15;
-                  const rowLabel = String.fromCharCode(65 + row);
-                  const colLabel = col + 1;
-                  return (
-                    <div 
-                      key={i} 
-                      className="border border-blue-500/40 flex items-center justify-center relative"
-                    >
-                      <span className="text-[8px] md:text-[10px] text-blue-400/80 font-mono rotate-90 md:rotate-0">
-                        {rowLabel}{colLabel}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Inner Container - ALWAYS maintains 16:9 aspect ratio and scales to fit */}
+            {/* Inner Container - 16:9 Aspect Ratio */}
             <div 
-              className="relative group select-none overflow-hidden bg-black w-full h-full flex items-center justify-center"
+              className="relative overflow-hidden bg-black w-full h-full flex items-center justify-center"
               style={isFullscreen ? { 
                 aspectRatio: '16/9',
                 maxWidth: '177.778vh',
@@ -595,12 +339,6 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                 <div className="absolute inset-0 z-30 bg-gradient-to-br from-[#0e1320] via-[#090c15] to-[#04060a] flex flex-col items-center justify-center p-6 text-center space-y-4 md:space-y-6">
                   {/* Subtle Grid / glow */}
                   <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#ef4444_1px,transparent_1px)] [background-size:16px_16px]"></div>
-                  
-                  {/* Brand watermark top right */}
-                  <div className="absolute top-3 right-3 z-20 opacity-60">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/PFlix.png" alt="PhysicsSPMFlix" className="h-4 md:h-6 w-auto object-contain" />
-                  </div>
 
                   {/* Icon Card */}
                   <div className="relative z-10 w-16 h-16 md:w-20 md:h-20 rounded-3xl bg-red-950/40 border border-red-500/40 flex items-center justify-center shadow-[0_0_50px_rgba(239,68,68,0.25)]">
@@ -646,422 +384,17 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                   </div>
                 </div>
               ) : (
-                <>
-                  {/* Embedded Stream via Obfuscated ID */}
-                  <iframe
-                    ref={iframeRef}
-                    src={iframeSrc}
-                    className="absolute top-0 left-0 w-full h-full border-0 pointer-events-auto"
-                    allow="autoplay"
-                    title={currentLesson.titleBm}
-                    onLoad={() => {
-                      // Reset timer when iframe finishes loading to catch late auto-focuses
-                      coverMountedAt.current = Date.now();
-                    }}
-                  ></iframe>
-                  {/* YouTube Anti-Interaction Overlay (Blocks pausing and top bar hover) */}
-                  {!bypassShields && currentLesson.youtubeId && !showCover && (
-                    <div className="absolute inset-0 z-20 pointer-events-auto bg-transparent"></div>
-                  )}
-
-            {/* Large Diagonal Watermark (27 degrees, Grid I2-N12) */}
-            <div className="absolute inset-0 z-[15] pointer-events-none flex items-center justify-center overflow-hidden">
-              <div 
-                className="w-[150%] h-[150%] absolute"
-                style={{ transform: 'rotate(-27deg)' }}
-              >
-                <div 
-                  className="absolute flex items-center justify-center"
-                  style={{
-                    left: currentLesson.titleBm === "2.6 Prinsip Bernoulli" ? '13.333%' : '6.666%',   // Col 3 for Bernoulli, Col 2 for others
-                    top: currentLesson.titleBm === "2.6 Prinsip Bernoulli" ? '7.692%' : '30.769%',    // Row C for Bernoulli, Row I for others
-                    width: currentLesson.titleBm === "2.6 Prinsip Bernoulli" ? '86.666%' : '73.333%', // 13 cols for Bernoulli, 11 cols for others
-                    height: currentLesson.titleBm === "2.6 Prinsip Bernoulli" ? '57.692%' : '23.076%' // 15 rows for Bernoulli, 6 rows for others
-                  }}
-                >
-                  <div className={`bg-slate-900 rounded-2xl opacity-40 scale-[0.95] h-full flex items-center justify-center ${currentLesson.titleBm === "2.6 Prinsip Bernoulli" ? 'p-5 md:p-8' : 'p-3 md:p-5'}`}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/PHYSFLIX.png" alt="PhysicsSPMFlix Watermark" className="h-full w-auto object-contain" />
-                  </div>
-                </div>
-
-                {/* Second Rotated Semi-Transparent Watermark (J4-M12) only for 2.6 Prinsip Bernoulli */}
-                {currentLesson.titleBm === "2.6 Prinsip Bernoulli" && (
-                  <div 
-                    className="absolute flex items-center justify-center"
-                    style={{
-                      left: '20%',      // Col 4 start
-                      top: '34.615%',   // Row J start
-                      width: '60%',     // Col 4 to 12 (9 cols)
-                      height: '15.384%' // Span 4 rows (J to M)
-                    }}
-                  >
-                    <div className="bg-slate-900 rounded-2xl p-3 md:p-5 opacity-40 scale-150 h-full flex items-center justify-center">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src="/PHYSFLIX.png" alt="PhysicsSPMFlix Watermark" className="h-full w-auto object-contain" />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Mobile Bottom Controls Shield - Blocks CC, Gear, Fullscreen buttons on Drive player */}
-            {!bypassShields && !currentLesson.youtubeId && (
-              <div className="absolute left-0 right-0 bottom-0 z-20 pointer-events-auto cursor-default bg-black/95 md:hidden" style={{ height: '15%' }}></div>
-            )}
-
-            {/* Custom Top Right Brand Watermark - Blocks Google Drive Popout Button */}
-            {/* Grid coverage: Mobile Portrait=A13-E15, FS Portrait=A13-F15, Mobile Landscape=A14-D15, FS Landscape=keep current */}
-            {!bypassShields && (
-              <div 
-                className="absolute top-0 right-0 z-20 flex items-center justify-center bg-black/90 rounded-bl-2xl pointer-events-auto cursor-default border-l border-b border-white/5 w-12 h-12 md:w-14 md:h-14"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/PFlix.png" alt="PhysicsSPMFlix" className="h-4 md:h-6 w-auto object-contain" />
-              </div>
-            )}
-
-            {/* Conditional Tavis Censor Block for 2.6 Daya */}
-            {currentLesson.titleBm === "2.6 Daya" && (
-              <div 
-                className={`absolute left-0 z-20 pointer-events-auto cursor-default bg-black/95 border-r border-b border-white/5 w-[13.33%] ${
-                  isFullscreen
-                    ? "portrait:top-[23.08%] portrait:h-[7.69%] landscape:top-[11.54%] landscape:h-[7.69%]"
-                    : "portrait:top-[23.08%] portrait:h-[3.85%] landscape:top-[11.54%] landscape:h-[7.69%]"
-                }`}
-              ></div>
-            )}
-
-            {/* Conditional Tavis Censor Block for 4.3a Haba Pendam Tentu & 4.3b Transformer (PC View D1-E2) */}
-            {(currentLesson.titleBm === "4.3a Haba Pendam Tentu" || currentLesson.titleBm === "4.3b Transformer") && (
-              <>
-                <div 
-                  className="absolute z-20 pointer-events-auto cursor-default bg-[#0a0a0a] hidden md:block"
-                  style={{
-                    left: '0%',         // Col 1 start
-                    top: '11.538%',     // Row D start
-                    width: '13.333%',   // Col 1 to 2 (2 cols)
-                    height: '7.692%'    // Span 2 rows (D to E)
-                  }}
-                ></div>
-                
-                {/* Mobile View Blockers */}
-                <div 
-                  className={`absolute left-0 z-20 pointer-events-auto cursor-default bg-[#0a0a0a] md:hidden h-[7.692%] ${
-                    isFullscreen
-                      ? "portrait:top-[11.538%] portrait:w-[13.333%] landscape:top-[11.538%] landscape:w-[20%]"
-                      : "top-[19.23%] w-[13.333%]"
-                  }`}
-                ></div>
-              </>
-            )}
-
-            {/* Conditional Tavis Censor Block for 6.1a Reputan Radioaktif & 6.1b (V11-X13) */}
-            {(currentLesson.titleBm === "6.1a Reputan Radioaktif" || currentLesson.titleBm === "6.1b Reputan Radioaktif & Separuh Hayat") && (
-              <div 
-                className="absolute z-20 pointer-events-auto cursor-default bg-[#0a0a0a]"
-                style={{
-                  left: '66.666%',    // Col 11 start
-                  top: '80.769%',     // Row V start
-                  width: '20%',       // Col 11 to 13 (3 cols)
-                  height: '11.538%'   // Span 3 rows (V, W, X)
-                }}
-              ></div>
-            )}
-
-            {/* Conditional PHYSFLIX Cover for 5.6b Interferens Gelombang */}
-            {currentLesson.titleBm === "5.6b Interferens Gelombang" && (
-              <div 
-                className="absolute z-20 flex items-center justify-center bg-[#0a0a0a] rounded-[2px] md:rounded-md shadow-lg border border-white/10 pointer-events-none"
-                style={{
-                  left: '60%',      // Col 10 start
-                  top: '84.615%',   // Row W start
-                  width: '20%',     // Col 10 to 12 (3 cols)
-                  height: '7.692%'  // Span 2 rows (W and X)
-                }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/PHYSFLIX.png" alt="PhysicsSPMFlix" className="h-[60%] w-auto object-contain opacity-80" />
-              </div>
-            )}
-
-
-            {/* Top-Left Shield - Blocks Google Drive Title Link (Solid black on mobile to hide menu) */}
-            {!bypassShields && !currentLesson.youtubeId && (
-              <div className="absolute top-0 left-0 z-20 w-[80%] h-10 md:h-16 pointer-events-auto cursor-default bg-black md:bg-transparent"></div>
-            )}
-
-            {/* Bottom Controller Shield (Solid Black) - Hides player controls completely on PC */}
-            {!bypassShields && !currentLesson.youtubeId && devShowControllerShield && (
-              <div 
-                className="absolute left-0 right-0 bottom-0 z-20 pointer-events-auto cursor-default bg-black hidden md:block"
-                style={{
-                  height: isFullscreen ? '7.692%' : '15.38%',
-                }}
-              ></div>
-            )}
-
-            {/* 27-Degree Rotated Green Grid Watermark (Dev Tools) */}
-            {devShow45Watermark && (
-              <div className="absolute inset-0 z-[140] pointer-events-none flex items-center justify-center overflow-hidden">
-                <div 
-                  className="w-[150%] h-[150%] grid" // Slightly larger to cover corners during rotation
-                  style={{ 
-                    transform: 'rotate(-27deg)',
-                    gridTemplateColumns: 'repeat(15, minmax(0, 1fr))',
-                    gridTemplateRows: 'repeat(26, minmax(0, 1fr))'
-                  }}
-                >
-                  {Array.from({ length: 15 * 26 }).map((_, i) => {
-                    const col = i % 15;
-                    const row = Math.floor(i / 15);
-                    const letter = String.fromCharCode(65 + row); // A-Z
-                    const number = col + 1; // 1-15
-                    return (
-                      <div key={i} className="border border-green-500/40 flex items-center justify-center bg-green-500/20">
-                        <span className="text-green-300 font-mono text-[8px] md:text-xs font-bold bg-black/60 px-0.5 rounded">{letter}{number}</span>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* TEMPORARY 15x26 GRID OVERLAY FOR PRECISE POSITIONING */}
-            {devShowGrid && (
-              <div 
-                className="absolute inset-0 z-50 pointer-events-none grid"
-                style={{ 
-                  gridTemplateColumns: 'repeat(15, minmax(0, 1fr))',
-                  gridTemplateRows: 'repeat(26, minmax(0, 1fr))'
-                }}
-              >
-                {Array.from({ length: 15 * 26 }).map((_, i) => {
-                  const col = i % 15;
-                  const row = Math.floor(i / 15);
-                  const letter = String.fromCharCode(65 + row); // A-Z
-                  const number = col + 1; // 1-15
-                  return (
-                    <div key={i} className="border border-red-500/30 flex items-center justify-center overflow-hidden">
-                      <span className="text-red-500/80 font-mono text-[8px] md:text-xs font-bold bg-black/40 px-0.5 rounded">{letter}{number}</span>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-
-            {/* Bottom-Center Invisible Shield - Blocks Timeline Scrubbing (Fast Forward/Rewind) */}
-            {!bypassShields && (
-              <div 
-                className={`absolute left-[2%] right-[2%] z-30 pointer-events-auto cursor-not-allowed max-md:landscape:!top-0 max-md:landscape:!bottom-auto max-md:landscape:!h-[11.5%] max-md:landscape:!left-0 max-md:landscape:!right-0 ${isDev && devShowShields ? 'bg-red-500/30' : 'bg-transparent'}`}
-                style={shieldStyle}
-                title="Sila tonton tanpa skip"
-              ></div>
-            )}
-
-            {/* Permanent Protectors for 'Tavis' Logo */}
-            {devShowShields && (
-              <>
-                {currentLesson.tavisPositions && currentLesson.tavisPositions.length > 0 ? (
-                  currentLesson.tavisPositions.map((pos, idx) => (
-                <div 
-                  key={idx}
-                  className="absolute z-20 flex items-center justify-center bg-[#0a0a0a] rounded-[4px] md:rounded-lg shadow-xl border border-white/10 pointer-events-none"
-                  style={pos as React.CSSProperties}
-                >
-                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                   <img src="/PHYSFLIX.png" alt="PhysicsSPMFlix" className="h-[45%] w-auto object-contain opacity-80" />
-                </div>
-              ))
-            ) : (
-              <>
-                {showTavisM1toM20 && (
-                  <>
-                    {/* Top-Right Tavis Protector (B7-B8 for M1-M20) -> Fullscreen Portrait E10-F11 */}
-                    <div 
-                      className={`absolute z-20 flex items-center justify-center bg-[#0a0a0a] rounded-[4px] md:rounded-lg shadow-xl border border-white/10 pointer-events-none top-[10%] right-[20%] w-[20%] h-[10%] ${
-                        isFullscreen
-                          ? "portrait:top-[15.384%] portrait:right-auto portrait:left-[60%] portrait:w-[13.333%] portrait:h-[7.692%]"
-                          : "portrait:top-[73%] portrait:right-auto portrait:left-[60%] portrait:w-[20%] portrait:h-[7.7%]"
-                      }`}
-                    >
-                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                       <img src="/PHYSFLIX.png" alt="PhysicsSPMFlix" className="h-[45%] w-auto object-contain opacity-80" />
-                    </div>
-                    
-                    {/* Bottom-Right Tavis Protector (I7-I8 for M1-M20) -> Fullscreen Portrait V10-W11 */}
-                    <div 
-                      className={`absolute z-20 flex items-center justify-center bg-[#0a0a0a] rounded-[4px] md:rounded-lg shadow-xl border border-white/10 pointer-events-none bottom-[10%] right-[20%] w-[20%] h-[10%] ${
-                        isFullscreen
-                          ? "portrait:bottom-auto portrait:top-[80.769%] portrait:right-auto portrait:left-[60%] portrait:w-[13.333%] portrait:h-[7.692%]"
-                          : "portrait:bottom-auto portrait:top-[23%] portrait:right-auto portrait:left-[60%] portrait:w-[20%] portrait:h-[7.7%]"
-                      }`}
-                    >
-                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                       <img src="/PHYSFLIX.png" alt="PhysicsSPMFlix" className="h-[45%] w-auto object-contain opacity-80" />
-                    </div>
-                  </>
-                )}
-
-                {showTavisM21Plus && (
-                  <>
-                    {/* Top-Left Tavis Protector (B1-B2 for M21+) -> Portrait F10-H12 */}
-                    <div 
-                      className="absolute z-20 flex items-center justify-center bg-[#0a0a0a] rounded-[4px] md:rounded-lg shadow-xl border border-white/10 pointer-events-none top-[10%] left-[0%] w-[20%] h-[10%] portrait:top-[19.2%] portrait:left-[60%] portrait:w-[20%] portrait:h-[11.5%]"
-                    >
-                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                       <img src="/PHYSFLIX.png" alt="PhysicsSPMFlix" className="h-[45%] w-auto object-contain opacity-80" />
-                    </div>
-
-                    {/* Top-Right Tavis Protector 1 (B7-B8 for M21+) */}
-                    <div 
-                      className="absolute z-20 flex items-center justify-center bg-[#0a0a0a] rounded-[4px] md:rounded-lg shadow-xl border border-white/10 pointer-events-none top-[10%] right-[20%] w-[20%] h-[10%] portrait:hidden"
-                    >
-                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                       <img src="/PHYSFLIX.png" alt="PhysicsSPMFlix" className="h-[45%] w-auto object-contain opacity-80" />
-                    </div>
-                    
-                    {/* Top-Right Tavis Protector 2 (C9 for M21+) */}
-                    <div 
-                      className="absolute z-20 flex items-center justify-center bg-[#0a0a0a] rounded-[4px] md:rounded-lg shadow-xl border border-white/10 pointer-events-none top-[20%] right-[10%] w-[10%] h-[10%] portrait:hidden"
-                    >
-                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/PHYSFLIX.png" alt="PhysicsSPMFlix" className="h-[45%] w-auto object-contain opacity-80" />
-                    </div>
-                  </>
-                )}
-              </>
-            )}
-            </>
-          )}
-
-            {/* Custom Initial Cover (Hole Punch) - unified for mobile & desktop */}
-            {showCover && (
-              <div className="absolute inset-0 z-30 pointer-events-none overflow-hidden flex items-center justify-center">
-                {/* Click blockers & Solid Fallback Cover - prevents clicks and acts as a solid visual fallback if box-shadow fails */}
-                <div className="absolute top-0 left-0 right-0 h-[calc(50%-26px)] bg-[#0a0a0a] pointer-events-auto z-40"></div>
-                <div className="absolute bottom-0 left-0 right-0 h-[calc(50%-26px)] bg-[#0a0a0a] pointer-events-auto z-40"></div>
-                <div className="absolute top-[calc(50%-26px)] left-0 w-[calc(50%-36px)] h-[52px] bg-[#0a0a0a] pointer-events-auto z-40"></div>
-                <div className="absolute top-[calc(50%-26px)] right-0 w-[calc(50%-36px)] h-[52px] bg-[#0a0a0a] pointer-events-auto z-40"></div>
-
-                {/* Highly compatible inline-styled Hole Punch (Bypasses Tailwind JIT/Caching issues) */}
-                <div 
-                  className="w-[72px] h-[52px] rounded-[12px] z-30"
-                  style={{ 
-                    boxShadow: '0 0 0 9999px #0a0a0a',
-                    transform: 'translateZ(0)',
-                    WebkitTransform: 'translateZ(0)' 
-                  }}
-                ></div>
-
-                {/* Additional UI elements (Logo, text) placed around the hole EXACTLY like old repo */}
-                <div className="absolute top-10 left-0 right-0 flex flex-col items-center z-40">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/PHYSFLIX.png" alt="PhysicsSPMFlix" className="h-12 md:h-16 w-auto object-contain mb-4 opacity-90" />
-                  <span className="text-white/80 text-sm md:text-xl font-black font-mono tracking-widest text-center uppercase">
-                    {currentLesson.titleBm}
-                  </span>
-                </div>
-                
-                <div className="absolute bottom-16 left-0 right-0 flex justify-center z-40">
-                  <span className="text-red-500/80 text-sm md:text-base font-bold tracking-wide animate-pulse">
-                    ↑ Klik butang Play di atas ↑
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Full Screen End Cover (Last 5 Minutes) */}
-            {showEndCover && (
-              <div 
-                className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center pointer-events-auto"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/PHYSFLIX.png" alt="PhysicsSPMFlix" className="h-16 md:h-24 w-auto object-contain opacity-90 mb-4" />
-                <span className="text-red-500 font-bold text-lg md:text-2xl animate-pulse mb-6">SESI TAMAT</span>
-                
-                <button
-                  onClick={() => {
-                    const startParam = `${minStartSecs}s`;
-
-                    setShowEndCover(false);
-                    setShowCover(!isMobileDevice && currentLesson.youtubeId ? false : true); // Reset the hole punch cover
-                    setCurrentStartSeconds(minStartSecs); // Reset timer
-                    videoOpenedAt.current = Date.now(); // Reset elapsed time
-                    
-                    if (currentLesson.youtubeId) {
-                      setIframeSrc(`https://www.youtube.com/embed/${currentLesson.youtubeId}?start=${minStartSecs}&rel=0&modestbranding=1&autoplay=1&controls=1&disablekb=1&fs=0&cc_load_policy=1&cc_lang_pref=ms`);
-                    } else {
-                      const driveUrl = `https://drive.google.com/file/d/${rawDriveId}/preview`;
-                      setIframeSrc(`${driveUrl}?t=${startParam}&cc_load_policy=0&cc=0`); // Restart video at correct min
-                    }
-                  }}
-                  className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 active:scale-95 flex items-center gap-2"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
-                  </svg>
-                  Tonton Semula
-                </button>
-              </div>
-            )}
-            </>
-          )}
+                <iframe
+                  ref={iframeRef}
+                  src={iframeSrc}
+                  className="w-full h-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  title={currentLesson.titleBm}
+                ></iframe>
+              )}
             </div>
           </div>
-
-          {/* TEMPORARY JUMP FEATURE */}
-          {devShowJump && (
-            <div className="mt-4 flex flex-col md:flex-row items-start md:items-center gap-3 bg-slate-800/50 p-4 rounded-lg border border-slate-700/50">
-              <span className="text-sm font-medium text-slate-300 whitespace-nowrap">⏳ Lompat ke Masa:</span>
-              <input 
-                type="text" 
-                placeholder="Cth: 12:30 atau 1m30s"
-                className="bg-black border border-slate-600 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-red-500 w-full md:w-48"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    const val = e.currentTarget.value;
-                    if (!val) return;
-                    let formattedTime = val;
-                    let calculatedSecs = 0;
-                    if (val.includes(":")) {
-                      const parts = val.split(":");
-                      if (parts.length === 2) formattedTime = `${parts[0]}m${parts[1]}s`;
-                      else if (parts.length === 3) formattedTime = `${parts[0]}h${parts[1]}m${parts[2]}s`;
-                      
-                      const p = val.split(":").map(Number);
-                      if (p.length === 2) calculatedSecs = p[0]*60 + p[1];
-                      else if (p.length === 3) calculatedSecs = p[0]*3600 + p[1]*60 + p[2];
-                    } else {
-                      let h=0, m=0, s=0;
-                      const hM = val.match(/(\d+)h/);
-                      const mM = val.match(/(\d+)m/);
-                      const sM = val.match(/(\d+)s/);
-                      if (hM) h = parseInt(hM[1]);
-                      if (mM) m = parseInt(mM[1]);
-                      if (sM) s = parseInt(sM[1]);
-                      calculatedSecs = h*3600 + m*60 + s;
-                    }
-                    setCurrentStartSeconds(calculatedSecs);
-                    videoOpenedAt.current = Date.now(); // Reset elapsed time
-
-                    if (currentLesson.youtubeId) {
-                      setIframeSrc(`https://www.youtube.com/embed/${currentLesson.youtubeId}?start=${calculatedSecs}&rel=0&modestbranding=1&autoplay=1&controls=1&disablekb=1&fs=0&cc_load_policy=1&cc_lang_pref=ms`);
-                    } else {
-                      const baseUrl = `https://drive.google.com/file/d/${rawDriveId}/preview`;
-                      const urlWithTime = `${baseUrl}?t=${formattedTime}&cc_load_policy=0&cc=0`;
-                      setIframeSrc(urlWithTime);
-                    }
-                  }
-                }}
-              />
-              <span className="text-xs text-slate-400 italic">
-                (Taip masa dan tekan <strong>Enter</strong>. Video akan *reload* di minit tersebut. Ciri sementara.)
-              </span>
-            </div>
-          )}
-
-
 
           {/* Video Header & Actions */}
           <div className="space-y-4">
@@ -1080,21 +413,21 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                 <div className="flex items-center bg-[#131826] rounded-full border border-slate-800 p-0.5">
                   <button
                     onClick={handleLike}
-                    className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition ${
+                    className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${
                       liked ? "bg-red-600 text-white" : "text-slate-300 hover:text-white"
                     }`}
                   >
                     <ThumbsUp className="w-3.5 h-3.5" />
                     <span>{likeCount}</span>
                   </button>
-                  <button className="px-2.5 py-1.5 text-slate-400 hover:text-white border-l border-slate-800">
+                  <button className="px-2.5 py-1.5 text-slate-400 hover:text-white border-l border-slate-800 cursor-pointer">
                     <ThumbsDown className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
                 <button 
                   onClick={handleShare}
-                  className="flex items-center space-x-1.5 px-3.5 py-2 rounded-full bg-[#131826] hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 transition"
+                  className="flex items-center space-x-1.5 px-3.5 py-2 rounded-full bg-[#131826] hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 transition cursor-pointer"
                 >
                   <Share2 className="w-3.5 h-3.5 text-blue-400" />
                   <span>{shareText === "Kongsi" ? t("btnShare") : shareText}</span>
@@ -1102,7 +435,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
 
                 <button
                   onClick={() => toggleBookmark(currentLesson.id)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-semibold transition ${
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-semibold transition cursor-pointer ${
                     isBookmarked(currentLesson.id)
                       ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
                       : "bg-[#131724] hover:bg-[#1a2133] text-slate-300 border border-slate-800"
@@ -1114,7 +447,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
 
                 <button
                   onClick={toggleFullscreen}
-                  className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-900/20 text-sm font-semibold transition"
+                  className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-900/20 text-sm font-semibold transition cursor-pointer"
                 >
                   <Maximize className="w-4 h-4" />
                   <span className="hidden sm:inline">Skrin Penuh</span>
@@ -1128,7 +461,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
             <div className="flex overflow-x-auto hide-scrollbar border-b border-slate-800 gap-4 md:gap-6 text-sm font-bold">
               <button
                 onClick={() => setActiveTab("overview")}
-                className={`pb-3 whitespace-nowrap transition ${
+                className={`pb-3 whitespace-nowrap transition cursor-pointer ${
                   activeTab === "overview"
                     ? "border-b-2 border-red-500 text-white"
                     : "text-slate-400 hover:text-slate-200"
@@ -1138,7 +471,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               </button>
               <button
                 onClick={() => setActiveTab("notes")}
-                className={`pb-3 whitespace-nowrap transition ${
+                className={`pb-3 whitespace-nowrap transition cursor-pointer ${
                   activeTab === "notes"
                     ? "border-b-2 border-red-500 text-white"
                     : "text-slate-400 hover:text-slate-200"
@@ -1148,7 +481,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               </button>
               <button
                 onClick={() => setActiveTab("qa")}
-                className={`pb-3 whitespace-nowrap transition ${
+                className={`pb-3 whitespace-nowrap transition cursor-pointer ${
                   activeTab === "qa"
                     ? "border-b-2 border-red-500 text-white"
                     : "text-slate-400 hover:text-slate-200"
@@ -1187,7 +520,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                         <button
                           key={i}
                           onClick={() => setSelectedConcept(selectedConcept === concept ? null : concept)}
-                          className={`px-3 py-1 border rounded-lg text-xs font-medium transition-colors ${
+                          className={`px-3 py-1 border rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                             selectedConcept === concept
                               ? "bg-red-600 border-red-500 text-white"
                               : "bg-[#1a2133] border-slate-700/60 text-slate-200 hover:bg-slate-800 hover:text-white"
@@ -1219,13 +552,10 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                   Nota Ringkas & Formula SPM
                 </h3>
                 <p>
-                  1. Pastikan perhatikan tanda positif dan negatif bagi jarak objek (u) dan jarak imej (v).
+                  1. Perhatikan tanda positif dan negatif bagi pembolehubah dan rumus fizik.
                 </p>
                 <p>
-                  2. Kanta Cembung (Convex Lens) berfungsi menumpukan sinar cahaya pada titik fokus (F).
-                </p>
-                <p>
-                  3. Formula Kanta / Cermin: <code className="bg-[#1c2438] px-2 py-0.5 rounded text-red-400 font-mono">1/f = 1/u + 1/v</code>
+                  2. Rujuk Standard Pembelajaran (DSKP) untuk memahami kata kunci pemarkahan SPM.
                 </p>
               </div>
             )}
@@ -1242,7 +572,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                   />
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl transition"
+                    className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl transition cursor-pointer"
                   >
                     Hantar
                   </button>
@@ -1267,11 +597,11 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
         {/* Right Column - Sidebar (Playlist / Learning Tools) */}
         <div className="lg:col-span-4 space-y-6">
           <div className="p-5 rounded-3xl bg-[#101420] border border-slate-800/80 shadow-2xl space-y-5">
-            {/* Playlist vs Learning Tools Segmented Switch */}
+            {/* Playlist vs Learning Tools Switch */}
             <div className="flex bg-[#161c2b] p-1 rounded-2xl border border-slate-800">
               <button
                 onClick={() => setSidebarTab("playlist")}
-                className={`flex-1 py-2 rounded-xl text-xs font-bold transition ${
+                className={`flex-1 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
                   sidebarTab === "playlist"
                     ? "bg-red-600 text-white shadow-md"
                     : "text-slate-400 hover:text-white"
@@ -1281,7 +611,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               </button>
               <button
                 onClick={() => setSidebarTab("tools")}
-                className={`flex-1 py-2 rounded-xl text-xs font-bold transition ${
+                className={`flex-1 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
                   sidebarTab === "tools"
                     ? "bg-red-600 text-white shadow-md"
                     : "text-slate-400 hover:text-white"
@@ -1305,7 +635,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
 
               <button
                 onClick={() => setSidebarTab(sidebarTab === "quiz" ? "playlist" : "quiz")}
-                className={`w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl text-white font-bold text-xs transition shadow-lg ${
+                className={`w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl text-white font-bold text-xs transition shadow-lg cursor-pointer ${
                   sidebarTab === "quiz"
                     ? "bg-slate-700 hover:bg-slate-600 shadow-slate-900"
                     : "bg-purple-600 hover:bg-purple-500 shadow-purple-950"
@@ -1329,7 +659,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                   <span className="text-[10px] text-slate-500 font-bold">{t("hide")}</span>
                 </div>
 
-                <div id="playlist-container" className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+                <div id="playlist-container" className="space-y-2 max-h-[460px] overflow-y-auto pr-1">
                   {allVideoLessons.map((lesson, idx) => {
                     const isCurrent = lesson.id === currentLesson.id;
                     return (
