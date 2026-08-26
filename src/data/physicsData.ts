@@ -419,6 +419,32 @@ export const rawForm4Videos = [
     "thumbnailUrl": "/thumbnails/09jX9qGHwSQ.webp"
   },
   {
+    "driveId": "sn7_SSzSURM",
+    "youtubeId": "sn7_SSzSURM",
+    "thumbnailUrl": "/thumbnails/sn7_SSzSURM.webp",
+    "week": "T4 M15",
+    "weekNum": 15,
+    "titleBm": "3.3b Satelit Buatan Manusia",
+    "titleDlp": "3.3b Man-made Satellites Part 2",
+    "form": 4,
+    "chapterNum": 3,
+    "chapterBm": "Kegravitian",
+    "chapterDlp": "Gravitation",
+    "duration": "56:14",
+    "keyConceptsBm": [
+      "Laju Linear Satelit",
+      "Halaju Lepas v",
+      "Satelit Bukan Geopegun",
+      "Orbit Satelit"
+    ],
+    "keyConceptsDlp": [
+      "Linear Speed of Satellite",
+      "Escape Velocity v",
+      "Non-geostationary Satellite",
+      "Satellite Orbit"
+    ]
+  },
+  {
     "driveId": "XzSTapojxMU",
     "youtubeId": "XzSTapojxMU",
     "week": "T4 M16",
