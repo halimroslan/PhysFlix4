@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Play, Info, Sparkles, Compass, Waves, Flame, Zap, Atom } from "lucide-react";
+import { Play, Info, Sparkles, Compass, Waves, Flame, Zap, Atom, CheckCircle2, X } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { VideoLesson } from "@/data/physicsData";
 import { motion, AnimatePresence } from "framer-motion";
@@ -334,6 +334,7 @@ export function getLessonDescription(lesson: VideoLesson, lang: "bm" | "en" | st
 export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ onPlay, featuredLessons }) => {
   const { lang, t } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   const [cleanLessons, setCleanLessons] = useState<VideoLesson[]>(() => {
     const filtered = (featuredLessons || []).filter((lesson) => {
@@ -482,7 +483,7 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ onPlay, featuredLe
               </button>
 
               <button
-                onClick={() => onPlay(currentLesson)}
+                onClick={() => setShowInfoModal(true)}
                 className="flex items-center space-x-2 px-5 py-3 rounded-xl bg-slate-900/80 hover:bg-slate-800/80 text-slate-200 border border-slate-700/60 font-semibold text-xs md:text-sm transition active:scale-95 cursor-pointer"
               >
                 <Info className="w-4 h-4" />
@@ -510,6 +511,78 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ onPlay, featuredLe
           {currentIndex + 1} / {cleanLessons.length}
         </span>
       </div>
+
+      {/* "Apa Yang Akan Anda Pelajari" Pop-up Modal */}
+      <AnimatePresence>
+        {showInfoModal && (
+          <div 
+            className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+            onClick={() => setShowInfoModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 15 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="relative w-full max-w-lg rounded-3xl bg-[#0e1320] border border-slate-700/70 shadow-2xl p-6 md:p-8 space-y-6 text-left"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="flex items-start justify-between gap-4 border-b border-slate-800/80 pb-4">
+                <div className="space-y-1">
+                  <h3 className="text-xs font-black tracking-widest text-slate-400 uppercase">
+                    {lang === "bm" ? "APA YANG AKAN ANDA PELAJARI" : "WHAT YOU'LL LEARN"}
+                  </h3>
+                  <h4 className="text-base sm:text-lg font-extrabold text-white">
+                    {lang === "bm" ? currentLesson.titleBm : currentLesson.titleDlp}
+                  </h4>
+                  <p className="text-xs text-red-400 font-semibold">
+                    {lang === "bm" ? `Bab ${currentLesson.chapterNum}: ${currentLesson.chapterBm}` : `Chapter ${currentLesson.chapterNum}: ${currentLesson.chapterDlp}`}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => setShowInfoModal(false)}
+                  className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition cursor-pointer border border-slate-700/50"
+                  aria-label="Tutup"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Learning Points Checklist */}
+              <div className="space-y-3 max-h-[55vh] overflow-y-auto pr-1">
+                {(lang === "bm" ? currentLesson.learningPointsBm : currentLesson.learningPointsDlp).map((point, i) => (
+                  <div key={i} className="flex items-start space-x-3 text-xs sm:text-sm text-slate-200 leading-relaxed">
+                    <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <span>{point}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end space-x-3 pt-2 border-t border-slate-800/80">
+                <button
+                  onClick={() => setShowInfoModal(false)}
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition cursor-pointer"
+                >
+                  {lang === "bm" ? "Tutup" : "Close"}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowInfoModal(false);
+                    onPlay(currentLesson);
+                  }}
+                  className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition shadow-lg shadow-red-950/80 active:scale-95 cursor-pointer"
+                >
+                  <Play className="w-3.5 h-3.5 fill-white" />
+                  <span>{t("playNow")}</span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
