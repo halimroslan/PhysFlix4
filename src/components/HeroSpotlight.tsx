@@ -364,12 +364,12 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({ onPlay, featuredLe
   }, [featuredLessons]);
 
   useEffect(() => {
-    if (cleanLessons.length <= 1) return;
+    if (cleanLessons.length <= 1 || showInfoModal) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % cleanLessons.length);
     }, 7000);
     return () => clearInterval(interval);
-  }, [cleanLessons.length]);
+  }, [cleanLessons.length, showInfoModal]);
 
   if (cleanLessons.length === 0) return null;
 
