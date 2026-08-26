@@ -57,7 +57,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: "home", label: "Laman Utama" },
     { id: "form4", label: "Tingkatan 4" },
     { id: "form5", label: "Tingkatan 5" },
-    { id: "spm", label: "Ulangkaji SPM" },
     { id: "mylist", label: "Senarai Saya" },
     { id: "scoreboard", label: "Score Board" },
     { id: "experiments", label: "MyHomePhysics Lab" },

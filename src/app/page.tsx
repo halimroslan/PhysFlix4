@@ -9,7 +9,6 @@ import { HeroSpotlight, getPhysicsTopicCategory } from "@/components/HeroSpotlig
 import { Compass, Waves, Flame, Zap, Atom, Sparkles } from "lucide-react";
 import { ContinueWatching } from "@/components/ContinueWatching";
 import { TopPicks } from "@/components/TopPicks";
-import { RevisionCollections } from "@/components/RevisionCollections";
 import { VideoPlayerView } from "@/components/VideoPlayerView";
 import { AnalyticBoard } from "@/components/AnalyticBoard";
 import { ScoreBoardView } from "@/components/ScoreBoardView";
@@ -168,11 +167,6 @@ function MainDashboard() {
       return timeB - timeA;
     });
 
-  const spmLessons = allVideoLessons.filter((l) => {
-    const searchString = `${l.titleBm.toLowerCase()} ${l.keyConceptsBm.join(" ").toLowerCase()} ${l.titleDlp.toLowerCase()}`;
-    return searchString.includes("ulangkaji") || searchString.includes("tips") || searchString.includes("percubaan") || searchString.includes("spm");
-  });
-
   const allChapters = Array.from(new Set(allVideoLessons.map(l => `${l.form}-${l.chapterNum}`))).map(formChap => {
     const [form, chap] = formChap.split("-");
     const lessons = allVideoLessons.filter(l => l.form === parseInt(form) && l.chapterNum === parseInt(chap));
@@ -296,21 +290,6 @@ function MainDashboard() {
                 </div>
               ))}
             </div>
-          ) : currentTab === "spm" ? (
-            <div className="space-y-6">
-              <div className="flex items-center space-x-3 border-b border-slate-800 pb-4">
-                <Target className="w-6 h-6 text-red-500" />
-                <h2 className="text-2xl font-extrabold text-white">
-                  {lang === "bm" ? "Koleksi Ulangkaji SPM" : "SPM Revision Collection"}
-                </h2>
-                <span className="px-3 py-1 bg-red-950/60 border border-red-800/60 text-red-400 text-xs font-extrabold rounded-full">
-                  {spmLessons.length} Video
-                </span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {spmLessons.map(renderVideoCard)}
-              </div>
-            </div>
           ) : currentTab === "form4" ? (
             <div className="space-y-6">
               <div className="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -364,11 +343,6 @@ function MainDashboard() {
               )}
               {/* Top Picks for You Categories */}
               <TopPicks onSelectTopic={handleSelectTopic} />
-              {/* SPM Revision Collections */}
-              <RevisionCollections
-                onOpenQuiz={() => setIsQuizOpen(true)}
-                onOpenFormula={() => setIsFormulaOpen(true)}
-              />
             </>
           )}
         </main>

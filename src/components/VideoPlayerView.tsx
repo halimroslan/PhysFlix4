@@ -17,7 +17,10 @@ import {
   Maximize,
   Settings,
   X,
-  Brain
+  Brain,
+  Video,
+  Clock,
+  Sparkles
 } from "lucide-react";
 import QuizComponent from "./QuizComponent";
 import { useLanguage } from "@/context/LanguageContext";
@@ -145,39 +148,8 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     return 0;
   })();
 
-  const is22m0sStart = currentLesson?.titleBm === "6.1a Reputan Radioaktif";
-  const is20MinStart = currentLesson?.titleBm === "2.2b Graf Gerakan Linear & 2.3 Jatuh Bebas Ulangkaji";
-  const is17MinStart = currentLesson?.titleBm === "4.2 Induksi Elektromagnet";
-  const is16m41sStart = currentLesson?.titleBm === "3.4 Tenaga & Kuasa Elektrik";
-  const is15m45sStart = currentLesson?.titleBm === "6.1b Reputan Radioaktif & Separuh Hayat";
-  const is15m16sStart = currentLesson?.titleBm === "7.1a Teori Kuantum Cahaya";
-  const is15m14sStart = currentLesson?.titleBm === "4.1b Fleming Kiri";
-  const is15MinStart = currentLesson?.titleBm === "5.1 Asas Gelombang" || currentLesson?.titleBm === "1.1 Daya Paduan" || currentLesson?.week === "T5 M35";
-  const is14m40sStart = currentLesson?.titleBm === "4.4b Hukum Gas Ulangkaji" || currentLesson?.titleBm === "7.3b Fotoelektrik Einstein & Aplikasi";
-  const is13m54sStart = currentLesson?.week === "T5 M32";
-  const is13m46sStart = currentLesson?.titleBm === "3.2b Rintangan";
-  const is13m35sStart = currentLesson?.titleBm === "7.2 Kesan Fotoelektrik";
-  const is13m25sStart = currentLesson?.titleBm === "7.1b Teori Kuantum Cahaya";
-  const is13mStart = currentLesson?.titleBm === "6.6b Pembentukan Imej Oleh Cermin Sfera";
-  const is12m40sStart = currentLesson?.titleBm === "6.1 Pembiasan Cahaya";
-  const is7m25sStart = currentLesson?.week === "T5 M34";
-  const is6m15sStart = currentLesson?.week === "T5 M36";
-  const is5m11sStart = currentLesson?.titleBm === "7.3a Fotoelektrik Einstein";
-  const is4m10sStart = currentLesson?.titleBm === "4.3b Transformer";
-  const is3m33sStart = currentLesson?.titleBm === "5.2 Diod Semikonduktor";
-  const is3m31sStart = currentLesson?.week === "T5 M37";
-  const is3m30sStart = currentLesson?.titleBm === "6.2a Tenaga Nuklear";
-  const is3m22sStart = currentLesson?.week === "T5 M33";
-  const is3m15sStart = currentLesson?.titleBm === "6.2b Tenaga Nuklear & Pelakuran";
-  const is2m10sStart = currentLesson?.titleBm === "5.1 Elektron";
-  const is1m42sStart = currentLesson?.week === "T5 M39";
-  const is1m32sStart = currentLesson?.week === "T5 M38";
-  const is1m10sStart = currentLesson?.titleBm === "5.3 Transistor";
-  const is0sStart = currentLesson?.week === "Ujian Amali Sains (Fizik)";
-
-  const minStartSecs = is22m0sStart ? 1320 : (is20MinStart ? 1200 : (is17MinStart ? 1020 : (is16m41sStart ? 1001 : (is15m45sStart ? 945 : (is15m16sStart ? 916 : (is15m14sStart ? 914 : (is15MinStart ? 900 : (is14m40sStart ? 880 : (is13m54sStart ? 834 : (is13m46sStart ? 826 : (is13m35sStart ? 815 : (is13m25sStart ? 805 : (is13mStart ? 780 : (is12m40sStart ? 760 : (is7m25sStart ? 445 : (is6m15sStart ? 375 : (is5m11sStart ? 311 : (is4m10sStart ? 250 : (is3m33sStart ? 213 : (is3m31sStart ? 211 : (is3m30sStart ? 210 : (is3m22sStart ? 202 : (is3m15sStart ? 195 : (is2m10sStart ? 130 : (is1m42sStart ? 102 : (is1m32sStart ? 92 : (is1m10sStart ? 70 : (is0sStart ? 0 : 600))))))))))))))))))))))))))));
-  
-  const watchableDuration = Math.max(1, totalSeconds > 0 ? totalSeconds - minStartSecs : 600);
+  const minStartSecs = 0;
+  const watchableDuration = Math.max(1, totalSeconds > 0 ? totalSeconds : 600);
 
   const [showCover, setShowCover] = useState(true);
   const [showEndCover, setShowEndCover] = useState(false);
@@ -619,22 +591,78 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                 maxHeight: '100%'
               }}
             >
-              {/* Embedded Stream via Obfuscated ID */}
-            <iframe
-              ref={iframeRef}
-              src={iframeSrc}
-              className="absolute top-0 left-0 w-full h-full border-0 pointer-events-auto"
-              allow="autoplay"
-              title={currentLesson.titleBm}
-              onLoad={() => {
-                // Reset timer when iframe finishes loading to catch late auto-focuses
-                coverMountedAt.current = Date.now();
-              }}
-            ></iframe>
-            {/* YouTube Anti-Interaction Overlay (Blocks pausing and top bar hover) */}
-            {!bypassShields && currentLesson.youtubeId && !showCover && (
-              <div className="absolute inset-0 z-20 pointer-events-auto bg-transparent"></div>
-            )}
+              {currentLesson.form === 5 || currentLesson.isPendingUpload || !currentLesson.youtubeId ? (
+                <div className="absolute inset-0 z-30 bg-gradient-to-br from-[#0e1320] via-[#090c15] to-[#04060a] flex flex-col items-center justify-center p-6 text-center space-y-4 md:space-y-6">
+                  {/* Subtle Grid / glow */}
+                  <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#ef4444_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                  
+                  {/* Brand watermark top right */}
+                  <div className="absolute top-3 right-3 z-20 opacity-60">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/PFlix.png" alt="PhysicsSPMFlix" className="h-4 md:h-6 w-auto object-contain" />
+                  </div>
+
+                  {/* Icon Card */}
+                  <div className="relative z-10 w-16 h-16 md:w-20 md:h-20 rounded-3xl bg-red-950/40 border border-red-500/40 flex items-center justify-center shadow-[0_0_50px_rgba(239,68,68,0.25)]">
+                    <Video className="w-8 h-8 md:w-10 md:h-10 text-red-400 animate-pulse" />
+                  </div>
+
+                  {/* Text Details */}
+                  <div className="relative z-10 space-y-2 max-w-xl px-2">
+                    <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] md:text-xs font-black uppercase tracking-wider">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>{lang === "bm" ? "Tingkatan 5 • Sedang Diproses" : "Form 5 • Processing"}</span>
+                    </div>
+                    
+                    <h2 className="text-base sm:text-xl md:text-2xl font-black text-white tracking-tight">
+                      {lang === "bm" 
+                        ? "Video Pembelajaran Akan Dimuat Naik Dalam Masa Terdekat" 
+                        : "Lesson Video Will Be Uploaded Soon"}
+                    </h2>
+                    
+                    <p className="text-[11px] sm:text-xs md:text-sm text-slate-400 leading-relaxed max-w-md mx-auto">
+                      {lang === "bm"
+                        ? `Rakaman video pengajaran bagi topik "${currentLesson.titleBm}" sedang disediakan. Anda boleh membaca nota ringkas, menyemak DSKP atau mencuba kuiz "Uji Minda" di panel sebelah!`
+                        : `Video recording for "${currentLesson.titleDlp}" is being prepared. You can read summary notes, check DSKP or try the "Uji Minda" quiz on the side panel!`}
+                    </p>
+                  </div>
+
+                  {/* Interactive Quick Links */}
+                  <div className="relative z-10 flex flex-wrap items-center justify-center gap-3 pt-1">
+                    <button
+                      onClick={() => setSidebarTab("quiz")}
+                      className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition shadow-lg shadow-purple-950/80 flex items-center space-x-2 cursor-pointer active:scale-95"
+                    >
+                      <Brain className="w-4 h-4" />
+                      <span>{lang === "bm" ? "Mula Kuiz Uji Minda" : "Start Quiz"}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("notes")}
+                      className="px-4 py-2.5 rounded-xl bg-[#151b2a] hover:bg-slate-800 text-slate-200 text-xs font-bold transition border border-slate-700/80 flex items-center space-x-2 cursor-pointer active:scale-95"
+                    >
+                      <FileText className="w-4 h-4 text-emerald-400" />
+                      <span>{lang === "bm" ? "Buka Nota Ringkas" : "Open Notes"}</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {/* Embedded Stream via Obfuscated ID */}
+                  <iframe
+                    ref={iframeRef}
+                    src={iframeSrc}
+                    className="absolute top-0 left-0 w-full h-full border-0 pointer-events-auto"
+                    allow="autoplay"
+                    title={currentLesson.titleBm}
+                    onLoad={() => {
+                      // Reset timer when iframe finishes loading to catch late auto-focuses
+                      coverMountedAt.current = Date.now();
+                    }}
+                  ></iframe>
+                  {/* YouTube Anti-Interaction Overlay (Blocks pausing and top bar hover) */}
+                  {!bypassShields && currentLesson.youtubeId && !showCover && (
+                    <div className="absolute inset-0 z-20 pointer-events-auto bg-transparent"></div>
+                  )}
 
             {/* Large Diagonal Watermark (27 degrees, Grid I2-N12) */}
             <div className="absolute inset-0 z-[15] pointer-events-none flex items-center justify-center overflow-hidden">
@@ -977,6 +1005,8 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                 </button>
               </div>
             )}
+            </>
+          )}
             </div>
           </div>
 
