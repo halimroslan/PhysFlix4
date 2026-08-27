@@ -2,8 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { useAuth } from "./AuthContext";
-import { db } from "../lib/firebase";
-import { doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 export interface VideoStat {
   totalTimeWatched: number;
@@ -18,13 +17,13 @@ export interface VideoStatsMap {
 }
 
 interface UserActivityContextType {
-  bookmarks: string[]; // array of driveIds
-  watchHistory: string[]; // array of driveIds
+  bookmarks: string[];
+  watchHistory: string[];
   videoStats: VideoStatsMap;
   toggleBookmark: (driveId: string) => void;
   addToHistory: (driveId: string) => void;
   isBookmarked: (driveId: string) => boolean;
-  updateVideoProgress: (driveId: string, timeSpentInSeconds: number, durationInSeconds: number) => void;
+  updateVideoProgress: (driveId: string, timeSpentInSeconds: number, watchableDuration: number) => void;
   updateResumeTime: (driveId: string, timeInSeconds: number, minStartSecs: number, watchableDuration: number) => void;
   incrementRepeat: (driveId: string) => void;
 }
@@ -37,96 +36,117 @@ export const UserActivityProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [watchHistory, setWatchHistory] = useState<string[]>([]);
   const [videoStats, setVideoStats] = useState<VideoStatsMap>({});
   
-  // Ref to prevent infinite loops when updating Firebase
-  const isUpdatingFirebase = useRef(false);
-  const dataLoadedFromFirebase = useRef(false);
+  const isUpdatingSupabase = useRef(false);
+  const dataLoadedFromRemote = useRef(false);
 
-  // Load from LocalStorage for fast initial render, then attach Firebase listener
+  // Helper to clean stats
+  const sanitizeVideoStats = (stats: any): VideoStatsMap => {
+    if (!stats || typeof stats !== "object") return {};
+    const sanitized: VideoStatsMap = {};
+    for (const [key, val] of Object.entries(stats)) {
+      const stat = val as VideoStat;
+      if (stat && typeof stat === "object") {
+        if (stat.repeats > 50) {
+          stat.repeats = 0;
+          stat.totalTimeWatched = 0;
+        }
+        sanitized[key] = stat;
+      }
+    }
+    return sanitized;
+  };
+
+  // Load from LocalStorage for instantaneous UI, then fetch from Supabase
   useEffect(() => {
     if (user) {
-      dataLoadedFromFirebase.current = false;
-      // 1. Quick load from localStorage
-      const storedBookmarks = localStorage.getItem(`bookmarks_${user.uid}`);
+      dataLoadedFromRemote.current = false;
+      const userKey = user.uid || user.id;
+
+      // 1. Quick load from localStorage cache
+      const storedBookmarks = localStorage.getItem(`bookmarks_${userKey}`);
       if (storedBookmarks) {
         try { setBookmarks(JSON.parse(storedBookmarks)); } catch (e) {}
       }
 
-      const storedHistory = localStorage.getItem(`history_${user.uid}`);
+      const storedHistory = localStorage.getItem(`history_${userKey}`);
       if (storedHistory) {
         try { setWatchHistory(JSON.parse(storedHistory)); } catch (e) {}
       }
 
-      const sanitizeVideoStats = (stats: any): VideoStatsMap => {
-        if (!stats) return {};
-        const sanitized: VideoStatsMap = {};
-        for (const [key, val] of Object.entries(stats)) {
-          const stat = val as VideoStat;
-          // Heal corrupted repeats (nobody watches a video 50+ times realistically)
-          if (stat.repeats > 50) {
-            stat.repeats = 0;
-            stat.totalTimeWatched = 0; // Reset corrupted time too
-          }
-          sanitized[key] = stat;
-        }
-        return sanitized;
-      };
-
-      const storedStats = localStorage.getItem(`videoStats_${user.uid}`);
+      const storedStats = localStorage.getItem(`videoStats_${userKey}`);
       if (storedStats) {
         try { setVideoStats(sanitizeVideoStats(JSON.parse(storedStats))); } catch (e) {}
       }
 
-      // 2. Firebase Sync
-      const userActivityRef = doc(db, "users", user.uid, "activity", "main");
-      
-      const unsubscribe = onSnapshot(userActivityRef, (docSnap) => {
-        if (docSnap.exists() && !isUpdatingFirebase.current) {
-          const data = docSnap.data();
-          if (data.bookmarks) setBookmarks(data.bookmarks);
-          if (data.watchHistory) setWatchHistory(data.watchHistory);
-          if (data.videoStats) setVideoStats(sanitizeVideoStats(data.videoStats));
+      // 2. Supabase Sync
+      const fetchFromSupabase = async () => {
+        if (!isSupabaseConfigured) {
+          dataLoadedFromRemote.current = true;
+          return;
         }
-        dataLoadedFromFirebase.current = true; // Mark as loaded
-      });
 
-      return () => unsubscribe();
+        try {
+          const { data, error } = await supabase
+            .from("user_activity")
+            .select("bookmarks, watch_history, video_stats")
+            .eq("user_id", userKey)
+            .maybeSingle();
+
+          if (error) {
+            console.warn("Supabase fetch error, using local data:", error);
+          } else if (data) {
+            if (Array.isArray(data.bookmarks)) setBookmarks(data.bookmarks);
+            if (Array.isArray(data.watch_history)) setWatchHistory(data.watch_history);
+            if (data.video_stats) setVideoStats(sanitizeVideoStats(data.video_stats));
+          }
+        } catch (err) {
+          console.warn("Error fetching Supabase activity:", err);
+        } finally {
+          dataLoadedFromRemote.current = true;
+        }
+      };
+
+      fetchFromSupabase();
     } else {
       setBookmarks([]);
       setWatchHistory([]);
       setVideoStats({});
-      dataLoadedFromFirebase.current = false;
+      dataLoadedFromRemote.current = false;
     }
   }, [user]);
 
-  // Save to LocalStorage & Firebase whenever they change
+  // Save to LocalStorage & Supabase whenever they change
   useEffect(() => {
-    if (user && dataLoadedFromFirebase.current) {
-      localStorage.setItem(`bookmarks_${user.uid}`, JSON.stringify(bookmarks));
-      localStorage.setItem(`history_${user.uid}`, JSON.stringify(watchHistory));
-      localStorage.setItem(`videoStats_${user.uid}`, JSON.stringify(videoStats));
+    if (user && dataLoadedFromRemote.current) {
+      const userKey = user.uid || user.id;
+
+      localStorage.setItem(`bookmarks_${userKey}`, JSON.stringify(bookmarks));
+      localStorage.setItem(`history_${userKey}`, JSON.stringify(watchHistory));
+      localStorage.setItem(`videoStats_${userKey}`, JSON.stringify(videoStats));
       
-      // Update Firebase
-      const syncToFirebase = async () => {
-        isUpdatingFirebase.current = true;
+      // Update Supabase
+      const syncToSupabase = async () => {
+        if (!isSupabaseConfigured || isUpdatingSupabase.current) return;
+        
+        isUpdatingSupabase.current = true;
         try {
-          const userActivityRef = doc(db, "users", user.uid, "activity", "main");
-          await setDoc(userActivityRef, {
+          await supabase.from("user_activity").upsert({
+            user_id: userKey,
             bookmarks,
-            watchHistory,
-            videoStats,
-            updatedAt: Date.now()
-          }, { merge: true });
+            watch_history: watchHistory,
+            video_stats: videoStats,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: "user_id" });
         } catch (error) {
-          console.error("Error syncing to Firebase:", error);
+          console.error("Error syncing to Supabase:", error);
         } finally {
-          // Add a small delay before accepting snapshot updates again to prevent echo
           setTimeout(() => {
-            isUpdatingFirebase.current = false;
-          }, 500);
+            isUpdatingSupabase.current = false;
+          }, 300);
         }
       };
       
-      syncToFirebase();
+      syncToSupabase();
     }
   }, [bookmarks, watchHistory, videoStats, user]);
 
@@ -143,7 +163,7 @@ export const UserActivityProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const addToHistory = (driveId: string) => {
     setWatchHistory((prev) => {
       const filtered = prev.filter((id) => id !== driveId);
-      return [driveId, ...filtered].slice(0, 50); // Keep max 50 recent videos
+      return [driveId, ...filtered].slice(0, 50);
     });
   };
 
@@ -154,37 +174,30 @@ export const UserActivityProvider: React.FC<{ children: React.ReactNode }> = ({ 
         ...prev,
         [driveId]: {
           ...current,
-          repeats: current.repeats + 1
-        }
+          repeats: current.repeats + 1,
+        },
       };
     });
   };
 
   const updateVideoProgress = (driveId: string, timeSpentInSeconds: number, watchableDuration: number) => {
-    if (timeSpentInSeconds < 5) return; // Ignore very short views
+    if (timeSpentInSeconds < 5) return;
 
     setVideoStats((prev) => {
       const current = prev[driveId] || { totalTimeWatched: 0, repeats: 0, completionPercentage: 0 };
       let newTotalTime = current.totalTimeWatched + timeSpentInSeconds;
       
-      // Auto-heal corrupted data from previous infinite loop bug
       if (newTotalTime > watchableDuration * 50) {
-        newTotalTime = watchableDuration; // Reset to 1 completion
+        newTotalTime = watchableDuration;
       }
       
-      // Calculate completion, max 100%
       let newCompletion = Math.round((newTotalTime / watchableDuration) * 100);
       if (newCompletion > 100) newCompletion = 100;
 
-      // Auto-heal falsely inflated completion percentage (from the 1-second watchable bug)
-      if (current.completionPercentage === 100 && newTotalTime < watchableDuration * 0.95) {
-        // Allow downgrade to the correct calculated value
-      } else if (newCompletion < current.completionPercentage) {
-        // Never decrease completion percentage otherwise
+      if (newCompletion < current.completionPercentage && current.completionPercentage !== 100) {
         newCompletion = current.completionPercentage;
       }
       
-      // Calculate repeats dynamically (1 repeat for every 95% of watchable duration)
       const calculatedRepeats = Math.floor(newTotalTime / (watchableDuration * 0.95));
       const newRepeats = calculatedRepeats > current.repeats || current.repeats > 50 ? calculatedRepeats : current.repeats;
 
@@ -195,8 +208,8 @@ export const UserActivityProvider: React.FC<{ children: React.ReactNode }> = ({ 
           totalTimeWatched: newTotalTime,
           completionPercentage: newCompletion,
           repeats: newRepeats,
-          lastUpdatedTimestamp: Date.now()
-        }
+          lastUpdatedTimestamp: Date.now(),
+        },
       };
     });
   };
@@ -209,10 +222,7 @@ export const UserActivityProvider: React.FC<{ children: React.ReactNode }> = ({ 
       let newCompletion = Math.round((watchedAmount / watchableDuration) * 100);
       if (newCompletion > 100) newCompletion = 100;
 
-      // Auto-heal falsely inflated completion percentage
-      if (current.completionPercentage === 100 && newCompletion < 95) {
-        // Allow downgrade
-      } else if (newCompletion < current.completionPercentage) {
+      if (newCompletion < current.completionPercentage && current.completionPercentage !== 100) {
         newCompletion = current.completionPercentage;
       }
       
@@ -222,8 +232,8 @@ export const UserActivityProvider: React.FC<{ children: React.ReactNode }> = ({ 
           ...current,
           lastWatchedSeconds: timeInSeconds,
           completionPercentage: newCompletion,
-          lastUpdatedTimestamp: Date.now()
-        }
+          lastUpdatedTimestamp: Date.now(),
+        },
       };
     });
   };

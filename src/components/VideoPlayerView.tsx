@@ -24,8 +24,7 @@ import { conceptDefinitions } from "@/data/conceptDefinitions";
 import { deobfuscateId } from "@/utils/security";
 import { useUserActivity } from "@/context/UserActivityContext";
 import { useAuth } from "@/context/AuthContext";
-import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 interface VideoPlayerViewProps {
   currentLesson: VideoLesson;
@@ -205,13 +204,28 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
 
     const fetchLikes = async () => {
       const baseLikes = getBaseLikes(currentLesson.id);
+      if (!isSupabaseConfigured) {
+        setLikeCount(baseLikes + (localLiked ? 1 : 0));
+        return;
+      }
+
       try {
-        const docRef = doc(db, "videoStats", currentLesson.id);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setLikeCount(docSnap.data().likes);
+        const { data, error } = await supabase
+          .from("video_stats")
+          .select("likes")
+          .eq("id", currentLesson.id)
+          .maybeSingle();
+
+        if (error) {
+          setLikeCount(baseLikes + (localLiked ? 1 : 0));
+        } else if (data && typeof data.likes === "number") {
+          setLikeCount(data.likes);
         } else {
-          await setDoc(docRef, { likes: baseLikes });
+          await supabase.from("video_stats").upsert({
+            id: currentLesson.id,
+            likes: baseLikes,
+            updated_at: new Date().toISOString(),
+          });
           setLikeCount(baseLikes + (localLiked ? 1 : 0));
         }
       } catch (e) {
@@ -231,16 +245,20 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
   const handleLike = async () => {
     const newLikedState = !liked;
     setLiked(newLikedState);
-    setLikeCount((c) => newLikedState ? c + 1 : c - 1);
+    const newCount = newLikedState ? likeCount + 1 : Math.max(0, likeCount - 1);
+    setLikeCount(newCount);
     localStorage.setItem(`liked_${currentLesson.id}`, newLikedState ? "true" : "false");
     
-    try {
-      const docRef = doc(db, "videoStats", currentLesson.id);
-      await updateDoc(docRef, {
-        likes: increment(newLikedState ? 1 : -1)
-      });
-    } catch (e) {
-      console.warn("Error updating likes in Firestore", e);
+    if (isSupabaseConfigured) {
+      try {
+        await supabase.from("video_stats").upsert({
+          id: currentLesson.id,
+          likes: newCount,
+          updated_at: new Date().toISOString(),
+        });
+      } catch (e) {
+        console.warn("Error updating likes in Supabase", e);
+      }
     }
   };
 

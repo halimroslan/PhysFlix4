@@ -202,7 +202,7 @@ export const LoginPage: React.FC = () => {
             </div>
 
             <p className="mt-4 text-xs text-[#8c8c8c]">
-              Halaman ini dilindungi oleh Google reCAPTCHA dan Firebase Auth untuk memastikan anda bukan bot.
+              Halaman ini dilindungi oleh Google OAuth dan Supabase Auth untuk memastikan keselamatan akaun anda.
             </p>
           </div>
         )}
