@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import { X, Search, Copy, Check, Filter, Sparkles, Sigma } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { allFormulas, FormulaItem } from "@/data/formulaData";
+import { MathFormula } from "@/components/MathFormula";
 
 export const FormulaSheetModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
@@ -221,13 +222,13 @@ export const FormulaSheetModal: React.FC<{ isOpen: boolean; onClose: () => void 
                   </div>
 
                   {/* Formula Display Box + Copy Button */}
-                  <div className="flex items-center space-x-2 bg-[#090d17] px-4 py-2.5 rounded-xl border border-slate-800/90 shadow-inner min-w-[200px] justify-between group-hover:border-rose-500/30 transition">
-                    <code className="text-sm sm:text-base font-mono font-extrabold text-rose-400 tracking-wide select-all">
-                      {item.formula}
-                    </code>
+                  <div className="flex items-center space-x-3 bg-[#080c16] px-4 py-3 rounded-xl border border-slate-800/90 shadow-inner min-w-[220px] max-w-full justify-between group-hover:border-rose-500/40 transition">
+                    <div className="py-1 px-2 text-rose-400 font-medium text-base sm:text-lg">
+                      <MathFormula latex={item.formulaDisplay || item.formula} />
+                    </div>
                     <button
                       onClick={() => handleCopy(item.id, item.formula)}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition flex-shrink-0"
+                      className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition flex-shrink-0"
                       title="Salin formula"
                       aria-label="Salin formula"
                     >
