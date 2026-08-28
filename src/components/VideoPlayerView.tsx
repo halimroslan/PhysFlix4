@@ -22,7 +22,8 @@ import {
   BookOpen,
   ArrowRightLeft,
   Lightbulb,
-  GraduationCap
+  GraduationCap,
+  X
 } from "lucide-react";
 import QuizComponent from "./QuizComponent";
 import { useLanguage } from "@/context/LanguageContext";
@@ -203,17 +204,54 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
   const getConceptInfo = (conceptName: string | null): DictTerm | null => {
     if (!conceptName) return null;
     const clean = conceptName.toLowerCase().trim();
-    // Exact match BM or DLP
+    // 1. Exact match BM or DLP
     let match = allKamusTerms.find(
       (t) => t.bm.toLowerCase() === clean || t.dlp.toLowerCase() === clean
     );
+    // 2. Substring match
     if (!match) {
       match = allKamusTerms.find(
         (t) => t.bm.toLowerCase().includes(clean) || clean.includes(t.bm.toLowerCase()) ||
                t.dlp.toLowerCase().includes(clean) || clean.includes(t.dlp.toLowerCase())
       );
     }
-    return match || null;
+    if (match) return match;
+
+    // 3. Fallback to conceptDefinitions (exact key)
+    const directDef = conceptDefinitions[conceptName];
+    if (directDef) {
+      return {
+        id: `custom-${conceptName}`,
+        form: currentLesson.form,
+        chapterNum: 0,
+        chapterBm: currentLesson.chapterBm,
+        chapterDlp: currentLesson.chapterDlp,
+        bm: conceptName,
+        dlp: conceptName,
+        defBm: directDef,
+        defDlp: directDef,
+      };
+    }
+
+    // 4. Case-insensitive key lookup in conceptDefinitions
+    const defKey = Object.keys(conceptDefinitions).find(
+      (k) => k.toLowerCase() === clean || clean.includes(k.toLowerCase()) || k.toLowerCase().includes(clean)
+    );
+    if (defKey && conceptDefinitions[defKey]) {
+      return {
+        id: `custom-${defKey}`,
+        form: currentLesson.form,
+        chapterNum: 0,
+        chapterBm: currentLesson.chapterBm,
+        chapterDlp: currentLesson.chapterDlp,
+        bm: defKey,
+        dlp: defKey,
+        defBm: conceptDefinitions[defKey],
+        defDlp: conceptDefinitions[defKey],
+      };
+    }
+
+    return null;
   };
 
   // Auto-scroll to currently playing video in playlist
@@ -813,18 +851,99 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                       </div>
 
                       {/* Important Keywords */}
-                      <div className="p-4 bg-slate-900/80 border border-slate-800 rounded-xl space-y-2">
-                        <h4 className="font-bold text-slate-300 text-xs flex items-center gap-1.5">
-                          <GraduationCap className="w-4 h-4 text-purple-400" />
-                          {lang === "bm" ? "Kata Kunci Penting (Kamus):" : "Essential Keywords:"}
-                        </h4>
+                      <div className="p-4 bg-slate-900/80 border border-slate-800 rounded-xl space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-bold text-slate-300 text-xs flex items-center gap-1.5">
+                            <GraduationCap className="w-4 h-4 text-purple-400" />
+                            {lang === "bm" ? "Kata Kunci Penting (Kamus):" : "Essential Keywords:"}
+                          </h4>
+                          <span className="text-[10px] text-slate-400">
+                            {lang === "bm" ? "Klik untuk definisi" : "Click for definition"}
+                          </span>
+                        </div>
                         <div className="flex flex-wrap gap-1.5 pt-1">
                           {(lang === "bm" ? currentLesson.keyConceptsBm : currentLesson.keyConceptsDlp).map((c, idx) => (
-                            <span key={idx} className="px-2.5 py-1 bg-slate-800/90 border border-slate-700/80 text-slate-200 text-[11px] font-medium rounded-lg">
-                              {c}
-                            </span>
+                            <button
+                              key={idx}
+                              onClick={() => setSelectedConcept(selectedConcept === c ? null : c)}
+                              className={`px-2.5 py-1 border text-xs font-medium rounded-lg transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                                selectedConcept === c
+                                  ? "bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/30 scale-105 ring-2 ring-red-400/40"
+                                  : "bg-slate-800/90 border-slate-700/80 text-slate-200 hover:bg-slate-700/90 hover:border-slate-500 hover:text-white"
+                              }`}
+                            >
+                              <span>{c}</span>
+                            </button>
                           ))}
                         </div>
+
+                        {selectedConcept && (() => {
+                          const info = getConceptInfo(selectedConcept);
+                          return (
+                            <div className="mt-2 p-3.5 bg-slate-950/95 border border-slate-700/90 rounded-xl relative animate-in fade-in slide-in-from-top-2 duration-300 space-y-2">
+                              <div className="flex items-center justify-between flex-wrap gap-2">
+                                <div className="flex items-center gap-2">
+                                  <h5 className="text-xs font-bold text-red-400 flex items-center gap-1.5">
+                                    <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
+                                    {info ? (lang === "bm" ? info.bm : info.dlp) : selectedConcept}
+                                  </h5>
+                                  {info && info.dlp && lang === "bm" && (
+                                    <span className="text-[10px] text-slate-400 italic">({info.dlp})</span>
+                                  )}
+                                  {info && info.bm && lang === "dlp" && (
+                                    <span className="text-[10px] text-slate-400 italic">({info.bm})</span>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  {info?.symbol && (
+                                    <span className="px-1.5 py-0.5 bg-purple-950/80 border border-purple-800 text-purple-300 text-[10px] font-mono font-bold rounded">
+                                      {info.symbol}
+                                    </span>
+                                  )}
+                                  {info?.sk && (
+                                    <span className="px-1.5 py-0.5 bg-blue-950/80 border border-blue-800 text-blue-300 text-[10px] font-bold rounded">
+                                      SK {info.sk}
+                                    </span>
+                                  )}
+                                  <button
+                                    onClick={() => setSelectedConcept(null)}
+                                    className="p-1 text-slate-400 hover:text-white rounded hover:bg-slate-800 transition cursor-pointer"
+                                    title="Tutup"
+                                  >
+                                    <X className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              </div>
+
+                              <div className="text-xs text-slate-200 leading-relaxed bg-black/40 p-2.5 rounded-lg border border-slate-800/80">
+                                {info ? (
+                                  <div className="space-y-1.5">
+                                    <p className="font-medium text-slate-200">
+                                      {lang === "bm" ? info.defBm : info.defDlp}
+                                    </p>
+                                    {lang === "bm" && info.defDlp && (
+                                      <p className="text-[11px] text-slate-400 italic border-t border-slate-800/80 pt-1">
+                                        <span className="font-semibold text-slate-400 not-italic">DLP:</span> {info.defDlp}
+                                      </p>
+                                    )}
+                                    {lang === "dlp" && info.defBm && (
+                                      <p className="text-[11px] text-slate-400 italic border-t border-slate-800/80 pt-1">
+                                        <span className="font-semibold text-slate-400 not-italic">BM:</span> {info.defBm}
+                                      </p>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <p className="text-slate-300">
+                                    {conceptDefinitions[selectedConcept] ||
+                                      (lang === "bm"
+                                        ? "Definisi untuk konsep ini selaras dengan Sukatan DSKP KSSM Fizik."
+                                        : "The definition for this concept aligns with KSSM SPM Physics DSKP standard.")}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>
