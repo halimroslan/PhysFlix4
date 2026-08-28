@@ -411,7 +411,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               videoId: vid,
               questionId: targetQuestion.id,
               text: data.answer,
-              authorName: "Sir Halim (AI Tutor)",
+              authorName: "Sir Halim",
               authorRole: "guru",
               isVerified: true,
             }),
@@ -1732,8 +1732,9 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                         {item.replies.length > 0 && (
                           <div className="space-y-2.5 pt-2 pl-3 sm:pl-6 border-l-2 border-slate-800">
                             {item.replies.map((reply) => {
-                              const isAITutor = reply.authorName.includes("AI Tutor");
+                              const isAITutor = reply.id.startsWith("reply-ai-") || reply.authorName.includes("AI Tutor") || reply.authorName === "Sir Halim";
                               const isGuru = reply.authorRole === "guru" || reply.isVerified || isAITutor;
+                              const displayAuthorName = reply.authorName.replace(/\s*\(AI Tutor\)/gi, "").trim() || "Sir Halim";
                               return (
                                 <div
                                   key={reply.id}
@@ -1754,20 +1755,20 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                                           ? "bg-emerald-600"
                                           : "bg-slate-700"
                                       }`}>
-                                        {isAITutor ? "SH" : (isGuru ? "SH" : reply.authorName.substring(0, 1).toUpperCase())}
+                                        {isAITutor ? "SH" : (isGuru ? "SH" : displayAuthorName.substring(0, 1).toUpperCase())}
                                       </div>
                                       <span className={`text-xs font-bold ${isAITutor ? "text-cyan-300" : (isGuru ? "text-emerald-300" : "text-slate-200")}`}>
-                                        {reply.authorName}
+                                        {displayAuthorName}
                                       </span>
                                       {isAITutor ? (
-                                        <span className="px-2 py-0.2 bg-gradient-to-r from-cyan-900/90 to-blue-900/90 border border-cyan-500/80 text-cyan-200 text-[9px] font-extrabold rounded-full flex items-center gap-1 shadow-sm">
+                                        <span className="px-2 py-0.5 bg-gradient-to-r from-cyan-900/90 to-blue-900/90 border border-cyan-500/80 text-cyan-200 text-[9px] font-extrabold rounded-full flex items-center gap-1 shadow-sm">
                                           <Sparkles className="w-2.5 h-2.5 text-cyan-300" />
-                                          {lang === "bm" ? "Jawapan Sir Halim (AI Tutor)" : "Sir Halim AI Answer"}
+                                          AI Tutor
                                         </span>
                                       ) : isGuru ? (
-                                        <span className="px-2 py-0.2 bg-emerald-900/90 border border-emerald-600/80 text-emerald-200 text-[9px] font-extrabold rounded-full flex items-center gap-1">
+                                        <span className="px-2 py-0.5 bg-emerald-900/90 border border-emerald-600/80 text-emerald-200 text-[9px] font-extrabold rounded-full flex items-center gap-1">
                                           <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
-                                          {lang === "bm" ? "Jawapan Rasmi Guru" : "Teacher Answer"}
+                                          {lang === "bm" ? "Guru" : "Teacher"}
                                         </span>
                                       ) : null}
                                     </div>

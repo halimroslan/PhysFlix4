@@ -154,7 +154,7 @@ export async function POST(req: NextRequest) {
       }
 
       const quickCheck = checkQuickAbusive(text.trim());
-      if (quickCheck.isAbusive && !authorName?.includes("AI Tutor")) {
+      if (quickCheck.isAbusive && authorRole !== "guru" && !authorName?.includes("Sir Halim") && !authorName?.includes("AI Tutor")) {
         return NextResponse.json({
           error: "Balasan mengandungi unsur yang tidak sopan.",
           isAbusive: true,
