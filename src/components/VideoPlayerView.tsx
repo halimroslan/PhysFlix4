@@ -43,6 +43,7 @@ import { allFormulas, FormulaItem } from "@/data/formulaData";
 import { getLessonCheatNote } from "@/data/cheatNotesData";
 import { MathFormula } from "@/components/MathFormula";
 import { QAItem, QAReply, getLessonQAItems } from "@/data/qaDatabase";
+import { checkQuickAbusive } from "@/utils/moderation";
 import { deobfuscateId } from "@/utils/security";
 import { useUserActivity } from "@/context/UserActivityContext";
 import { useAuth } from "@/context/AuthContext";
@@ -343,7 +344,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
       try {
         const parsed = JSON.parse(savedQA);
         if (Array.isArray(parsed)) {
-          // Filter out any legacy dummy/mock items
+          // Filter out any legacy dummy/mock items AND any abusive comments that slipped in
           const realItems = parsed.filter(
             (item) =>
               item.id &&
@@ -352,9 +353,15 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               !item.id.startsWith("qa-2-") &&
               !item.id.startsWith("qa-3-") &&
               !item.id.startsWith("qa-4-") &&
-              !item.id.startsWith("qa-5-")
+              !item.id.startsWith("qa-5-") &&
+              !checkQuickAbusive(item.question).isAbusive
           );
           setQaList(realItems);
+          try {
+            localStorage.setItem(storageKey, JSON.stringify(realItems));
+          } catch {
+            // ignore
+          }
           return;
         }
       } catch (e) {
@@ -379,10 +386,22 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     if (!newQuestionText.trim() || isModerating) return;
 
     setModerationError(null);
+
+    // 1. Instant heuristic check (0ms latency)
+    const instantCheck = checkQuickAbusive(newQuestionText.trim());
+    if (instantCheck.isAbusive) {
+      setModerationError(
+        lang === "bm"
+          ? instantCheck.reason
+          : "Your question contains inappropriate language. Please use polite and constructive terms."
+      );
+      return;
+    }
+
     setIsModerating(true);
 
     try {
-      // Content Moderation with Ox Alpha AI
+      // 2. Ox Alpha AI Deep Contextual Moderation
       const modRes = await fetch("/api/moderate-comment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -449,10 +468,22 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     if (!replyText.trim() || isModerating) return;
 
     setModerationError(null);
+
+    // 1. Instant heuristic check (0ms latency)
+    const instantCheck = checkQuickAbusive(replyText.trim());
+    if (instantCheck.isAbusive) {
+      setModerationError(
+        lang === "bm"
+          ? instantCheck.reason
+          : "Your reply contains inappropriate language. Please use polite and constructive terms."
+      );
+      return;
+    }
+
     setIsModerating(true);
 
     try {
-      // Content Moderation with Ox Alpha AI
+      // 2. Ox Alpha AI Deep Contextual Moderation
       const modRes = await fetch("/api/moderate-comment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

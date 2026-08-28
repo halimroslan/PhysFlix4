@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkQuickAbusive } from "@/utils/moderation";
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,24 +9,37 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ isAbusive: false, reason: "" });
     }
 
+    const trimmed = text.trim();
+
+    // 1. Instant heuristic profanity & insult check
+    const quickCheck = checkQuickAbusive(trimmed);
+    if (quickCheck.isAbusive) {
+      return NextResponse.json({
+        isAbusive: true,
+        reason: quickCheck.reason,
+      });
+    }
+
+    // 2. Ox Alpha AI Deep Contextual Moderation via OpenRouter
     const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (!apiKey) {
-      console.warn("OPENROUTER_API_KEY is not configured, passing moderation by default");
+      console.warn("OPENROUTER_API_KEY is not configured in env, passing moderation by default");
       return NextResponse.json({ isAbusive: false, reason: "" });
     }
 
-    const prompt = `You are an AI content moderator for an educational physics platform (PhysFlix SPM).
-Analyze the following user-submitted question/comment/reply for:
+    const prompt = `You are an AI content moderator for an educational SPM physics learning platform (PhysFlix).
+Analyze the following user-submitted question, comment, or reply for:
 1. Abusive, profane, vulgar, insulting, or toxic language (in Malay, English, Manglish, or local slang).
-2. Bullying, personal attacks, hate speech, or harassment.
-3. Sexually explicit, obscene, or inappropriate content.
-4. Malicious spam, scams, or non-educational advertising.
+2. Sarcastic, mocking, disrespectful, or derogatory attacks against teachers or students (e.g., 'gila ke cikgu ni', 'cikgu bodoh', 'lawak bodoh', 'buang masa').
+3. Bullying, personal attacks, hate speech, or harassment.
+4. Sexually explicit, obscene, or inappropriate content.
+5. Malicious spam, scams, or non-educational advertising.
 
-If the text contains abusive or prohibited content, return strictly valid JSON:
+If the text contains ANY abusive, insulting, disrespectful, or prohibited content, return strictly valid JSON:
 {
   "isAbusive": true,
-  "reason": "Penerangan ringkas dalam Bahasa Melayu mengapa soalan/komen ini disekat"
+  "reason": "Penerangan ringkas dalam Bahasa Melayu mengapa soalan/komen ini disekat (contoh: Komen mengandungi kata-kata menghina guru)"
 }
 
 If the text is polite, constructive, a genuine physics/study question, a greeting, or helpful discussion, return strictly valid JSON:
@@ -35,7 +49,7 @@ If the text is polite, constructive, a genuine physics/study question, a greetin
 }
 
 Teks untuk disemak:
-"""${text.trim()}"""`;
+"""${trimmed}"""`;
 
     const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
@@ -63,7 +77,7 @@ Teks untuk disemak:
     });
 
     if (!openRouterResponse.ok) {
-      console.warn("OpenRouter API error, falling back to clean text assumption", await openRouterResponse.text());
+      console.warn("OpenRouter API error:", await openRouterResponse.text());
       return NextResponse.json({ isAbusive: false, reason: "" });
     }
 
@@ -81,7 +95,6 @@ Teks untuk disemak:
         reason: parsed.reason || "",
       });
     } catch {
-      // If parsing fails but words like isAbusive: true appear
       const isAbusive = content.toLowerCase().includes('"isabusive": true') || content.toLowerCase().includes('"isabusive":true');
       return NextResponse.json({
         isAbusive,
