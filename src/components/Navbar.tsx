@@ -31,6 +31,18 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsToolsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Netflix-style scroll effect
   useEffect(() => {
@@ -169,7 +181,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Profile & Tools Dropdown */}
           <div 
-            className="relative flex items-center gap-2 cursor-pointer group"
+            ref={dropdownRef}
+            className="relative flex items-center gap-2 cursor-pointer group py-2"
+            onClick={() => setIsToolsDropdownOpen((prev) => !prev)}
             onMouseEnter={() => setIsToolsDropdownOpen(true)}
             onMouseLeave={() => setIsToolsDropdownOpen(false)}
           >
@@ -178,42 +192,63 @@ export const Navbar: React.FC<NavbarProps> = ({
               <img
                 src={user.photoURL}
                 alt={user.displayName || "User"}
-                className="w-8 h-8 rounded object-cover"
+                className="w-8 h-8 rounded-full border border-slate-700 object-cover"
               />
             ) : (
-              <div className="w-8 h-8 rounded bg-gradient-to-br from-amber-500 to-red-600 flex items-center justify-center text-white font-bold text-xs">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-red-600 flex items-center justify-center text-white font-bold text-xs shadow">
                 {user?.displayName ? user.displayName.substring(0, 2).toUpperCase() : "SH"}
               </div>
             )}
-            <ChevronDown className={`w-4 h-4 text-white transition-transform ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-white transition-transform duration-200 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
 
-            {/* Dropdown Menu */}
+            {/* Dropdown Menu with Seamless Hover Bridge */}
             {isToolsDropdownOpen && (
-              <div className="absolute top-full right-0 mt-4 w-48 bg-black/90 border border-slate-800 rounded shadow-2xl py-2 flex flex-col text-sm text-gray-300">
-                {/* Arrow up pointing to profile */}
-                <div className="absolute -top-2 right-4 w-4 h-4 bg-black/90 border-t border-l border-slate-800 transform rotate-45"></div>
-                
-                <div className="px-4 py-2 font-bold text-white border-b border-slate-800 mb-2 truncate">
-                  {user?.displayName || "Sir Halim"}
-                </div>
+              <div 
+                className="absolute top-full right-0 pt-2 w-52 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="bg-[#0f172a]/95 backdrop-blur-md border border-slate-700/80 rounded-xl shadow-2xl p-2 flex flex-col text-sm text-gray-300">
+                  {/* Arrow indicator */}
+                  <div className="absolute -top-1 right-4 w-3 h-3 bg-[#0f172a] border-t border-l border-slate-700 transform rotate-45"></div>
+                  
+                  <div className="px-3 py-2 border-b border-slate-800 mb-1">
+                    <p className="font-bold text-white text-xs truncate">{user?.displayName || "Sir Halim"}</p>
+                    <p className="text-[11px] text-slate-400 truncate">{user?.email || ""}</p>
+                  </div>
 
-                <button onClick={onOpenFormula} className="flex items-center px-4 py-2 hover:underline">
-                  <Target className="w-4 h-4 mr-3 text-slate-400" /> Formula
-                </button>
-                <button onClick={onOpenDict} className="flex items-center px-4 py-2 hover:underline">
-                  <Book className="w-4 h-4 mr-3 text-slate-400" /> Kamus
-                </button>
-                <button onClick={onOpenQuiz} className="flex items-center px-4 py-2 hover:underline">
-                  <FileText className="w-4 h-4 mr-3 text-slate-400" /> Kuiz / Kertas
-                </button>
-                <button onClick={onOpenCalc} className="flex items-center px-4 py-2 hover:underline">
-                  <Calculator className="w-4 h-4 mr-3 text-slate-400" /> Kalkulator
-                </button>
-                
-                <div className="border-t border-slate-800 mt-2 pt-2">
-                  <button onClick={logout} className="flex items-center w-full px-4 py-2 hover:underline text-left">
-                    <LogOut className="w-4 h-4 mr-3 text-slate-400" /> Log Keluar
+                  <button 
+                    onClick={() => { onOpenFormula?.(); setIsToolsDropdownOpen(false); }} 
+                    className="flex items-center px-3 py-2 hover:bg-slate-800/80 hover:text-white rounded-lg transition text-left"
+                  >
+                    <Target className="w-4 h-4 mr-3 text-cyan-400" /> Formula
                   </button>
+                  <button 
+                    onClick={() => { onOpenDict?.(); setIsToolsDropdownOpen(false); }} 
+                    className="flex items-center px-3 py-2 hover:bg-slate-800/80 hover:text-white rounded-lg transition text-left"
+                  >
+                    <Book className="w-4 h-4 mr-3 text-emerald-400" /> Kamus
+                  </button>
+                  <button 
+                    onClick={() => { onOpenQuiz?.(); setIsToolsDropdownOpen(false); }} 
+                    className="flex items-center px-3 py-2 hover:bg-slate-800/80 hover:text-white rounded-lg transition text-left"
+                  >
+                    <FileText className="w-4 h-4 mr-3 text-amber-400" /> Kuiz / Kertas
+                  </button>
+                  <button 
+                    onClick={() => { onOpenCalc?.(); setIsToolsDropdownOpen(false); }} 
+                    className="flex items-center px-3 py-2 hover:bg-slate-800/80 hover:text-white rounded-lg transition text-left"
+                  >
+                    <Calculator className="w-4 h-4 mr-3 text-indigo-400" /> Kalkulator
+                  </button>
+                  
+                  <div className="border-t border-slate-800/80 mt-1 pt-1">
+                    <button 
+                      onClick={() => { logout(); setIsToolsDropdownOpen(false); }} 
+                      className="flex items-center w-full px-3 py-2 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-lg transition text-left font-medium"
+                    >
+                      <LogOut className="w-4 h-4 mr-3 text-red-400" /> Log Keluar
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
