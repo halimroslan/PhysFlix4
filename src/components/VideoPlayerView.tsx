@@ -333,6 +333,8 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
   const [isModerating, setIsModerating] = useState(false);
   const [moderationError, setModerationError] = useState<string | null>(null);
 
+  const [isGeneratingAIAnswer, setIsGeneratingAIAnswer] = useState<{ [id: string]: boolean }>({});
+
   const userEmail = user?.email?.toLowerCase().trim() || "";
   const isSuperAdmin = ["ahalimroslan@gmail.com", "abdulhalimroslan@gmail.com"].includes(userEmail);
 
@@ -378,6 +380,63 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
       localStorage.setItem(`physflix_qa_${currentLesson.id}`, JSON.stringify(newList));
     } catch (e) {
       console.warn("Failed to persist QA list", e);
+    }
+  };
+
+  const triggerAIAnswer = async (targetQuestion: QAItem) => {
+    setIsGeneratingAIAnswer((prev) => ({ ...prev, [targetQuestion.id]: true }));
+    try {
+      const res = await fetch("/api/ai-answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: targetQuestion.question,
+          lessonTitle: currentLesson.titleBm || currentLesson.titleDlp,
+          chapterNum: currentLesson.chapterNum,
+          form: currentLesson.form,
+          lang,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.answer) {
+          const aiReply: QAReply = {
+            id: `reply-ai-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+            authorName: lang === "bm" ? "Sir Halim (AI Tutor)" : "Sir Halim (AI Tutor)",
+            authorRole: "guru",
+            isVerified: true,
+            text: data.answer,
+            timestamp: lang === "bm" ? "Baru sahaja" : "Just now",
+            createdAt: Date.now(),
+            likes: 0,
+          };
+
+          setQaList((current) => {
+            const updatedList = current.map((q) => {
+              if (q.id === targetQuestion.id) {
+                const alreadyHasAI = q.replies.some((r) => r.text === data.answer);
+                if (alreadyHasAI) return q;
+                return {
+                  ...q,
+                  replies: [...q.replies, aiReply],
+                };
+              }
+              return q;
+            });
+            try {
+              localStorage.setItem(`physflix_qa_${currentLesson.id}`, JSON.stringify(updatedList));
+            } catch (e) {
+              console.warn("Failed to persist QA with AI reply", e);
+            }
+            return updatedList;
+          });
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to trigger AI answer:", err);
+    } finally {
+      setIsGeneratingAIAnswer((prev) => ({ ...prev, [targetQuestion.id]: false }));
     }
   };
 
@@ -447,6 +506,9 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     saveQAList(updated);
     setNewQuestionText("");
     setIsModerating(false);
+
+    // Automatically trigger conversational AI tutor explanation from Sir Halim AI
+    triggerAIAnswer(newQA);
   };
 
   const handleLikeQuestion = (id: string) => {
@@ -1462,8 +1524,8 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                           {item.question}
                         </p>
 
-                        {/* Action Buttons: Like & Reply */}
-                        <div className="flex items-center gap-4 pt-1 text-xs border-t border-slate-800/80">
+                        {/* Action Buttons: Like, Reply, and AI Tutor trigger */}
+                        <div className="flex items-center gap-3 pt-1 text-xs border-t border-slate-800/80 flex-wrap">
                           <button
                             onClick={() => handleLikeQuestion(item.id)}
                             className={`flex items-center gap-1.5 font-semibold transition cursor-pointer ${
@@ -1483,18 +1545,63 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                               {lang === "bm" ? "Balas" : "Reply"} {item.replies.length > 0 && `(${item.replies.length})`}
                             </span>
                           </button>
+
+                          <button
+                            onClick={() => triggerAIAnswer(item)}
+                            disabled={isGeneratingAIAnswer[item.id]}
+                            className="flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 font-semibold transition cursor-pointer disabled:opacity-50 ml-auto px-2 py-0.5 rounded-lg bg-cyan-950/40 border border-cyan-800/60 hover:bg-cyan-900/50 shadow-sm"
+                            title="Dapatkan jawapan santai & tepat daripada AI Tutor"
+                          >
+                            {isGeneratingAIAnswer[item.id] ? (
+                              <>
+                                <Loader2 className="w-3 h-3 animate-spin text-cyan-400" />
+                                <span className="text-[11px]">{lang === "bm" ? "Menaip Jawapan..." : "Generating..."}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="w-3 h-3 text-cyan-400" />
+                                <span className="text-[11px]">{lang === "bm" ? "Jawapan Sir Halim AI" : "Sir Halim AI Answer"}</span>
+                              </>
+                            )}
+                          </button>
                         </div>
+
+                        {/* AI Tutor Generating Indicator Card */}
+                        {isGeneratingAIAnswer[item.id] && (
+                          <div className="p-3.5 rounded-xl bg-cyan-950/30 border border-cyan-700/60 shadow-lg animate-pulse flex items-start gap-3 mt-2">
+                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-[11px] font-bold shrink-0 mt-0.5 shadow-md shadow-cyan-500/30">
+                              <Sparkles className="w-3.5 h-3.5 animate-spin" />
+                            </div>
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold text-cyan-300">Sir Halim (AI Tutor)</span>
+                                <span className="px-1.5 py-0.2 bg-cyan-900/80 border border-cyan-600/80 text-cyan-200 text-[9px] font-bold rounded-full flex items-center gap-1">
+                                  <Sparkles className="w-2.5 h-2.5 text-cyan-300" />
+                                  {lang === "bm" ? "Sedang menaip jawapan santai..." : "Typing friendly answer..."}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-300 leading-relaxed italic">
+                                {lang === "bm"
+                                  ? "Menyusun penjelasan mudah difahami & mengekalkan konsep serta kata kunci Fizik SPM..."
+                                  : "Crafting a student-friendly explanation with precise SPM physics concepts..."}
+                              </p>
+                            </div>
+                          </div>
+                        )}
 
                         {/* Replies Section */}
                         {item.replies.length > 0 && (
                           <div className="space-y-2.5 pt-2 pl-3 sm:pl-6 border-l-2 border-slate-800">
                             {item.replies.map((reply) => {
-                              const isGuru = reply.authorRole === "guru" || reply.isVerified;
+                              const isAITutor = reply.authorName.includes("AI Tutor");
+                              const isGuru = reply.authorRole === "guru" || reply.isVerified || isAITutor;
                               return (
                                 <div
                                   key={reply.id}
                                   className={`p-3.5 rounded-xl space-y-2 transition ${
-                                    isGuru
+                                    isAITutor
+                                      ? "bg-[#0a1828] border border-cyan-600/70 shadow-lg shadow-cyan-950/50"
+                                      : isGuru
                                       ? "bg-[#0b1622] border border-emerald-700/60 shadow-md"
                                       : "bg-[#0f1422] border border-slate-800"
                                   }`}
@@ -1502,19 +1609,28 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                                   <div className="flex items-center justify-between flex-wrap gap-1">
                                     <div className="flex items-center gap-2">
                                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold ${
-                                        isGuru ? "bg-emerald-600" : "bg-slate-700"
+                                        isAITutor
+                                          ? "bg-gradient-to-br from-cyan-500 to-blue-600 shadow-md shadow-cyan-500/30"
+                                          : isGuru
+                                          ? "bg-emerald-600"
+                                          : "bg-slate-700"
                                       }`}>
-                                        {isGuru ? "SH" : reply.authorName.substring(0, 1).toUpperCase()}
+                                        {isAITutor ? "SH" : (isGuru ? "SH" : reply.authorName.substring(0, 1).toUpperCase())}
                                       </div>
-                                      <span className={`text-xs font-bold ${isGuru ? "text-emerald-300" : "text-slate-200"}`}>
+                                      <span className={`text-xs font-bold ${isAITutor ? "text-cyan-300" : (isGuru ? "text-emerald-300" : "text-slate-200")}`}>
                                         {reply.authorName}
                                       </span>
-                                      {isGuru && (
+                                      {isAITutor ? (
+                                        <span className="px-2 py-0.2 bg-gradient-to-r from-cyan-900/90 to-blue-900/90 border border-cyan-500/80 text-cyan-200 text-[9px] font-extrabold rounded-full flex items-center gap-1 shadow-sm">
+                                          <Sparkles className="w-2.5 h-2.5 text-cyan-300" />
+                                          {lang === "bm" ? "Jawapan Sir Halim (AI Tutor)" : "Sir Halim AI Answer"}
+                                        </span>
+                                      ) : isGuru ? (
                                         <span className="px-2 py-0.2 bg-emerald-900/90 border border-emerald-600/80 text-emerald-200 text-[9px] font-extrabold rounded-full flex items-center gap-1">
                                           <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
                                           {lang === "bm" ? "Jawapan Rasmi Guru" : "Teacher Answer"}
                                         </span>
-                                      )}
+                                      ) : null}
                                     </div>
                                     <span className="text-[10px] text-slate-500">{reply.timestamp}</span>
                                   </div>
