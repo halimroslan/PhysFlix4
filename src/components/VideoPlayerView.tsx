@@ -302,7 +302,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
           .eq("id", currentLesson.id)
           .maybeSingle();
 
-        const currentLikes = (data && typeof data.likes === "number") ? data.likes : (localLiked ? 1 : 0);
+        const currentLikes = (data && typeof data.likes === "number") ? data.likes : 0;
         const currentViews = (data && typeof data.views === "number") ? data.views : 0;
         const newViews = currentViews + 1;
 
@@ -316,7 +316,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
           updated_at: new Date().toISOString(),
         });
       } catch (e) {
-        setLikeCount(localLiked ? 1 : 0);
+        setLikeCount(0);
       }
     };
     trackViewAndFetchStats();
