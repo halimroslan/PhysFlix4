@@ -15,12 +15,20 @@ import {
   Circle,
   FileText,
   Play,
-  Lock
+  Lock,
+  Sigma,
+  Copy,
+  Check,
+  BookOpen,
+  ArrowRightLeft
 } from "lucide-react";
 import QuizComponent from "./QuizComponent";
 import { useLanguage } from "@/context/LanguageContext";
 import { VideoLesson, allVideoLessons } from "@/data/physicsData";
 import { conceptDefinitions } from "@/data/conceptDefinitions";
+import { allKamusTerms, DictTerm } from "@/data/kamusData";
+import { allFormulas, FormulaItem } from "@/data/formulaData";
+import { MathFormula } from "@/components/MathFormula";
 import { deobfuscateId } from "@/utils/security";
 import { useUserActivity } from "@/context/UserActivityContext";
 import { useAuth } from "@/context/AuthContext";
@@ -172,6 +180,38 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
   const [likeCount, setLikeCount] = useState(0);
   const [shareText, setShareText] = useState("Kongsi");
   const [selectedConcept, setSelectedConcept] = useState<string | null>(null);
+  const [copiedFormulaId, setCopiedFormulaId] = useState<string | null>(null);
+
+  // Fetch verified related formulas for this video lesson
+  const relatedFormulas = React.useMemo(() => {
+    if (!currentLesson?.relatedFormulaIds || currentLesson.relatedFormulaIds.length === 0) return [];
+    return currentLesson.relatedFormulaIds
+      .map((id) => allFormulas.find((f) => f.id === id))
+      .filter((f): f is FormulaItem => !!f);
+  }, [currentLesson?.relatedFormulaIds]);
+
+  const handleCopyFormula = (id: string, formulaStr: string) => {
+    navigator.clipboard.writeText(formulaStr);
+    setCopiedFormulaId(id);
+    setTimeout(() => setCopiedFormulaId(null), 2000);
+  };
+
+  // Find exact definition from Modul TasFiz / DSKP for clicked concept
+  const getConceptInfo = (conceptName: string | null): DictTerm | null => {
+    if (!conceptName) return null;
+    const clean = conceptName.toLowerCase().trim();
+    // Exact match BM or DLP
+    let match = allKamusTerms.find(
+      (t) => t.bm.toLowerCase() === clean || t.dlp.toLowerCase() === clean
+    );
+    if (!match) {
+      match = allKamusTerms.find(
+        (t) => t.bm.toLowerCase().includes(clean) || clean.includes(t.bm.toLowerCase()) ||
+               t.dlp.toLowerCase().includes(clean) || clean.includes(t.dlp.toLowerCase())
+      );
+    }
+    return match || null;
+  };
 
   // Auto-scroll to currently playing video in playlist
   useEffect(() => {
@@ -504,52 +544,200 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
 
             {/* Tab Content */}
             {activeTab === "overview" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-5 rounded-2xl bg-[#111624] border border-slate-800 space-y-3">
-                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-                    {t("whatYoullLearn")}
-                  </h3>
-                  <ul className="space-y-2">
-                    {(lang === "bm" ? currentLesson.learningPointsBm : currentLesson.learningPointsDlp).map(
-                      (point, i) => (
-                        <li key={i} className="flex items-start space-x-2 text-xs text-slate-300">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                          <span>{point}</span>
-                        </li>
-                      )
-                    )}
-                  </ul>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* What You'll Learn */}
+                  <div className="p-5 rounded-2xl bg-[#111624] border border-slate-800 space-y-3">
+                    <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-amber-400" />
+                      {t("whatYoullLearn")}
+                    </h3>
+                    <ul className="space-y-2.5">
+                      {(lang === "bm" ? currentLesson.learningPointsBm : currentLesson.learningPointsDlp).map(
+                        (point, i) => (
+                          <li key={i} className="flex items-start space-x-2 text-xs text-slate-300">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                            <span>{point}</span>
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+
+                  {/* Key Concepts with Dictionary Definition */}
+                  <div className="p-5 rounded-2xl bg-[#111624] border border-slate-800 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <BookOpen className="w-4 h-4 text-cyan-400" />
+                        {t("keyConcepts")}
+                      </h3>
+                      <span className="text-[10px] text-slate-400">
+                        {lang === "bm" ? "Klik untuk definisi" : "Click for definition"}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {(lang === "bm" ? currentLesson.keyConceptsBm : currentLesson.keyConceptsDlp).map(
+                        (concept, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setSelectedConcept(selectedConcept === concept ? null : concept)}
+                            className={`px-3 py-1.5 border rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                              selectedConcept === concept
+                                ? "bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/30 scale-105"
+                                : "bg-[#1a2133] border-slate-700/60 text-slate-200 hover:bg-slate-800 hover:border-slate-600 hover:text-white"
+                            }`}
+                          >
+                            <span>{concept}</span>
+                          </button>
+                        )
+                      )}
+                    </div>
+
+                    {selectedConcept && (() => {
+                      const info = getConceptInfo(selectedConcept);
+                      return (
+                        <div className="mt-3 p-4 bg-slate-900/90 border border-slate-700/80 rounded-xl relative animate-in fade-in slide-in-from-top-2 duration-300 space-y-2">
+                          <div className="flex items-center justify-between flex-wrap gap-2">
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-sm font-bold text-red-400">{info ? (lang === "bm" ? info.bm : info.dlp) : selectedConcept}</h4>
+                              {info && info.dlp && lang === "bm" && (
+                                <span className="text-[10px] text-slate-400 italic">({info.dlp})</span>
+                              )}
+                              {info && info.bm && lang === "dlp" && (
+                                <span className="text-[10px] text-slate-400 italic">({info.bm})</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              {info?.symbol && (
+                                <span className="px-2 py-0.5 bg-purple-950/80 border border-purple-800 text-purple-300 text-[10px] font-mono font-bold rounded">
+                                  {info.symbol}
+                                </span>
+                              )}
+                              {info?.sk && (
+                                <span className="px-2 py-0.5 bg-blue-950/80 border border-blue-800 text-blue-300 text-[10px] font-bold rounded">
+                                  {info.sk}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="text-xs text-slate-200 leading-relaxed bg-black/30 p-2.5 rounded-lg border border-slate-800/80">
+                            {info ? (
+                              <div>
+                                <p className="font-medium text-slate-200">
+                                  {lang === "bm" ? info.defBm : info.defDlp}
+                                </p>
+                                {lang === "bm" && info.defDlp && (
+                                  <p className="mt-1.5 text-[11px] text-slate-400 italic border-t border-slate-800 pt-1">
+                                    DLP: {info.defDlp}
+                                  </p>
+                                )}
+                                {lang === "dlp" && info.defBm && (
+                                  <p className="mt-1.5 text-[11px] text-slate-400 italic border-t border-slate-800 pt-1">
+                                    BM: {info.defBm}
+                                  </p>
+                                )}
+                              </div>
+                            ) : (
+                              <p className="text-slate-300">
+                                {conceptDefinitions[selectedConcept] || 
+                                  (lang === "bm" 
+                                    ? "Definisi untuk konsep ini selaras dengan Sukatan DSKP KSSM Fizik." 
+                                    : "The definition for this concept aligns with KSSM SPM Physics DSKP standard.")}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-[#111624] border border-slate-800 space-y-3">
-                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-                    {t("keyConcepts")}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {(lang === "bm" ? currentLesson.keyConceptsBm : currentLesson.keyConceptsDlp).map(
-                      (concept, i) => (
-                        <button
-                          key={i}
-                          onClick={() => setSelectedConcept(selectedConcept === concept ? null : concept)}
-                          className={`px-3 py-1 border rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                            selectedConcept === concept
-                              ? "bg-red-600 border-red-500 text-white"
-                              : "bg-[#1a2133] border-slate-700/60 text-slate-200 hover:bg-slate-800 hover:text-white"
-                          }`}
-                        >
-                          {concept}
-                        </button>
-                      )
+                {/* Related Formulas Section */}
+                <div className="p-5 rounded-2xl bg-[#111624] border border-slate-800 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 bg-red-600/20 text-red-400 border border-red-500/30 rounded-lg">
+                        <Sigma className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-300">
+                          {lang === "bm" ? "Formula Berkaitan (KSSM SPM)" : "Related Formulas (KSSM SPM)"}
+                        </h3>
+                        <p className="text-[11px] text-slate-400">
+                          {lang === "bm" 
+                            ? "Rumus fizik rasmi yang terlibat dalam topik pembelajaran ini" 
+                            : "Official physics formulas involved in this lesson"}
+                        </p>
+                      </div>
+                    </div>
+                    {relatedFormulas.length > 0 && (
+                      <span className="px-2.5 py-1 bg-red-950/60 border border-red-800/80 text-red-300 text-[11px] font-bold rounded-lg">
+                        {relatedFormulas.length} {lang === "bm" ? "Formula" : "Formulas"}
+                      </span>
                     )}
                   </div>
-                  {selectedConcept && (
-                    <div className="mt-3 p-4 bg-slate-900/80 border border-slate-700 rounded-xl relative animate-in fade-in slide-in-from-top-2 duration-300">
-                      <h4 className="text-sm font-bold text-red-400 mb-1">{selectedConcept}</h4>
-                      <p className="text-xs text-slate-300 leading-relaxed">
-                        {conceptDefinitions[selectedConcept] || 
-                          (lang === "bm" 
-                            ? "Definisi untuk konsep ini akan dikemas kini kelak mengikut silibus SPM." 
-                            : "The definition for this concept will be updated soon according to the SPM syllabus.")}
+
+                  {relatedFormulas.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 pt-1">
+                      {relatedFormulas.map((formula) => (
+                        <div
+                          key={formula.id}
+                          className="p-4 rounded-xl bg-[#151b2d] border border-slate-700/80 hover:border-red-500/50 transition-all flex flex-col justify-between group space-y-3"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <span className="text-[11px] font-semibold text-slate-400 group-hover:text-slate-300">
+                              {lang === "bm" ? formula.topicBm : formula.topicDlp}
+                            </span>
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              {formula.unit && (
+                                <span className="px-1.5 py-0.5 bg-slate-800 text-slate-300 text-[10px] font-mono rounded border border-slate-700">
+                                  {formula.unit}
+                                </span>
+                              )}
+                              <button
+                                onClick={() => handleCopyFormula(formula.id, formula.formula)}
+                                className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition cursor-pointer"
+                                title="Salin Formula"
+                              >
+                                {copiedFormulaId === formula.id ? (
+                                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                ) : (
+                                  <Copy className="w-3.5 h-3.5" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Mathematical KaTeX Equation */}
+                          <div className="py-2.5 px-3 bg-black/40 rounded-lg border border-slate-800 flex items-center justify-center min-h-[52px]">
+                            <MathFormula 
+                              latex={formula.formulaDisplay || formula.formula} 
+                              className="text-white text-base md:text-lg font-medium"
+                            />
+                          </div>
+
+                          {/* Variable breakdown */}
+                          <div className="text-[11px] text-slate-400 leading-relaxed border-t border-slate-800/80 pt-2 space-y-1">
+                            <p className="text-slate-300">
+                              {lang === "bm" ? formula.variablesBm : formula.variablesDlp}
+                            </p>
+                            {formula.notes && (
+                              <p className="text-[10px] text-amber-400/90 italic">
+                                {formula.notes}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 bg-slate-900/60 border border-slate-800 rounded-xl text-xs text-slate-400 leading-relaxed">
+                      <p>
+                        {lang === "bm"
+                          ? "Topik ini berfokuskan kepada konsep kualitatif, prinsip teori, dan rajah sinar / aplikasi tanpa formula pengiraan khusus."
+                          : "This topic focuses on qualitative concepts, theoretical principles, and ray diagrams / applications without specific calculation formulas."}
                       </p>
                     </div>
                   )}
@@ -558,16 +746,65 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
             )}
 
             {activeTab === "notes" && (
-              <div className="p-5 rounded-2xl bg-[#111624] border border-slate-800 space-y-3 text-xs text-slate-300 leading-relaxed">
-                <h3 className="text-sm font-bold text-white">
-                  Nota Ringkas & Formula SPM
-                </h3>
-                <p>
-                  1. Perhatikan tanda positif dan negatif bagi pembolehubah dan rumus fizik.
-                </p>
-                <p>
-                  2. Rujuk Standard Pembelajaran (DSKP) untuk memahami kata kunci pemarkahan SPM.
-                </p>
+              <div className="p-5 rounded-2xl bg-[#111624] border border-slate-800 space-y-5 text-xs text-slate-300 leading-relaxed">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-red-400" />
+                    {lang === "bm" ? "Ringkasan Nota & Rumus Topik Ini" : "Topic Summary Notes & Formulas"}
+                  </h3>
+                  <span className="text-[11px] text-slate-400">
+                    {currentLesson.chapterBm} (Tingkatan {currentLesson.form})
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 bg-slate-900/80 border border-slate-800 rounded-xl space-y-2">
+                    <h4 className="font-bold text-slate-200 text-xs">
+                      {lang === "bm" ? "Panduan Menjawab SPM:" : "SPM Answering Guide:"}
+                    </h4>
+                    <ul className="space-y-1.5 list-disc list-inside text-slate-400 text-[11px]">
+                      <li>Pastikan semua kuantiti fizik ditukar kepada unit asas S.I. sebelum pengiraan.</li>
+                      <li>Tulis rumus fizik yang betul sebelum menggantikan nilai pembolehubah.</li>
+                      <li>Nyatakan jawapan akhir dengan unit S.I. dan bilangan angka bererti yang tepat.</li>
+                    </ul>
+                  </div>
+
+                  <div className="p-4 bg-slate-900/80 border border-slate-800 rounded-xl space-y-2">
+                    <h4 className="font-bold text-slate-200 text-xs">
+                      {lang === "bm" ? "Kata Kunci Penting (Kamus):" : "Important Keywords:"}
+                    </h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {(lang === "bm" ? currentLesson.keyConceptsBm : currentLesson.keyConceptsDlp).map((c, idx) => (
+                        <span key={idx} className="px-2 py-0.5 bg-slate-800 border border-slate-700 text-slate-300 text-[10px] rounded">
+                          {c}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {relatedFormulas.length > 0 && (
+                  <div className="space-y-3 pt-2">
+                    <h4 className="font-bold text-slate-200 text-xs">
+                      {lang === "bm" ? "Formula Berkaitan Dalam Topik Ini:" : "Related Formulas in This Topic:"}
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {relatedFormulas.map((f) => (
+                        <div key={f.id} className="p-3 bg-[#161c2c] border border-slate-800 rounded-xl space-y-2">
+                          <div className="text-[10px] text-slate-400 font-semibold">
+                            {lang === "bm" ? f.topicBm : f.topicDlp}
+                          </div>
+                          <div className="py-1 flex justify-center">
+                            <MathFormula latex={f.formulaDisplay || f.formula} className="text-white text-base font-medium" />
+                          </div>
+                          <div className="text-[10px] text-slate-400">
+                            {lang === "bm" ? f.variablesBm : f.variablesDlp}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

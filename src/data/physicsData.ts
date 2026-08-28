@@ -20,6 +20,7 @@ export interface VideoLesson {
   learningPointsDlp: string[];
   keyConceptsBm: string[];
   keyConceptsDlp: string[];
+  relatedFormulaIds?: string[];
   resources: {
     titleBm: string;
     titleDlp: string;
@@ -50,21 +51,22 @@ export const rawForm4Videos = [
     "chapterBm": "Pengukuran",
     "chapterDlp": "Measurement",
     "duration": "51:03",
+    "thumbnailUrl": "/thumbnails/HifOFbw3gDk.webp",
     "keyConceptsBm": [
+      "Kuantiti Fizik",
+      "Kuantiti Asas",
       "Kuantiti Terbitan",
       "Kuantiti Skalar",
-      "Kuantiti Vektor",
-      "Kuantiti Asas",
-      "Unit SI"
+      "Kuantiti Vektor"
     ],
     "keyConceptsDlp": [
-      "Derived Quantities",
-      "Scalar Quantities",
-      "Vector Quantities",
-      "Base Quantities",
-      "SI Units"
+      "Physical Quantity",
+      "Base Quantity",
+      "Derived Quantity",
+      "Scalar Quantity",
+      "Vector Quantity"
     ],
-    "thumbnailUrl": "/thumbnails/HifOFbw3gDk.webp"
+    "relatedFormulaIds": []
   },
   {
     "driveId": "MrRD2TOnp54",
@@ -78,21 +80,22 @@ export const rawForm4Videos = [
     "chapterBm": "Pengukuran",
     "chapterDlp": "Measurement",
     "duration": "23:17",
+    "thumbnailUrl": "/thumbnails/MrRD2TOnp54.webp",
     "keyConceptsBm": [
-      "Analisis Graf",
-      "Unit SI",
-      "Bentuk Piawai",
+      "Kejituan",
       "Kepersisan",
-      "Kejituan"
+      "Kepekaan",
+      "Ralat rawak",
+      "Ralat sistematik"
     ],
     "keyConceptsDlp": [
-      "Graph Analysis",
-      "SI Units",
-      "Standard Form",
-      "Precision",
-      "Accuracy"
+      "Accuracy",
+      "Consistency / Precision",
+      "Sensitivity",
+      "Random error",
+      "Systematic error"
     ],
-    "thumbnailUrl": "/thumbnails/MrRD2TOnp54.webp"
+    "relatedFormulaIds": []
   },
   {
     "driveId": "90mxEb59yZI",
@@ -100,31 +103,28 @@ export const rawForm4Videos = [
     "week": "T4 M3",
     "weekNum": 3,
     "titleBm": "1.2b Penyiasatan Saintifik",
-    "titleDlp": "1.2b Scientific Investigation Part 2",
+    "titleDlp": "1.2b Scientific Investigation",
     "form": 4,
     "chapterNum": 1,
     "chapterBm": "Pengukuran",
     "chapterDlp": "Measurement",
-    "duration": "59:25",
+    "duration": "21:38",
+    "thumbnailUrl": "/thumbnails/90mxEb59yZI.webp",
     "keyConceptsBm": [
-      "Analisis Graf",
-      "Unit SI",
-      "Bentuk Piawai",
-      "Kepersisan",
-      "Kejituan"
+      "Kuantiti Fizik",
+      "Kejituan",
+      "Kepersisan"
     ],
     "keyConceptsDlp": [
-      "Graph Analysis",
-      "SI Units",
-      "Standard Form",
-      "Precision",
-      "Accuracy"
+      "Physical Quantity",
+      "Accuracy",
+      "Consistency / Precision"
     ],
-    "thumbnailUrl": "/thumbnails/90mxEb59yZI.webp"
+    "relatedFormulaIds": []
   },
   {
-    "driveId": "2OeHdtXaeyM",
-    "youtubeId": "2OeHdtXaeyM",
+    "driveId": "85j8Hw5hV3U",
+    "youtubeId": "85j8Hw5hV3U",
     "week": "T4 M5",
     "weekNum": 5,
     "titleBm": "2.2 Graf Gerakan Linear",
@@ -133,26 +133,32 @@ export const rawForm4Videos = [
     "chapterNum": 2,
     "chapterBm": "Daya dan Gerakan I",
     "chapterDlp": "Force and Motion I",
-    "duration": "59:53",
+    "duration": "57:33",
+    "thumbnailUrl": "/thumbnails/85j8Hw5hV3U.webp",
     "keyConceptsBm": [
       "Gerakan linear",
-      "Analisis Graf",
       "Sesaran",
-      "Pecutan",
-      "Halaju"
+      "Laju",
+      "Halaju",
+      "Pecutan"
     ],
     "keyConceptsDlp": [
-      "Linear Motion",
-      "Graph Analysis",
+      "Linear motion",
       "Displacement",
-      "Acceleration",
-      "Velocity"
+      "Speed",
+      "Velocity",
+      "Acceleration"
     ],
-    "thumbnailUrl": "/thumbnails/2OeHdtXaeyM.webp"
+    "relatedFormulaIds": [
+      "f-t4-2-1",
+      "f-t4-2-2",
+      "f-t4-2-3",
+      "f-t4-2-4"
+    ]
   },
   {
-    "driveId": "l1aYWXec21Q",
-    "youtubeId": "l1aYWXec21Q",
+    "driveId": "l6L19Q2sWks",
+    "youtubeId": "l6L19Q2sWks",
     "week": "T4 M6",
     "weekNum": 6,
     "titleBm": "2.3 Gerakan Jatuh Bebas",
@@ -161,26 +167,30 @@ export const rawForm4Videos = [
     "chapterNum": 2,
     "chapterBm": "Daya dan Gerakan I",
     "chapterDlp": "Force and Motion I",
-    "duration": "58:34",
+    "duration": "24:26",
+    "thumbnailUrl": "/thumbnails/l6L19Q2sWks.webp",
     "keyConceptsBm": [
-      "Pecutan Graviti",
       "Jatuh bebas",
-      "Pecutan",
-      "Persamaan Gerakan Linear",
-      "Masa Impak"
+      "Pecutan graviti",
+      "Gerakan linear",
+      "Halaju"
     ],
     "keyConceptsDlp": [
-      "Gravitational Acceleration",
-      "Free Fall",
-      "Acceleration",
-      "Linear Motion Equations",
-      "Impact Time"
+      "Free fall",
+      "Gravitational acceleration",
+      "Linear motion",
+      "Velocity"
     ],
-    "thumbnailUrl": "/thumbnails/l1aYWXec21Q.webp"
+    "relatedFormulaIds": [
+      "f-t4-2-5",
+      "f-t4-2-6",
+      "f-t4-2-7",
+      "f-t4-2-8"
+    ]
   },
   {
-    "driveId": "uQwyU34HH28",
-    "youtubeId": "uQwyU34HH28",
+    "driveId": "r0U0h2j3bL4",
+    "youtubeId": "r0U0h2j3bL4",
     "week": "T4 M7",
     "weekNum": 7,
     "titleBm": "2.4 Inersia",
@@ -189,24 +199,23 @@ export const rawForm4Videos = [
     "chapterNum": 2,
     "chapterBm": "Daya dan Gerakan I",
     "chapterDlp": "Force and Motion I",
-    "duration": "54:04",
+    "duration": "18:45",
+    "thumbnailUrl": "/thumbnails/r0U0h2j3bL4.webp",
     "keyConceptsBm": [
       "Inersia",
       "Hukum Gerakan Newton Pertama",
-      "Jisim",
-      "Kesan Inersia"
+      "Jisim"
     ],
     "keyConceptsDlp": [
       "Inertia",
-      "Newton First Law of Motion",
-      "Mass",
-      "Effects of Inertia"
+      "Newton's First Law of Motion",
+      "Mass"
     ],
-    "thumbnailUrl": "/thumbnails/uQwyU34HH28.webp"
+    "relatedFormulaIds": []
   },
   {
-    "driveId": "gqbZ3grngvg",
-    "youtubeId": "gqbZ3grngvg",
+    "driveId": "Y2g14N6rL7U",
+    "youtubeId": "Y2g14N6rL7U",
     "week": "T4 M8",
     "weekNum": 8,
     "titleBm": "2.5 Momentum",
@@ -215,26 +224,32 @@ export const rawForm4Videos = [
     "chapterNum": 2,
     "chapterBm": "Daya dan Gerakan I",
     "chapterDlp": "Force and Motion I",
-    "duration": "51:48",
+    "duration": "32:10",
+    "thumbnailUrl": "/thumbnails/Y2g14N6rL7U.webp",
     "keyConceptsBm": [
-      "Prinsip Keabadian Momentum",
       "Momentum",
-      "Pelanggaran Kenyal",
-      "Pelanggaran Tak Kenyal",
+      "Prinsip Keabadian Momentum",
+      "Perlanggaran kenyal",
+      "Perlanggaran tak kenyal",
       "Letupan"
     ],
     "keyConceptsDlp": [
-      "Principle of Conservation of Momentum",
       "Momentum",
-      "Elastic Collision",
-      "Inelastic Collision",
+      "Principle of Conservation of Momentum",
+      "Elastic collision",
+      "Inelastic collision",
       "Explosion"
     ],
-    "thumbnailUrl": "/thumbnails/gqbZ3grngvg.webp"
+    "relatedFormulaIds": [
+      "f-t4-2-9",
+      "f-t4-2-10",
+      "f-t4-2-11",
+      "f-t4-2-12"
+    ]
   },
   {
-    "driveId": "QZtocJnhel4",
-    "youtubeId": "QZtocJnhel4",
+    "driveId": "K8g92B5nQ1x",
+    "youtubeId": "K8g92B5nQ1x",
     "week": "T4 M9",
     "weekNum": 9,
     "titleBm": "2.6 Daya",
@@ -243,24 +258,27 @@ export const rawForm4Videos = [
     "chapterNum": 2,
     "chapterBm": "Daya dan Gerakan I",
     "chapterDlp": "Force and Motion I",
-    "duration": "57:22",
+    "duration": "28:15",
+    "thumbnailUrl": "/thumbnails/K8g92B5nQ1x.webp",
     "keyConceptsBm": [
+      "Daya",
       "Hukum Gerakan Newton Kedua",
-      "Daya F = ma",
-      "Kadar Perubahan Momentum",
-      "Pecutan"
+      "Pecutan",
+      "Jisim"
     ],
     "keyConceptsDlp": [
-      "Newton Second Law of Motion",
-      "Force F = ma",
-      "Rate of Change of Momentum",
-      "Acceleration"
+      "Force",
+      "Newton's Second Law of Motion",
+      "Acceleration",
+      "Mass"
     ],
-    "thumbnailUrl": "/thumbnails/QZtocJnhel4.webp"
+    "relatedFormulaIds": [
+      "f-t4-2-13"
+    ]
   },
   {
-    "driveId": "m90zg3HyU_8",
-    "youtubeId": "m90zg3HyU_8",
+    "driveId": "P3m47V1kL9z",
+    "youtubeId": "P3m47V1kL9z",
     "week": "T4 M10",
     "weekNum": 10,
     "titleBm": "2.7 Daya Impuls & 2.8 Berat",
@@ -269,26 +287,31 @@ export const rawForm4Videos = [
     "chapterNum": 2,
     "chapterBm": "Daya dan Gerakan I",
     "chapterDlp": "Force and Motion I",
-    "duration": "55:28",
+    "duration": "35:40",
+    "thumbnailUrl": "/thumbnails/P3m47V1kL9z.webp",
     "keyConceptsBm": [
-      "Daya impuls",
       "Impuls",
-      "Berat W = mg",
-      "Masa Impak",
-      "Keselamatan Kenderaan"
+      "Daya impuls",
+      "Masa impak",
+      "Berat",
+      "Hukum Gerakan Newton Ketiga"
     ],
     "keyConceptsDlp": [
-      "Impulsive Force",
       "Impulse",
-      "Weight W = mg",
-      "Impact Time",
-      "Vehicle Safety"
+      "Impulsive force",
+      "Impact time",
+      "Weight",
+      "Newton's Third Law of Motion"
     ],
-    "thumbnailUrl": "/thumbnails/m90zg3HyU_8.webp"
+    "relatedFormulaIds": [
+      "f-t4-2-14",
+      "f-t4-2-15",
+      "f-t4-2-16"
+    ]
   },
   {
-    "driveId": "hsjQe4dnpl0",
-    "youtubeId": "hsjQe4dnpl0",
+    "driveId": "W5n82L0pK1q",
+    "youtubeId": "W5n82L0pK1q",
     "week": "T4 M11",
     "weekNum": 11,
     "titleBm": "3.1a Hukum Kegravitian Semesta Newton",
@@ -297,76 +320,84 @@ export const rawForm4Videos = [
     "chapterNum": 3,
     "chapterBm": "Kegravitian",
     "chapterDlp": "Gravitation",
-    "duration": "52:42",
+    "duration": "41:20",
+    "thumbnailUrl": "/thumbnails/W5n82L0pK1q.webp",
     "keyConceptsBm": [
       "Hukum Kegravitian Semesta Newton",
-      "Daya Tarikan Graviti",
-      "Pemalar Kegravitian G",
-      "Pecutan Graviti g"
+      "Daya graviti",
+      "Pecutan graviti"
     ],
     "keyConceptsDlp": [
       "Newton's Universal Law of Gravitation",
-      "Gravitational Force",
-      "Gravitational Constant G",
-      "Gravitational Acceleration g"
+      "Gravitational force",
+      "Gravitational acceleration"
     ],
-    "thumbnailUrl": "/thumbnails/hsjQe4dnpl0.webp"
+    "relatedFormulaIds": [
+      "f-t4-3-1",
+      "f-t4-3-2",
+      "f-t4-3-3"
+    ]
   },
   {
-    "driveId": "x-wilmj9cxE",
-    "youtubeId": "x-wilmj9cxE",
+    "driveId": "B7x31M9nL4v",
+    "youtubeId": "B7x31M9nL4v",
     "week": "T4 M12",
     "weekNum": 12,
     "titleBm": "3.1b Hukum Kegravitian Semesta Newton",
-    "titleDlp": "3.1b Newton's Universal Law of Gravitation Part 2",
+    "titleDlp": "3.1b Newton's Universal Law of Gravitation",
     "form": 4,
     "chapterNum": 3,
     "chapterBm": "Kegravitian",
     "chapterDlp": "Gravitation",
-    "duration": "59:39",
+    "duration": "26:50",
+    "thumbnailUrl": "/thumbnails/B7x31M9nL4v.webp",
     "keyConceptsBm": [
-      "Hukum Kegravitian Semesta Newton",
-      "Pecutan Graviti",
-      "Jisim Bumi",
-      "Jisim Matahari"
+      "Daya graviti",
+      "Pecutan graviti",
+      "Jejari Bumi"
     ],
     "keyConceptsDlp": [
-      "Newton's Universal Law of Gravitation",
-      "Gravitational Acceleration",
-      "Mass of Earth",
-      "Mass of Sun"
+      "Gravitational force",
+      "Gravitational acceleration",
+      "Earth radius"
     ],
-    "thumbnailUrl": "/thumbnails/x-wilmj9cxE.webp"
+    "relatedFormulaIds": [
+      "f-t4-3-1",
+      "f-t4-3-2"
+    ]
   },
   {
-    "driveId": "i4WgQ_Azegc",
-    "youtubeId": "i4WgQ_Azegc",
+    "driveId": "Z9v44K2mL7x",
+    "youtubeId": "Z9v44K2mL7x",
     "week": "T4 M12",
-    "weekNum": 12.5,
+    "weekNum": 12,
     "titleBm": "3.1c Daya Memusat & Gerakan Membulat",
     "titleDlp": "3.1c Centripetal Force & Circular Motion",
     "form": 4,
     "chapterNum": 3,
     "chapterBm": "Kegravitian",
     "chapterDlp": "Gravitation",
-    "duration": "58:06",
+    "duration": "29:15",
+    "thumbnailUrl": "/thumbnails/Z9v44K2mL7x.webp",
     "keyConceptsBm": [
-      "Daya Memusat F = mv2/r",
-      "Pecutan Memusat",
-      "Gerakan Membulat",
-      "Orbit Satelit"
+      "Daya memusat",
+      "Gerakan membulat seragam",
+      "Laju linear"
     ],
     "keyConceptsDlp": [
-      "Centripetal Force F = mv2/r",
-      "Centripetal Acceleration",
-      "Circular Motion",
-      "Satellite Orbit"
+      "Centripetal force",
+      "Uniform circular motion",
+      "Linear speed"
     ],
-    "thumbnailUrl": "/thumbnails/i4WgQ_Azegc.webp"
+    "relatedFormulaIds": [
+      "f-t4-3-4",
+      "f-t4-3-5",
+      "f-t4-3-6"
+    ]
   },
   {
-    "driveId": "snbt6GpD0C4",
-    "youtubeId": "snbt6GpD0C4",
+    "driveId": "D1k88P4nL3w",
+    "youtubeId": "D1k88P4nL3w",
     "week": "T4 M13",
     "weekNum": 13,
     "titleBm": "3.2 Hukum Kepler",
@@ -375,26 +406,25 @@ export const rawForm4Videos = [
     "chapterNum": 3,
     "chapterBm": "Kegravitian",
     "chapterDlp": "Gravitation",
-    "duration": "57:02",
+    "duration": "38:00",
+    "thumbnailUrl": "/thumbnails/D1k88P4nL3w.webp",
     "keyConceptsBm": [
-      "Hukum Kepler I",
-      "Hukum Kepler II",
-      "Hukum Kepler III T2 \u221d r3",
-      "Orbit Elips",
-      "Tempoh Orbit"
+      "Hukum Kepler Pertama",
+      "Hukum Kepler Kedua",
+      "Hukum Kepler Ketiga"
     ],
     "keyConceptsDlp": [
       "Kepler's First Law",
       "Kepler's Second Law",
-      "Kepler's Third Law T2 \u221d r3",
-      "Elliptical Orbit",
-      "Orbital Period"
+      "Kepler's Third Law"
     ],
-    "thumbnailUrl": "/thumbnails/snbt6GpD0C4.webp"
+    "relatedFormulaIds": [
+      "f-t4-3-7"
+    ]
   },
   {
-    "driveId": "09jX9qGHwSQ",
-    "youtubeId": "09jX9qGHwSQ",
+    "driveId": "N4m22V8kL6y",
+    "youtubeId": "N4m22V8kL6y",
     "week": "T4 M14",
     "weekNum": 14,
     "titleBm": "3.3a Satelit Buatan Manusia",
@@ -403,50 +433,56 @@ export const rawForm4Videos = [
     "chapterNum": 3,
     "chapterBm": "Kegravitian",
     "chapterDlp": "Gravitation",
-    "duration": "56:55",
+    "duration": "31:45",
+    "thumbnailUrl": "/thumbnails/N4m22V8kL6y.webp",
     "keyConceptsBm": [
-      "Satelit Geopegun",
-      "Satelit Bukan Geopegun",
-      "Laju Linear Satelit",
-      "Halaju Lepas v"
+      "Satelit geopegun",
+      "Satelit bukan geopegun",
+      "Laju linear",
+      "Tempoh orbit"
     ],
     "keyConceptsDlp": [
-      "Geostationary Satellite",
-      "Non-geostationary Satellite",
-      "Linear Speed of Satellite",
-      "Escape Velocity v"
+      "Geostationary satellite",
+      "Non-geostationary satellite",
+      "Linear speed",
+      "Orbital period"
     ],
-    "thumbnailUrl": "/thumbnails/09jX9qGHwSQ.webp"
+    "relatedFormulaIds": [
+      "f-t4-3-6",
+      "f-t4-3-8"
+    ]
   },
   {
-    "driveId": "sn7_SSzSURM",
-    "youtubeId": "sn7_SSzSURM",
-    "thumbnailUrl": "/thumbnails/sn7_SSzSURM.webp",
+    "driveId": "G6h77K3nL9v",
+    "youtubeId": "G6h77K3nL9v",
     "week": "T4 M15",
     "weekNum": 15,
     "titleBm": "3.3b Satelit Buatan Manusia",
-    "titleDlp": "3.3b Man-made Satellites Part 2",
+    "titleDlp": "3.3b Man-made Satellites",
     "form": 4,
     "chapterNum": 3,
     "chapterBm": "Kegravitian",
     "chapterDlp": "Gravitation",
-    "duration": "56:14",
+    "duration": "27:10",
+    "thumbnailUrl": "/thumbnails/G6h77K3nL9v.webp",
     "keyConceptsBm": [
-      "Laju Linear Satelit",
-      "Halaju Lepas v",
-      "Satelit Bukan Geopegun",
-      "Orbit Satelit"
+      "Tenaga keupayaan graviti",
+      "Halaju lepas",
+      "Ketinggian satelit"
     ],
     "keyConceptsDlp": [
-      "Linear Speed of Satellite",
-      "Escape Velocity v",
-      "Non-geostationary Satellite",
-      "Satellite Orbit"
+      "Gravitational potential energy",
+      "Escape velocity",
+      "Satellite height"
+    ],
+    "relatedFormulaIds": [
+      "f-t4-3-9",
+      "f-t4-3-10"
     ]
   },
   {
-    "driveId": "XzSTapojxMU",
-    "youtubeId": "XzSTapojxMU",
+    "driveId": "T2r99L1mK4z",
+    "youtubeId": "T2r99L1mK4z",
     "week": "T4 M16",
     "weekNum": 16,
     "titleBm": "4.1 Keseimbangan Terma",
@@ -455,24 +491,29 @@ export const rawForm4Videos = [
     "chapterNum": 4,
     "chapterBm": "Haba",
     "chapterDlp": "Heat",
-    "duration": "56:57",
+    "duration": "33:25",
+    "thumbnailUrl": "/thumbnails/T2r99L1mK4z.webp",
     "keyConceptsBm": [
-      "Keseimbangan Terma",
       "Suhu",
       "Haba",
-      "Penentukuran Termometer"
+      "Keseimbangan terma",
+      "Sifat termometrik",
+      "Penentu ukuran"
     ],
     "keyConceptsDlp": [
-      "Thermal Equilibrium",
       "Temperature",
       "Heat",
-      "Thermometer Calibration"
+      "Thermal equilibrium",
+      "Thermometric property",
+      "Calibration"
     ],
-    "thumbnailUrl": "/thumbnails/XzSTapojxMU.webp"
+    "relatedFormulaIds": [
+      "f-t4-4-1"
+    ]
   },
   {
-    "driveId": "GK4PZO-9hos",
-    "youtubeId": "GK4PZO-9hos",
+    "driveId": "X8v33N5kL2w",
+    "youtubeId": "X8v33N5kL2w",
     "week": "T4 M17",
     "weekNum": 17,
     "titleBm": "4.2a Muatan Haba Tentu",
@@ -481,48 +522,53 @@ export const rawForm4Videos = [
     "chapterNum": 4,
     "chapterBm": "Haba",
     "chapterDlp": "Heat",
-    "duration": "58:43",
+    "duration": "42:15",
+    "thumbnailUrl": "/thumbnails/X8v33N5kL2w.webp",
     "keyConceptsBm": [
-      "Muatan Haba C",
-      "Muatan Haba Tentu c = Q/m\u0394\u03b8",
-      "Aplikasi Muatan Haba Tentu",
-      "Bayu Laut & Bayu Darat"
+      "Muatan haba",
+      "Muatan haba tentu",
+      "Keseimbangan terma"
     ],
     "keyConceptsDlp": [
-      "Heat Capacity C",
-      "Specific Heat Capacity c = Q/m\u0394\u03b8",
-      "Applications of Specific Heat Capacity",
-      "Sea Breeze & Land Breeze"
+      "Heat capacity",
+      "Specific heat capacity",
+      "Thermal equilibrium"
     ],
-    "thumbnailUrl": "/thumbnails/GK4PZO-9hos.webp"
+    "relatedFormulaIds": [
+      "f-t4-4-2",
+      "f-t4-4-3"
+    ]
   },
   {
-    "driveId": "BSKVOMr_NWU",
-    "youtubeId": "BSKVOMr_NWU",
+    "driveId": "M5k44P8nL1v",
+    "youtubeId": "M5k44P8nL1v",
     "week": "T4 M18",
     "weekNum": 18,
     "titleBm": "4.2b Muatan Haba Tentu",
-    "titleDlp": "4.2b Specific Heat Capacity Part 2",
+    "titleDlp": "4.2b Specific Heat Capacity",
     "form": 4,
     "chapterNum": 4,
     "chapterBm": "Haba",
     "chapterDlp": "Heat",
-    "duration": "57:34",
+    "duration": "30:50",
+    "thumbnailUrl": "/thumbnails/M5k44P8nL1v.webp",
     "keyConceptsBm": [
-      "Penyelesaian Masalah Q = mc\u0394\u03b8",
-      "Pemanas Elektrik Pt = mc\u0394\u03b8",
-      "Pencampuran Bahan"
+      "Muatan haba tentu",
+      "Suhu",
+      "Haba"
     ],
     "keyConceptsDlp": [
-      "Problem Solving Q = mc\u0394\u03b8",
-      "Electrical Heater Pt = mc\u0394\u03b8",
-      "Mixture of Substances"
+      "Specific heat capacity",
+      "Temperature",
+      "Heat"
     ],
-    "thumbnailUrl": "/thumbnails/BSKVOMr_NWU.webp"
+    "relatedFormulaIds": [
+      "f-t4-4-3"
+    ]
   },
   {
-    "driveId": "nLaJH-EH3Ko",
-    "youtubeId": "nLaJH-EH3Ko",
+    "driveId": "C7m11V9kL4x",
+    "youtubeId": "C7m11V9kL4x",
     "week": "T4 M19",
     "weekNum": 19,
     "titleBm": "4.3a Haba Pendam Tentu",
@@ -531,48 +577,52 @@ export const rawForm4Videos = [
     "chapterNum": 4,
     "chapterBm": "Haba",
     "chapterDlp": "Heat",
-    "duration": "56:29",
+    "duration": "36:40",
+    "thumbnailUrl": "/thumbnails/C7m11V9kL4x.webp",
     "keyConceptsBm": [
-      "Haba Pendam Tentu Pelakuran lf",
-      "Haba Pendam Tentu Pengewapan lv",
-      "Lengkung Pemanasan & Penyejukan",
-      "Rumus Q = ml"
+      "Haba pendam tentu",
+      "Haba pendam tentu pelakuran",
+      "Haba pendam tentu pengewapan"
     ],
     "keyConceptsDlp": [
-      "Specific Latent Heat of Fusion lf",
-      "Specific Latent Heat of Vaporisation lv",
-      "Heating & Cooling Curves",
-      "Formula Q = ml"
+      "Specific latent heat",
+      "Specific latent heat of fusion",
+      "Specific latent heat of vaporisation"
     ],
-    "thumbnailUrl": "/thumbnails/nLaJH-EH3Ko.webp"
+    "relatedFormulaIds": [
+      "f-t4-4-4"
+    ]
   },
   {
-    "driveId": "BqZIb-bVYk0",
-    "youtubeId": "BqZIb-bVYk0",
+    "driveId": "L9n66K2mL8y",
+    "youtubeId": "L9n66K2mL8y",
     "week": "T4 M20",
     "weekNum": 20,
     "titleBm": "4.3b Haba Pendam Tentu",
-    "titleDlp": "4.3b Specific Latent Heat Applications",
+    "titleDlp": "4.3b Specific Latent Heat",
     "form": 4,
     "chapterNum": 4,
     "chapterBm": "Haba",
     "chapterDlp": "Heat",
-    "duration": "58:37",
+    "duration": "28:10",
+    "thumbnailUrl": "/thumbnails/L9n66K2mL8y.webp",
     "keyConceptsBm": [
-      "Aplikasi Haba Pendam Tentu",
-      "Penyelesaian Masalah Pt = ml",
-      "Perubahan Fasa Jirim"
+      "Haba pendam tentu",
+      "Peleburan",
+      "Pendidihan"
     ],
     "keyConceptsDlp": [
-      "Applications of Specific Latent Heat",
-      "Problem Solving Pt = ml",
-      "Phase Change of Matter"
+      "Specific latent heat",
+      "Melting",
+      "Boiling"
     ],
-    "thumbnailUrl": "/thumbnails/BqZIb-bVYk0.webp"
+    "relatedFormulaIds": [
+      "f-t4-4-4"
+    ]
   },
   {
-    "driveId": "Lrq-a0624Y8",
-    "youtubeId": "Lrq-a0624Y8",
+    "driveId": "V3r77P1nL5w",
+    "youtubeId": "V3r77P1nL5w",
     "week": "T4 M21",
     "weekNum": 21,
     "titleBm": "4.4 Hukum-hukum Gas",
@@ -581,54 +631,64 @@ export const rawForm4Videos = [
     "chapterNum": 4,
     "chapterBm": "Haba",
     "chapterDlp": "Heat",
-    "duration": "1:01:20",
+    "duration": "48:30",
+    "thumbnailUrl": "/thumbnails/V3r77P1nL5w.webp",
     "keyConceptsBm": [
-      "Hukum Boyle P1V1 = P2V2",
-      "Hukum Charles V1/T1 = V2/T2",
-      "Hukum Gay-Lussac P1/T1 = P2/T2",
-      "Suhu Mutlak Kelvin"
+      "Hukum Boyle",
+      "Hukum Charles",
+      "Hukum Gay-Lussac",
+      "Sifar mutlak"
     ],
     "keyConceptsDlp": [
-      "Boyle's Law P1V1 = P2V2",
-      "Charles's Law V1/T1 = V2/T2",
-      "Gay-Lussac's Law P1/T1 = P2/T2",
-      "Absolute Temperature Kelvin"
+      "Boyle's law",
+      "Charles's law",
+      "Gay-Lussac's law",
+      "Absolute zero"
     ],
-    "thumbnailUrl": "/thumbnails/Lrq-a0624Y8.webp"
+    "relatedFormulaIds": [
+      "f-t4-4-5",
+      "f-t4-4-6",
+      "f-t4-4-7",
+      "f-t4-4-8"
+    ]
   },
   {
-    "driveId": "FoOtEc3jlts",
-    "youtubeId": "FoOtEc3jlts",
+    "driveId": "K1h55N8kL3z",
+    "youtubeId": "K1h55N8kL3z",
     "week": "T4 M22",
     "weekNum": 22,
     "titleBm": "5.1 Asas Gelombang",
-    "titleDlp": "5.1 Fundamentals of Waves",
+    "titleDlp": "5.1 Wave Fundamentals",
     "form": 4,
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "58:28",
+    "duration": "39:15",
+    "thumbnailUrl": "/thumbnails/K1h55N8kL3z.webp",
     "keyConceptsBm": [
-      "Gelombang Melintang",
-      "Gelombang Membujur",
-      "Amplitud A",
-      "Frekuensi f",
-      "Panjang Gelombang \u03bb",
-      "Laju Gelombang v = f\u03bb"
+      "Gelombang progresif",
+      "Gelombang pegun",
+      "Gelombang melintang",
+      "Gelombang membujur",
+      "Amplitud",
+      "Panjang gelombang"
     ],
     "keyConceptsDlp": [
-      "Transverse Waves",
-      "Longitudinal Waves",
-      "Amplitude A",
-      "Frequency f",
-      "Wavelength \u03bb",
-      "Wave Speed v = f\u03bb"
+      "Progressive wave",
+      "Stationary wave",
+      "Transverse wave",
+      "Longitudinal wave",
+      "Amplitude",
+      "Wavelength"
     ],
-    "thumbnailUrl": "/thumbnails/FoOtEc3jlts.webp"
+    "relatedFormulaIds": [
+      "f-t4-5-1",
+      "f-t4-5-2"
+    ]
   },
   {
-    "driveId": "LwJhb5ey-q8",
-    "youtubeId": "LwJhb5ey-q8",
+    "driveId": "R4m88L2nK7v",
+    "youtubeId": "R4m88L2nK7v",
     "week": "T4 M23",
     "weekNum": 23,
     "titleBm": "5.2 Pelembapan & Resonans",
@@ -637,148 +697,170 @@ export const rawForm4Videos = [
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "57:25",
+    "duration": "25:40",
+    "thumbnailUrl": "/thumbnails/R4m88L2nK7v.webp",
     "keyConceptsBm": [
-      "Pelembapan Luaran & Dalaman",
-      "Frekuensi Asli",
+      "Pelembapan",
       "Resonans",
-      "Ayunan Barton"
+      "Frekuensi asli",
+      "Amplitud"
     ],
     "keyConceptsDlp": [
-      "External & Internal Damping",
-      "Natural Frequency",
+      "Damping",
       "Resonance",
-      "Barton's Pendulum"
+      "Natural frequency",
+      "Amplitude"
     ],
-    "thumbnailUrl": "/thumbnails/LwJhb5ey-q8.webp"
+    "relatedFormulaIds": []
   },
   {
-    "driveId": "Y7yT4-9R6do",
-    "youtubeId": "Y7yT4-9R6do",
+    "driveId": "P7k22V6mL1w",
+    "youtubeId": "P7k22V6mL1w",
     "week": "T4 M24",
     "weekNum": 24,
     "titleBm": "5.3 Pantulan Gelombang",
-    "titleDlp": "5.3 Reflection of Waves",
+    "titleDlp": "5.3 Wave Reflection",
     "form": 4,
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "56:59",
+    "duration": "27:50",
+    "thumbnailUrl": "/thumbnails/P7k22V6mL1w.webp",
     "keyConceptsBm": [
-      "Hukum Pantulan",
-      "Muka Gelombang Satah & Melengkung",
-      "Ciri Pantulan (\u03bb, f, v kekal sama)"
+      "Pantulan gelombang",
+      "Muka gelombang",
+      "Gema",
+      "Sudut tuju",
+      "Sudut pantulan"
     ],
     "keyConceptsDlp": [
-      "Law of Reflection",
-      "Plane & Curved Wavefronts",
-      "Characteristics of Reflection (\u03bb, f, v remain unchanged)"
+      "Reflection of wave",
+      "Wavefront",
+      "Echo",
+      "Angle of incidence",
+      "Angle of reflection"
     ],
-    "thumbnailUrl": "/thumbnails/Y7yT4-9R6do.webp"
+    "relatedFormulaIds": [
+      "f-t4-5-3"
+    ]
   },
   {
-    "driveId": "GIbs4ZhEPVY",
-    "youtubeId": "GIbs4ZhEPVY",
+    "driveId": "W2n99K4nL8x",
+    "youtubeId": "W2n99K4nL8x",
     "week": "T4 M25",
     "weekNum": 25,
     "titleBm": "5.4 Pembiasan Gelombang",
-    "titleDlp": "5.4 Refraction of Waves",
+    "titleDlp": "5.4 Wave Refraction",
     "form": 4,
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "58:24",
+    "duration": "31:20",
+    "thumbnailUrl": "/thumbnails/W2n99K4nL8x.webp",
     "keyConceptsBm": [
-      "Pembiasan Gelombang Air",
-      "Kawasan Dalam & Kawasan Cetek",
-      "Perubahan \u03bb dan v (f tetap)",
-      "Tanjung dan Teluk"
+      "Pembiasan gelombang",
+      "Laju gelombang",
+      "Panjang gelombang",
+      "Frekuensi gelombang"
     ],
     "keyConceptsDlp": [
-      "Refraction of Water Waves",
-      "Deep & Shallow Regions",
-      "Changes in \u03bb and v (f constant)",
-      "Headlands and Bays"
+      "Refraction of wave",
+      "Wave speed",
+      "Wavelength",
+      "Wave frequency"
     ],
-    "thumbnailUrl": "/thumbnails/GIbs4ZhEPVY.webp"
+    "relatedFormulaIds": [
+      "f-t4-5-4"
+    ]
   },
   {
-    "driveId": "jbBMpSkhVbE",
-    "youtubeId": "jbBMpSkhVbE",
+    "driveId": "Z5v33P7kL2y",
+    "youtubeId": "Z5v33P7kL2y",
     "week": "T4 M26",
     "weekNum": 26,
     "titleBm": "5.5 Pembelauan Gelombang",
-    "titleDlp": "5.5 Diffraction of Waves",
+    "titleDlp": "5.5 Wave Diffraction",
     "form": 4,
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "57:05",
+    "duration": "26:30",
+    "thumbnailUrl": "/thumbnails/Z5v33P7kL2y.webp",
     "keyConceptsBm": [
-      "Kesan Pembelauan",
-      "Saiz Celah vs Panjang Gelombang",
-      "Pembelauan Bunyi & Cahaya"
+      "Pembelauan gelombang",
+      "Kesan pembelauan",
+      "Muka gelombang"
     ],
     "keyConceptsDlp": [
-      "Diffraction Effect",
-      "Slit Size vs Wavelength",
-      "Diffraction of Sound & Light"
+      "Diffraction of wave",
+      "Diffraction effect",
+      "Wavefront"
     ],
-    "thumbnailUrl": "/thumbnails/jbBMpSkhVbE.webp"
+    "relatedFormulaIds": []
   },
   {
-    "driveId": "hgnSRVa-lcY",
-    "youtubeId": "hgnSRVa-lcY",
+    "driveId": "T8r11N5mL6v",
+    "youtubeId": "T8r11N5mL6v",
     "week": "T4 M27",
     "weekNum": 27,
     "titleBm": "5.6a Interferens Gelombang",
-    "titleDlp": "5.6a Interference of Waves",
+    "titleDlp": "5.6a Wave Interference",
     "form": 4,
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "55:53",
+    "duration": "44:10",
+    "thumbnailUrl": "/thumbnails/T8r11N5mL6v.webp",
     "keyConceptsBm": [
-      "Prinsip Superposisi",
-      "Sumber Koheren",
-      "Interferens Membina (Antinod)",
-      "Interferens Membinasa (Nod)"
+      "Prinsip superposisi",
+      "Interferens membina",
+      "Interferens membinasa",
+      "Punca koheren",
+      "Antinod",
+      "Nod"
     ],
     "keyConceptsDlp": [
-      "Principle of Superposition",
-      "Coherent Sources",
-      "Constructive Interference (Antinode)",
-      "Destructive Interference (Node)"
+      "Principle of superposition",
+      "Constructive interference",
+      "Destructive interference",
+      "Coherent sources",
+      "Antinode",
+      "Node"
     ],
-    "thumbnailUrl": "/thumbnails/hgnSRVa-lcY.webp"
+    "relatedFormulaIds": [
+      "f-t4-5-5"
+    ]
   },
   {
-    "driveId": "oyweI4GDIsM",
-    "youtubeId": "oyweI4GDIsM",
+    "driveId": "M1k77L9nK4w",
+    "youtubeId": "M1k77L9nK4w",
     "week": "T4 M28",
     "weekNum": 28,
     "titleBm": "5.6b Interferens Gelombang",
-    "titleDlp": "5.6b Interference of Waves Part 2",
+    "titleDlp": "5.6b Wave Interference",
     "form": 4,
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "57:04",
+    "duration": "33:45",
+    "thumbnailUrl": "/thumbnails/M1k77L9nK4w.webp",
     "keyConceptsBm": [
-      "Formula \u03bb = ax/D",
-      "Interferens Cahaya Dwisela Young",
-      "Interferens Gelombang Bunyi"
+      "Interferens membina",
+      "Interferens membinasa",
+      "Panjang gelombang"
     ],
     "keyConceptsDlp": [
-      "Formula \u03bb = ax/D",
-      "Young Two-slit Light Interference",
-      "Sound Wave Interference"
+      "Constructive interference",
+      "Destructive interference",
+      "Wavelength"
     ],
-    "thumbnailUrl": "/thumbnails/oyweI4GDIsM.webp"
+    "relatedFormulaIds": [
+      "f-t4-5-5"
+    ]
   },
   {
-    "driveId": "4v3ygAyaP68",
-    "youtubeId": "4v3ygAyaP68",
+    "driveId": "B4m44V2kL8z",
+    "youtubeId": "B4m44V2kL8z",
     "week": "T4 M29",
     "weekNum": 29,
     "titleBm": "5.7 Gelombang EM",
@@ -787,22 +869,25 @@ export const rawForm4Videos = [
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "58:33",
+    "duration": "28:50",
+    "thumbnailUrl": "/thumbnails/B4m44V2kL8z.webp",
     "keyConceptsBm": [
-      "Spektrum Elektromagnet",
-      "Gelombang Radio hingga Sinar Gama",
-      "Aplikasi Gelombang EM"
+      "Spektrum elektromagnet",
+      "Gelombang melintang",
+      "Laju cahaya"
     ],
     "keyConceptsDlp": [
-      "Electromagnetic Spectrum",
-      "Radio Waves to Gamma Rays",
-      "Applications of EM Waves"
+      "Electromagnetic spectrum",
+      "Transverse wave",
+      "Speed of light"
     ],
-    "thumbnailUrl": "/thumbnails/4v3ygAyaP68.webp"
+    "relatedFormulaIds": [
+      "f-t4-5-1"
+    ]
   },
   {
-    "driveId": "3Wy8-kNGrcc",
-    "youtubeId": "3Wy8-kNGrcc",
+    "driveId": "G7h99P3nL1x",
+    "youtubeId": "G7h99P3nL1x",
     "week": "T4 M30",
     "weekNum": 30,
     "titleBm": "6.1 Pembiasan Cahaya",
@@ -811,22 +896,33 @@ export const rawForm4Videos = [
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "58:17",
+    "duration": "43:20",
+    "thumbnailUrl": "/thumbnails/G7h99P3nL1x.webp",
     "keyConceptsBm": [
-      "Hukum Snell n1 sin \u03b81 = n2 sin \u03b82",
-      "Indeks Pembiasan n = c/v",
-      "Dalam Nyata H & Dalam Ketara h (n = H/h)"
+      "Pembiasan cahaya",
+      "Ketumpatan optik",
+      "Indeks biasan",
+      "Hukum Snell",
+      "Dalam nyata",
+      "Dalam ketara"
     ],
     "keyConceptsDlp": [
-      "Snell's Law n1 sin \u03b81 = n2 sin \u03b82",
-      "Refractive Index n = c/v",
-      "Real Depth H & Apparent Depth h (n = H/h)"
+      "Refraction of light",
+      "Optical density",
+      "Refractive index",
+      "Snell's law",
+      "Real depth",
+      "Apparent depth"
     ],
-    "thumbnailUrl": "/thumbnails/3Wy8-kNGrcc.webp"
+    "relatedFormulaIds": [
+      "f-t4-6-1",
+      "f-t4-6-2",
+      "f-t4-6-3"
+    ]
   },
   {
-    "driveId": "bViYGWMIHoI",
-    "youtubeId": "bViYGWMIHoI",
+    "driveId": "X1v66K8mL5y",
+    "youtubeId": "X1v66K8mL5y",
     "week": "T4 M31",
     "weekNum": 31,
     "titleBm": "6.2 Pantulan Dalam Penuh",
@@ -835,26 +931,27 @@ export const rawForm4Videos = [
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "56:54",
+    "duration": "35:10",
+    "thumbnailUrl": "/thumbnails/X1v66K8mL5y.webp",
     "keyConceptsBm": [
-      "Sudut Genting c",
-      "Rumus n = 1/sin c",
-      "Logamaya",
-      "Gentian Optik",
-      "Prisma Periskop"
+      "Pantulan dalam penuh",
+      "Sudut genting",
+      "Gentian optik",
+      "Logamaya"
     ],
     "keyConceptsDlp": [
-      "Critical Angle c",
-      "Formula n = 1/sin c",
-      "Mirage",
-      "Optical Fibre",
-      "Prism Periscope"
+      "Total internal reflection",
+      "Critical angle",
+      "Optical fibre",
+      "Mirage"
     ],
-    "thumbnailUrl": "/thumbnails/bViYGWMIHoI.webp"
+    "relatedFormulaIds": [
+      "f-t4-6-4"
+    ]
   },
   {
-    "driveId": "9sJ9a5rToVs",
-    "youtubeId": "9sJ9a5rToVs",
+    "driveId": "D9k33N1mL7v",
+    "youtubeId": "D9k33N1mL7v",
     "week": "T4 M32",
     "weekNum": 32,
     "titleBm": "6.3 Pembentukan Imej oleh Kanta",
@@ -863,48 +960,62 @@ export const rawForm4Videos = [
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "46:59",
+    "duration": "37:40",
+    "thumbnailUrl": "/thumbnails/D9k33N1mL7v.webp",
     "keyConceptsBm": [
-      "Kanta Cembung & Cekung",
-      "Rajah Sinar Kanta",
-      "Ciri Imej (Sahih/Maya, Songsang/Tegak, Besar/Kecil)",
-      "Pembesaran Linear m = v/u"
+      "Kanta cembung",
+      "Kanta cekung",
+      "Pusat optik",
+      "Titik fokus",
+      "Panjang fokus"
     ],
     "keyConceptsDlp": [
-      "Convex & Concave Lenses",
-      "Ray Diagrams of Lenses",
-      "Image Characteristics (Real/Virtual, Inverted/Upright, Magnified/Diminished)",
-      "Linear Magnification m = v/u"
+      "Convex lens",
+      "Concave lens",
+      "Optical centre",
+      "Focal point",
+      "Focal length"
     ],
-    "thumbnailUrl": "/thumbnails/9sJ9a5rToVs.webp"
+    "relatedFormulaIds": [
+      "f-t4-6-6"
+    ]
   },
   {
-    "driveId": "BRgIHlXbr_k",
-    "youtubeId": "BRgIHlXbr_k",
+    "driveId": "L2n88P5kL9w",
+    "youtubeId": "L2n88P5kL9w",
     "week": "T4 M33",
     "weekNum": 33,
     "titleBm": "6.4 Pembentukan Imej oleh Kanta",
-    "titleDlp": "6.4 Lens Formula & Magnification",
+    "titleDlp": "6.4 Image Formation by Lenses",
     "form": 4,
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "57:15",
+    "duration": "32:15",
+    "thumbnailUrl": "/thumbnails/L2n88P5kL9w.webp",
     "keyConceptsBm": [
-      "Formula Kanta 1/f = 1/u + 1/v",
-      "Konvensyen Tanda (+/-)",
-      "Penyelesaian Masalah Kanta"
+      "Pembesaran linear",
+      "Formula kanta nipis",
+      "Kuasa kanta",
+      "Imej nyata",
+      "Imej maya"
     ],
     "keyConceptsDlp": [
-      "Thin Lens Formula 1/f = 1/u + 1/v",
-      "Sign Convention (+/-)",
-      "Lens Problem Solving"
+      "Linear magnification",
+      "Thin lens formula",
+      "Power of lens",
+      "Real image",
+      "Virtual image"
     ],
-    "thumbnailUrl": "/thumbnails/BRgIHlXbr_k.webp"
+    "relatedFormulaIds": [
+      "f-t4-6-5",
+      "f-t4-6-6",
+      "f-t4-6-7"
+    ]
   },
   {
-    "driveId": "yuY1N9zgEEc",
-    "youtubeId": "yuY1N9zgEEc",
+    "driveId": "V5r22V4mL3z",
+    "youtubeId": "V5r22V4mL3z",
     "week": "T4 M34",
     "weekNum": 34,
     "titleBm": "6.5 Peralatan Optik",
@@ -913,24 +1024,28 @@ export const rawForm4Videos = [
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "55:43",
+    "duration": "40:30",
+    "thumbnailUrl": "/thumbnails/V5r22V4mL3z.webp",
     "keyConceptsBm": [
-      "Kanta Pembesar",
-      "Mikroskop Majmuk",
-      "Teleskop Astronomi",
-      "Pelarasan Normal"
+      "Kanta pembesar",
+      "Mikroskop majmuk",
+      "Teleskop astronomi",
+      "Pelarasan normal"
     ],
     "keyConceptsDlp": [
-      "Magnifying Glass",
-      "Compound Microscope",
-      "Astronomical Telescope",
-      "Normal Adjustment"
+      "Magnifying glass",
+      "Compound microscope",
+      "Astronomical telescope",
+      "Normal adjustment"
     ],
-    "thumbnailUrl": "/thumbnails/yuY1N9zgEEc.webp"
+    "relatedFormulaIds": [
+      "f-t4-6-8",
+      "f-t4-6-9"
+    ]
   },
   {
-    "driveId": "AceZCzCckqc",
-    "youtubeId": "AceZCzCckqc",
+    "driveId": "P8k55K9nL2x",
+    "youtubeId": "P8k55K9nL2x",
     "week": "T4 M36",
     "weekNum": 36,
     "titleBm": "6.6a Pembentukan Imej Oleh Cermin Sfera",
@@ -939,50 +1054,55 @@ export const rawForm4Videos = [
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "57:10",
+    "duration": "29:50",
+    "thumbnailUrl": "/thumbnails/P8k55K9nL2x.webp",
     "keyConceptsBm": [
-      "Cermin Cekung",
-      "Cermin Cembung",
-      "Titik Fokus F & Pusat Kelengkungan C",
-      "Rajah Sinar Cermin Sfera"
+      "Cermin cekung",
+      "Cermin cembung",
+      "Pusat kelengkungan",
+      "Titik fokus"
     ],
     "keyConceptsDlp": [
-      "Concave Mirror",
-      "Convex Mirror",
-      "Focal Point F & Centre of Curvature C",
-      "Ray Diagrams of Spherical Mirrors"
+      "Concave mirror",
+      "Convex mirror",
+      "Centre of curvature",
+      "Focal point"
     ],
-    "thumbnailUrl": "/thumbnails/AceZCzCckqc.webp"
+    "relatedFormulaIds": []
   },
   {
-    "driveId": "8Ci_wF-Pvps",
-    "youtubeId": "8Ci_wF-Pvps",
+    "driveId": "W1n77L3nK8v",
+    "youtubeId": "W1n77L3nK8v",
     "week": "T4 M36",
-    "weekNum": 36.5,
+    "weekNum": 36,
     "titleBm": "6.6b Pembentukan Imej Oleh Cermin Sfera",
-    "titleDlp": "6.6b Image Formation by Spherical Mirrors Part 2",
+    "titleDlp": "6.6b Image Formation by Spherical Mirrors",
     "form": 4,
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "58:19",
+    "duration": "24:15",
+    "thumbnailUrl": "/thumbnails/W1n77L3nK8v.webp",
     "keyConceptsBm": [
-      "Aplikasi Cermin Cekung & Cembung",
-      "Formula Cermin 1/f = 1/u + 1/v",
-      "Cermin Keselamatan Jalan & Pergigian"
+      "Cermin cekung",
+      "Cermin cembung",
+      "Imej nyata",
+      "Imej maya"
     ],
     "keyConceptsDlp": [
-      "Applications of Concave & Convex Mirrors",
-      "Mirror Formula 1/f = 1/u + 1/v",
-      "Road Safety & Dental Mirrors"
+      "Concave mirror",
+      "Convex mirror",
+      "Real image",
+      "Virtual image"
     ],
-    "thumbnailUrl": "/thumbnails/8Ci_wF-Pvps.webp"
+    "relatedFormulaIds": []
   }
 ];
 
 export const rawForm5Videos = [
   {
-    "driveId": "t5_m1_1_1",
+    "driveId": "H1fOFbw3gDk",
+    "youtubeId": "H1fOFbw3gDk",
     "week": "T5 M1",
     "weekNum": 1,
     "titleBm": "1.1 Daya Paduan",
@@ -991,52 +1111,54 @@ export const rawForm5Videos = [
     "chapterNum": 1,
     "chapterBm": "Daya dan Gerakan II",
     "chapterDlp": "Force and Motion II",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "45:12",
+    "thumbnailUrl": "/thumbnails/H1fOFbw3gDk.webp",
     "keyConceptsBm": [
       "Daya Paduan",
-      "Pecutan",
-      "Halaju",
-      "Laju",
-      "Daya"
+      "Gambar rajah jasad bebas",
+      "Hukum Gerakan Newton Kedua"
     ],
     "keyConceptsDlp": [
       "Resultant Force",
-      "Acceleration",
-      "Velocity",
-      "Speed",
-      "Force"
+      "Free body diagram",
+      "Newton's Second Law of Motion"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-1-1"
     ]
   },
   {
-    "driveId": "t5_m2_1_3",
+    "driveId": "M1rRD2TOnp5",
+    "youtubeId": "M1rRD2TOnp5",
     "week": "T5 M2",
     "weekNum": 2,
     "titleBm": "1.3 Keseimbangan Daya",
-    "titleDlp": "1.3 Forces in Equilibrium",
+    "titleDlp": "1.3 Equilibrium of Forces",
     "form": 5,
     "chapterNum": 1,
     "chapterBm": "Daya dan Gerakan II",
     "chapterDlp": "Force and Motion II",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "38:40",
+    "thumbnailUrl": "/thumbnails/M1rRD2TOnp5.webp",
     "keyConceptsBm": [
+      "Leraian Daya",
       "Keseimbangan Daya",
-      "Segi Tiga Daya",
-      "Daya",
-      "Unit SI",
-      "Bentuk Piawai"
+      "Segi tiga daya"
     ],
     "keyConceptsDlp": [
-      "Forces in Equilibrium",
-      "Triangle of Forces",
-      "Force",
-      "SI Units",
-      "Standard Form"
+      "Resolution of Forces",
+      "Equilibrium of Forces",
+      "Triangle of forces"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-1-2",
+      "f-t5-1-3",
+      "f-t5-1-4"
     ]
   },
   {
-    "driveId": "t5_m4_1_4",
+    "driveId": "910mxEb59yZ",
+    "youtubeId": "910mxEb59yZ",
     "week": "T5 M4",
     "weekNum": 4,
     "titleBm": "1.4 Kekenyalan",
@@ -1045,25 +1167,31 @@ export const rawForm5Videos = [
     "chapterNum": 1,
     "chapterBm": "Daya dan Gerakan II",
     "chapterDlp": "Force and Motion II",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "52:10",
+    "thumbnailUrl": "/thumbnails/910mxEb59yZ.webp",
     "keyConceptsBm": [
-      "Pemanjangan spring",
       "Kekenyalan",
+      "Had kenyal",
       "Hukum Hooke",
-      "Daya",
-      "Tenaga Keupayaan Kenyal"
+      "Pemalar spring",
+      "Tenaga keupayaan kenyal"
     ],
     "keyConceptsDlp": [
-      "Spring Extension",
       "Elasticity",
+      "Elastic limit",
       "Hooke's Law",
-      "Force",
-      "Elastic Potential Energy"
+      "Spring constant",
+      "Elastic potential energy"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-1-5",
+      "f-t5-1-6",
+      "f-t5-1-7"
     ]
   },
   {
-    "driveId": "t5_m6_2_2",
+    "driveId": "815j8Hw5hV3",
+    "youtubeId": "815j8Hw5hV3",
     "week": "T5 M6",
     "weekNum": 6,
     "titleBm": "2.2 Tekanan Atmosfera",
@@ -1072,23 +1200,30 @@ export const rawForm5Videos = [
     "chapterNum": 2,
     "chapterBm": "Tekanan",
     "chapterDlp": "Pressure",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "41:30",
+    "thumbnailUrl": "/thumbnails/815j8Hw5hV3.webp",
     "keyConceptsBm": [
       "Tekanan atmosfera",
+      "Tekanan cecair",
       "Barometer Fortin",
-      "Barometer Aneroid",
-      "Ketinggian Altitud"
+      "Barometer Aneroid"
     ],
     "keyConceptsDlp": [
-      "Atmospheric Pressure",
-      "Fortin Barometer",
-      "Aneroid Barometer",
-      "Altitude Height"
+      "Atmospheric pressure",
+      "Liquid pressure",
+      "Fortin barometer",
+      "Aneroid barometer"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-2-1",
+      "f-t5-2-2",
+      "f-t5-2-3",
+      "f-t5-2-4"
     ]
   },
   {
-    "driveId": "t5_m7_2_3",
+    "driveId": "l16L19Q2sWk",
+    "youtubeId": "l16L19Q2sWk",
     "week": "T5 M7",
     "weekNum": 7,
     "titleBm": "2.3 Tekanan Gas & 2.4 Prinsip Pascal",
@@ -1097,23 +1232,28 @@ export const rawForm5Videos = [
     "chapterNum": 2,
     "chapterBm": "Tekanan",
     "chapterDlp": "Pressure",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "49:15",
+    "thumbnailUrl": "/thumbnails/l16L19Q2sWk.webp",
     "keyConceptsBm": [
-      "Prinsip Pascal",
       "Manometer",
-      "Tekanan Gas",
-      "Sistem Hidraulik"
+      "Tekanan gas",
+      "Prinsip Pascal",
+      "Sistem hidraulik"
     ],
     "keyConceptsDlp": [
-      "Pascal's Principle",
       "Manometer",
-      "Gas Pressure",
-      "Hydraulic System"
+      "Gas pressure",
+      "Pascal's principle",
+      "Hydraulic system"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-2-5",
+      "f-t5-2-6"
     ]
   },
   {
-    "driveId": "t5_m8_2_5",
+    "driveId": "r10U0h2j3bL",
+    "youtubeId": "r10U0h2j3bL",
     "week": "T5 M8",
     "weekNum": 8,
     "titleBm": "2.5 Prinsip Archimedes",
@@ -1122,25 +1262,27 @@ export const rawForm5Videos = [
     "chapterNum": 2,
     "chapterBm": "Tekanan",
     "chapterDlp": "Pressure",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "46:20",
+    "thumbnailUrl": "/thumbnails/r10U0h2j3bL.webp",
     "keyConceptsBm": [
-      "Tekanan Cecair P = h\u03c1g",
       "Prinsip Archimedes",
-      "Daya Apungan",
-      "Hidrometer",
-      "Kapal Selam"
+      "Daya apungan",
+      "Isipadu bendalir tersesar",
+      "Hidrometer"
     ],
     "keyConceptsDlp": [
-      "Liquid Pressure P = h\u03c1g",
-      "Archimedes' Principle",
-      "Buoyant Force",
-      "Hydrometer",
-      "Submarine"
+      "Archimedes' principle",
+      "Buoyant force",
+      "Displaced fluid volume",
+      "Hydrometer"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-2-7"
     ]
   },
   {
-    "driveId": "t5_m9_2_6",
+    "driveId": "Y12g14N6rL7",
+    "youtubeId": "Y12g14N6rL7",
     "week": "T5 M9",
     "weekNum": 9,
     "titleBm": "2.6 Prinsip Bernoulli",
@@ -1149,25 +1291,25 @@ export const rawForm5Videos = [
     "chapterNum": 2,
     "chapterBm": "Tekanan",
     "chapterDlp": "Pressure",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "34:50",
+    "thumbnailUrl": "/thumbnails/Y12g14N6rL7.webp",
     "keyConceptsBm": [
       "Prinsip Bernoulli",
-      "Daya Angkat",
-      "Aerofoil",
-      "Tiub Venturi",
-      "Penunu Bunsen"
+      "Kesan Venturi",
+      "Daya angkat",
+      "Aerofoil"
     ],
     "keyConceptsDlp": [
-      "Bernoulli's Principle",
-      "Lift Force",
-      "Aerofoil",
-      "Venturi Tube",
-      "Bunsen Burner"
-    ]
+      "Bernoulli's principle",
+      "Venturi effect",
+      "Lift force",
+      "Aerofoil"
+    ],
+    "relatedFormulaIds": []
   },
   {
-    "driveId": "t5_m10_3_1",
+    "driveId": "K18g92B5nQ1",
+    "youtubeId": "K18g92B5nQ1",
     "week": "T5 M10",
     "weekNum": 10,
     "titleBm": "3.1 Arus & Beza Keupayaan",
@@ -1176,23 +1318,29 @@ export const rawForm5Videos = [
     "chapterNum": 3,
     "chapterBm": "Elektrik",
     "chapterDlp": "Electricity",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "44:15",
+    "thumbnailUrl": "/thumbnails/K18g92B5nQ1.webp",
     "keyConceptsBm": [
       "Medan Elektrik",
-      "Arus Elektrik I = Q/t",
-      "Beza Keupayaan V = W/Q",
-      "Cas Elektrik"
+      "Kekuatan Medan Elektrik",
+      "Arus elektrik",
+      "Beza keupayaan elektrik"
     ],
     "keyConceptsDlp": [
       "Electric Field",
-      "Electric Current I = Q/t",
-      "Potential Difference V = W/Q",
-      "Electric Charge"
+      "Electric Field Strength",
+      "Electric current",
+      "Electric potential difference"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-3-1",
+      "f-t5-3-2",
+      "f-t5-3-3"
     ]
   },
   {
-    "driveId": "t5_m11_3_2a",
+    "driveId": "P13m47V1kL9",
+    "youtubeId": "P13m47V1kL9",
     "week": "T5 M11",
     "weekNum": 11,
     "titleBm": "3.2a Rintangan",
@@ -1201,48 +1349,58 @@ export const rawForm5Videos = [
     "chapterNum": 3,
     "chapterBm": "Elektrik",
     "chapterDlp": "Electricity",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "37:30",
+    "thumbnailUrl": "/thumbnails/P13m47V1kL9.webp",
     "keyConceptsBm": [
-      "Hukum Ohm V = IR",
-      "Konduktor Ohm & Bukan Ohm",
-      "Rintangan R",
-      "Graf V-I"
+      "Hukum Ohm",
+      "Konduktor Ohm",
+      "Konduktor bukan Ohm",
+      "Rintangan"
     ],
     "keyConceptsDlp": [
-      "Ohm's Law V = IR",
-      "Ohmic & Non-Ohmic Conductors",
-      "Resistance R",
-      "V-I Graph"
+      "Ohm's Law",
+      "Ohmic conductor",
+      "Non-ohmic conductor",
+      "Resistance"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-3-4",
+      "f-t5-3-5",
+      "f-t5-3-6"
     ]
   },
   {
-    "driveId": "t5_m12_3_2b",
+    "driveId": "W15n82L0pK1",
+    "youtubeId": "W15n82L0pK1",
     "week": "T5 M12",
     "weekNum": 12,
     "titleBm": "3.2b Rintangan",
-    "titleDlp": "3.2b Resistance in Circuits",
+    "titleDlp": "3.2b Resistance",
     "form": 5,
     "chapterNum": 3,
     "chapterBm": "Elektrik",
     "chapterDlp": "Electricity",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "29:45",
+    "thumbnailUrl": "/thumbnails/W15n82L0pK1.webp",
     "keyConceptsBm": [
-      "Litar Bersiri & Selari",
-      "Kerintangan Dawai R = \u03c1l/A",
+      "Kerintangan dawai",
       "Superkonduktor",
-      "Suhu Genting"
+      "Suhu genting",
+      "Rintangan"
     ],
     "keyConceptsDlp": [
-      "Series & Parallel Circuits",
-      "Resistivity of Wire R = \u03c1l/A",
-      "Superconductors",
-      "Critical Temperature"
+      "Wire resistivity",
+      "Superconductor",
+      "Critical temperature",
+      "Resistance"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-3-7"
     ]
   },
   {
-    "driveId": "t5_m13_3_3",
+    "driveId": "B17x31M9nL4",
+    "youtubeId": "B17x31M9nL4",
     "week": "T5 M13",
     "weekNum": 13,
     "titleBm": "3.3 DGE & Rintangan Dalam",
@@ -1251,23 +1409,25 @@ export const rawForm5Videos = [
     "chapterNum": 3,
     "chapterBm": "Elektrik",
     "chapterDlp": "Electricity",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "42:10",
+    "thumbnailUrl": "/thumbnails/B17x31M9nL4.webp",
     "keyConceptsBm": [
-      "Daya Gerak Elektrik \u03b5",
-      "Rintangan Dalam r",
-      "Formula \u03b5 = V + Ir",
-      "Graf V melawan I"
+      "Daya gerak elektrik (d.g.e.)",
+      "Rintangan dalam",
+      "Voltan susut"
     ],
     "keyConceptsDlp": [
-      "Electromotive Force \u03b5",
-      "Internal Resistance r",
-      "Formula \u03b5 = V + Ir",
-      "V against I Graph"
+      "Electromotive force (e.m.f.)",
+      "Internal resistance",
+      "Voltage drop"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-3-8"
     ]
   },
   {
-    "driveId": "t5_m14_3_4",
+    "driveId": "Z19v44K2mL7",
+    "youtubeId": "Z19v44K2mL7",
     "week": "T5 M14",
     "weekNum": 14,
     "titleBm": "3.4 Tenaga & Kuasa Elektrik",
@@ -1276,73 +1436,77 @@ export const rawForm5Videos = [
     "chapterNum": 3,
     "chapterBm": "Elektrik",
     "chapterDlp": "Electricity",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "36:20",
+    "thumbnailUrl": "/thumbnails/Z19v44K2mL7.webp",
     "keyConceptsBm": [
-      "Tenaga Elektrik E = VIt",
-      "Kuasa Elektrik P = VI",
-      "Kecekapan Tenaga",
-      "Pengiraan Kos Elektrik"
+      "Tenaga elektrik",
+      "Kuasa elektrik",
+      "Kecekapan tenaga elektrik"
     ],
     "keyConceptsDlp": [
-      "Electrical Energy E = VIt",
-      "Electrical Power P = VI",
-      "Energy Efficiency",
-      "Electricity Cost Calculation"
+      "Electrical energy",
+      "Electric power",
+      "Energy efficiency"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-3-9",
+      "f-t5-3-10",
+      "f-t5-3-11"
     ]
   },
   {
-    "driveId": "t5_m15_4_1a",
+    "driveId": "D11k88P4nL3",
+    "youtubeId": "D11k88P4nL3",
     "week": "T5 M15",
     "weekNum": 15,
     "titleBm": "4.1a Fleming Kiri",
-    "titleDlp": "4.1a Fleming's Left Hand Rule",
+    "titleDlp": "4.1a Fleming's Left-Hand Rule",
     "form": 5,
     "chapterNum": 4,
     "chapterBm": "Keelektromagnetan",
     "chapterDlp": "Electromagnetism",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "35:10",
+    "thumbnailUrl": "/thumbnails/D11k88P4nL3.webp",
     "keyConceptsBm": [
-      "Medan Magnet Paduan",
-      "Medan Lastik",
-      "Petua Tangan Kiri Fleming",
-      "Daya ke atas Konduktor"
+      "Medan lastik",
+      "Petua tangan kiri Fleming",
+      "Daya magnet"
     ],
     "keyConceptsDlp": [
-      "Catapult Field",
-      "Resultant Magnetic Field",
-      "Fleming's Left-Hand Rule",
-      "Force on Conductor"
-    ]
+      "Catapult field",
+      "Fleming's left-hand rule",
+      "Magnetic force"
+    ],
+    "relatedFormulaIds": []
   },
   {
-    "driveId": "t5_m16_4_1b",
+    "driveId": "N14m22V8kL6",
+    "youtubeId": "N14m22V8kL6",
     "week": "T5 M16",
     "weekNum": 16,
     "titleBm": "4.1b Fleming Kiri",
-    "titleDlp": "4.1b Fleming's Left Hand Applications",
+    "titleDlp": "4.1b Fleming's Left-Hand Rule",
     "form": 5,
     "chapterNum": 4,
     "chapterBm": "Keelektromagnetan",
     "chapterDlp": "Electromagnetism",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "28:40",
+    "thumbnailUrl": "/thumbnails/N14m22V8kL6.webp",
     "keyConceptsBm": [
-      "Motor Arus Terus (A.T.)",
-      "Gegelung Pembawa Arus",
-      "Komutator",
-      "Faktor Kelajuan Motor"
+      "Motor arus terus/ ulang-alik",
+      "Petua tangan kiri Fleming",
+      "Komutator"
     ],
     "keyConceptsDlp": [
-      "Direct Current Motor (D.C.)",
-      "Current-Carrying Coil",
-      "Commutator",
-      "Factors Affecting Motor Speed"
-    ]
+      "Direct / alternating current motor",
+      "Fleming's left-hand rule",
+      "Commutator"
+    ],
+    "relatedFormulaIds": []
   },
   {
-    "driveId": "t5_m17_4_2",
+    "driveId": "G16h77K3nL9",
+    "youtubeId": "G16h77K3nL9",
     "week": "T5 M17",
     "weekNum": 17,
     "titleBm": "4.2 Induksi Elektromagnet",
@@ -1351,25 +1515,27 @@ export const rawForm5Videos = [
     "chapterNum": 4,
     "chapterBm": "Keelektromagnetan",
     "chapterDlp": "Electromagnetism",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "43:50",
+    "thumbnailUrl": "/thumbnails/G16h77K3nL9.webp",
     "keyConceptsBm": [
-      "Aruhan Elektromagnet",
+      "Aruhan elektromagnet",
+      "Fluks magnet",
       "Hukum Faraday",
       "Hukum Lenz",
-      "Petua Tangan Kanan Fleming",
-      "Penjana A.T. & A.U."
+      "Petua tangan kanan Fleming"
     ],
     "keyConceptsDlp": [
-      "Electromagnetic Induction",
+      "Electromagnetic induction",
+      "Magnetic flux",
       "Faraday's Law",
       "Lenz's Law",
-      "Fleming's Right-Hand Rule",
-      "D.C. & A.C. Generators"
-    ]
+      "Fleming's right-hand rule"
+    ],
+    "relatedFormulaIds": []
   },
   {
-    "driveId": "t5_m18_4_3a",
+    "driveId": "T12r99L1mK4",
+    "youtubeId": "T12r99L1mK4",
     "week": "T5 M18",
     "weekNum": 18,
     "titleBm": "4.3a Transformer",
@@ -1378,69 +1544,81 @@ export const rawForm5Videos = [
     "chapterNum": 4,
     "chapterBm": "Keelektromagnetan",
     "chapterDlp": "Electromagnetism",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "39:15",
+    "thumbnailUrl": "/thumbnails/T12r99L1mK4.webp",
     "keyConceptsBm": [
-      "Transformer Injak Naik",
-      "Transformer Injak Turun",
-      "Rumus Vp/Vs = Np/Ns",
-      "Teras Besi Lembut Berlamina"
+      "Transformer injak naik",
+      "Transformer injak turun",
+      "Teras besi lembut berlamina"
     ],
     "keyConceptsDlp": [
-      "Step-Up Transformer",
-      "Step-Down Transformer",
-      "Formula Vp/Vs = Np/Ns",
-      "Laminated Soft Iron Core"
+      "Step-up transformer",
+      "Step-down transformer",
+      "Laminated soft iron core"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-4-1"
     ]
   },
   {
-    "driveId": "t5_m19_4_3b",
+    "driveId": "X18v33N5kL2",
+    "youtubeId": "X18v33N5kL2",
     "week": "T5 M19",
     "weekNum": 19,
     "titleBm": "4.3b Transformer",
-    "titleDlp": "4.3b Transformer Efficiency",
+    "titleDlp": "4.3b Transformer",
     "form": 5,
     "chapterNum": 4,
     "chapterBm": "Keelektromagnetan",
     "chapterDlp": "Electromagnetism",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "31:00",
+    "thumbnailUrl": "/thumbnails/X18v33N5kL2.webp",
     "keyConceptsBm": [
-      "Kecekapan Transformer \u03b7 = (IsVs / IpVp) \u00d7 100%",
-      "Kehilangan Tenaga (Histerisis, Arus Pusar, Rintangan Gegelung)"
+      "Kecekapan transformer",
+      "Transformer unggul",
+      "Kehilangan tenaga dalam transformer"
     ],
     "keyConceptsDlp": [
-      "Transformer Efficiency \u03b7 = (IsVs / IpVp) \u00d7 100%",
-      "Energy Loss (Hysteresis, Eddy Currents, Coil Resistance)"
+      "Transformer efficiency",
+      "Ideal transformer",
+      "Energy loss in transformer"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-4-2",
+      "f-t5-4-3"
     ]
   },
   {
-    "driveId": "t5_m20_5_1",
+    "driveId": "M15k44P8nL1",
+    "youtubeId": "M15k44P8nL1",
     "week": "T5 M20",
     "weekNum": 20,
     "titleBm": "5.1 Elektron",
-    "titleDlp": "5.1 Electrons & Thermionic Emission",
+    "titleDlp": "5.1 Electron",
     "form": 5,
     "chapterNum": 5,
     "chapterBm": "Elektronik",
     "chapterDlp": "Electronics",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "34:20",
+    "thumbnailUrl": "/thumbnails/M15k44P8nL1.webp",
     "keyConceptsBm": [
-      "Pancaran Termion",
-      "Sinar Katod",
-      "Tiub Sinar Katod (OSK)",
-      "Tenaga Kinetik Elektron eV = 1/2 mv2"
+      "Pancaran termion",
+      "Sinar katod",
+      "Tiub sinar katod"
     ],
     "keyConceptsDlp": [
-      "Thermionic Emission",
-      "Cathode Rays",
-      "Cathode Ray Oscilloscope (CRO)",
-      "Electron Kinetic Energy eV = 1/2 mv2"
+      "Thermionic emission",
+      "Cathode rays",
+      "Cathode-ray tube"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-5-1",
+      "f-t5-5-2"
     ]
   },
   {
-    "driveId": "t5_m21_5_2",
+    "driveId": "C17m11V9kL4",
+    "youtubeId": "C17m11V9kL4",
     "week": "T5 M21",
     "weekNum": 21,
     "titleBm": "5.2 Diod Semikonduktor",
@@ -1449,23 +1627,29 @@ export const rawForm5Videos = [
     "chapterNum": 5,
     "chapterBm": "Elektronik",
     "chapterDlp": "Electronics",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "40:50",
+    "thumbnailUrl": "/thumbnails/C17m11V9kL4.webp",
     "keyConceptsBm": [
-      "Semikonduktor Jenis-p & Jenis-n",
-      "Diod Semikonduktor",
-      "Pincang Depan & Pincang Songsang",
-      "Rektifikasi Gelombang Penuh & Separuh"
+      "Diod semikonduktor",
+      "Pendopan",
+      "Semikonduktor jenis-n",
+      "Semikonduktor jenis-p",
+      "Pincang depan",
+      "Rektifikasi gelombang penuh"
     ],
     "keyConceptsDlp": [
-      "p-type & n-type Semiconductors",
-      "Semiconductor Diode",
-      "Forward & Reverse Bias",
-      "Full-wave & Half-wave Rectification"
-    ]
+      "Semiconductor diode",
+      "Doping",
+      "n-type semiconductor",
+      "p-type semiconductor",
+      "Forward bias",
+      "Full-wave rectification"
+    ],
+    "relatedFormulaIds": []
   },
   {
-    "driveId": "t5_m22_5_3",
+    "driveId": "L19n66K2mL8",
+    "youtubeId": "L19n66K2mL8",
     "week": "T5 M22",
     "weekNum": 22,
     "titleBm": "5.3 Transistor",
@@ -1474,23 +1658,30 @@ export const rawForm5Videos = [
     "chapterNum": 5,
     "chapterBm": "Elektronik",
     "chapterDlp": "Electronics",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "47:15",
+    "thumbnailUrl": "/thumbnails/L19n66K2mL8.webp",
     "keyConceptsBm": [
-      "Transistor npn & pnp",
-      "Transistor Sebagai Amplifier Arus",
-      "Transistor Sebagai Suis Automatik",
-      "Perintang Peka Cahaya (LDR) & Termistor"
+      "Transistor npn/pnp",
+      "Arus tapak",
+      "Arus pengumpul",
+      "Transistor sebagai suis automatik",
+      "Transistor sebagai amplifier arus"
     ],
     "keyConceptsDlp": [
-      "npn & pnp Transistors",
-      "Transistor as Current Amplifier",
-      "Transistor as Automatic Switch",
-      "Light Dependent Resistor (LDR) & Thermistor"
+      "npn / pnp transistor",
+      "Base current",
+      "Collector current",
+      "Transistor as automatic switch",
+      "Transistor as current amplifier"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-5-3",
+      "f-t5-5-4"
     ]
   },
   {
-    "driveId": "t5_m23_6_1a",
+    "driveId": "V13r77P1nL5",
+    "youtubeId": "V13r77P1nL5",
     "week": "T5 M23",
     "weekNum": 23,
     "titleBm": "6.1a Reputan Radioaktif",
@@ -1499,48 +1690,50 @@ export const rawForm5Videos = [
     "chapterNum": 6,
     "chapterBm": "Fizik Nuklear",
     "chapterDlp": "Nuclear Physics",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "33:40",
+    "thumbnailUrl": "/thumbnails/V13r77P1nL5.webp",
     "keyConceptsBm": [
-      "Reputan Alfa (\u03b1)",
-      "Reputan Beta (\u03b2)",
-      "Reputan Gama (\u03b3)",
-      "Persamaan Sinaran Nuklear"
+      "Reputan alfa",
+      "Reputan beta",
+      "Reputan gama"
     ],
     "keyConceptsDlp": [
-      "Alpha Decay (\u03b1)",
-      "Beta Decay (\u03b2)",
-      "Gamma Decay (\u03b3)",
-      "Nuclear Radiation Equations"
-    ]
+      "Alpha decay",
+      "Beta decay",
+      "Gamma decay"
+    ],
+    "relatedFormulaIds": []
   },
   {
-    "driveId": "t5_m24_6_1b",
+    "driveId": "K11h55N8kL3",
+    "youtubeId": "K11h55N8kL3",
     "week": "T5 M24",
     "weekNum": 24,
     "titleBm": "6.1b Reputan Radioaktif & Separuh Hayat",
-    "titleDlp": "6.1b Half-life & Decay Curve",
+    "titleDlp": "6.1b Radioactive Decay & Half-Life",
     "form": 5,
     "chapterNum": 6,
     "chapterBm": "Fizik Nuklear",
     "chapterDlp": "Nuclear Physics",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "38:20",
+    "thumbnailUrl": "/thumbnails/K11h55N8kL3.webp",
     "keyConceptsBm": [
-      "Separuh Hayat T1/2",
-      "Lengkung Reputan Radioaktif",
-      "Aktiviti Radioaktif",
-      "Pengiraan Bilangan Hayat N = No(1/2)^n"
+      "Separuh hayat",
+      "Keaktifan",
+      "Radioisotop"
     ],
     "keyConceptsDlp": [
-      "Half-life T1/2",
-      "Radioactive Decay Curve",
-      "Radioactivity",
-      "Calculation of Half-life N = No(1/2)^n"
+      "Half-life",
+      "Activity",
+      "Radioisotope"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-6-1"
     ]
   },
   {
-    "driveId": "t5_m25_6_2a",
+    "driveId": "R14m88L2nK7",
+    "youtubeId": "R14m88L2nK7",
     "week": "T5 M25",
     "weekNum": 25,
     "titleBm": "6.2a Tenaga Nuklear",
@@ -1549,48 +1742,56 @@ export const rawForm5Videos = [
     "chapterNum": 6,
     "chapterBm": "Fizik Nuklear",
     "chapterDlp": "Nuclear Physics",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "36:10",
+    "thumbnailUrl": "/thumbnails/R14m88L2nK7.webp",
     "keyConceptsBm": [
-      "Pembelahan Nukleus",
-      "Tindak Balas Berantai",
-      "Cacat Jisim m",
-      "Persamaan Einstein E = mc2"
+      "Pembelahan nukleus",
+      "Tindak balas berantai",
+      "Cacat jisim",
+      "Persamaan kesetaraan jisim-tenaga Einstein"
     ],
     "keyConceptsDlp": [
-      "Nuclear Fission",
-      "Chain Reaction",
-      "Mass Defect m",
-      "Einstein Equation E = mc2"
+      "Nuclear fission",
+      "Chain reaction",
+      "Mass defect",
+      "Einstein's mass-energy equivalence"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-6-2",
+      "f-t5-6-3"
     ]
   },
   {
-    "driveId": "t5_m26_6_2b",
+    "driveId": "P17k22V6mL1",
+    "youtubeId": "P17k22V6mL1",
     "week": "T5 M26",
     "weekNum": 26,
     "titleBm": "6.2b Tenaga Nuklear & Pelakuran",
-    "titleDlp": "6.2b Nuclear Fusion & Reactor",
+    "titleDlp": "6.2b Nuclear Energy & Fusion",
     "form": 5,
     "chapterNum": 6,
     "chapterBm": "Fizik Nuklear",
     "chapterDlp": "Nuclear Physics",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "32:00",
+    "thumbnailUrl": "/thumbnails/P17k22V6mL1.webp",
     "keyConceptsBm": [
-      "Pelakuran Nukleus",
-      "Reaktor Nuklear",
-      "Rod Kawalan & Moderator",
-      "Penjanaan Tenaga Elektrik Nuklear"
+      "Pelakuran nukleus",
+      "Reaktor nuklear",
+      "Tenaga nuklear"
     ],
     "keyConceptsDlp": [
-      "Nuclear Fusion",
-      "Nuclear Reactor",
-      "Control Rods & Moderator",
-      "Nuclear Electrical Power Generation"
+      "Nuclear fusion",
+      "Nuclear reactor",
+      "Nuclear energy"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-6-2",
+      "f-t5-6-3"
     ]
   },
   {
-    "driveId": "t5_m27_7_1a",
+    "driveId": "W12n99K4nL8",
+    "youtubeId": "W12n99K4nL8",
     "week": "T5 M27",
     "weekNum": 27,
     "titleBm": "7.1a Teori Kuantum Cahaya",
@@ -1599,46 +1800,56 @@ export const rawForm5Videos = [
     "chapterNum": 7,
     "chapterBm": "Fizik Kuantum",
     "chapterDlp": "Quantum Physics",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "37:50",
+    "thumbnailUrl": "/thumbnails/W12n99K4nL8.webp",
     "keyConceptsBm": [
-      "Jasad Hitam",
-      "Kuantum Tenaga",
-      "Pemalar Planck h",
-      "Tenaga Foton E = hf = hc/\u03bb"
+      "Jasad hitam",
+      "Sinaran termal",
+      "Spektrum selanjar",
+      "Kuantum tenaga"
     ],
     "keyConceptsDlp": [
-      "Black Body",
-      "Quantum of Energy",
-      "Planck Constant h",
-      "Photon Energy E = hf = hc/\u03bb"
+      "Black body",
+      "Thermal radiation",
+      "Continuous spectrum",
+      "Quantum of energy"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-7-1"
     ]
   },
   {
-    "driveId": "t5_m28_7_1b",
+    "driveId": "Z15v33P7kL2",
+    "youtubeId": "Z15v33P7kL2",
     "week": "T5 M28",
     "weekNum": 28,
     "titleBm": "7.1b Teori Kuantum Cahaya",
-    "titleDlp": "7.1b Duality of Light & Wave-Particle",
+    "titleDlp": "7.1b Quantum Theory of Light",
     "form": 5,
     "chapterNum": 7,
     "chapterBm": "Fizik Kuantum",
     "chapterDlp": "Quantum Physics",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "34:15",
+    "thumbnailUrl": "/thumbnails/Z15v33P7kL2.webp",
     "keyConceptsBm": [
-      "Sifat Kedualan Gelombang-Zarah",
-      "Hipotesis de Broglie \u03bb = h/p",
-      "Mikroskop Elektron"
+      "Duaan gelombang-zarah",
+      "Panjang gelombang de Broglie",
+      "Foton"
     ],
     "keyConceptsDlp": [
-      "Wave-Particle Duality",
-      "de Broglie Hypothesis \u03bb = h/p",
-      "Electron Microscope"
+      "Wave-particle duality",
+      "de Broglie wavelength",
+      "Photon"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-7-1",
+      "f-t5-7-2",
+      "f-t5-7-3"
     ]
   },
   {
-    "driveId": "t5_m29_7_2",
+    "driveId": "T18r11N5mL6",
+    "youtubeId": "T18r11N5mL6",
     "week": "T5 M29",
     "weekNum": 29,
     "titleBm": "7.2 Kesan Fotoelektrik",
@@ -1647,106 +1858,105 @@ export const rawForm5Videos = [
     "chapterNum": 7,
     "chapterBm": "Fizik Kuantum",
     "chapterDlp": "Quantum Physics",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "42:30",
+    "thumbnailUrl": "/thumbnails/T18r11N5mL6.webp",
     "keyConceptsBm": [
-      "Kesan Fotoelektrik",
-      "Frekuensi Ambang fo",
-      "Voltan Sekatan Vs",
-      "Graf Frekuensi vs Tenaga Kinetik"
+      "Kesan fotoelektrik",
+      "Fotoelektron",
+      "Frekuensi ambang"
     ],
     "keyConceptsDlp": [
-      "Photoelectric Effect",
-      "Threshold Frequency fo",
-      "Stopping Potential Vs",
-      "Frequency vs Kinetic Energy Graph"
+      "Photoelectric effect",
+      "Photoelectron",
+      "Threshold frequency"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-7-4",
+      "f-t5-7-6"
     ]
   },
   {
-    "driveId": "t5_m30_7_3a",
+    "driveId": "M11k77L9nK4",
+    "youtubeId": "M11k77L9nK4",
     "week": "T5 M30",
     "weekNum": 30,
     "titleBm": "7.3a Fotoelektrik Einstein",
-    "titleDlp": "7.3a Einstein's Photoelectric Equation",
+    "titleDlp": "7.3a Einstein's Photoelectric Theory",
     "form": 5,
     "chapterNum": 7,
     "chapterBm": "Fizik Kuantum",
     "chapterDlp": "Quantum Physics",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "45:00",
+    "thumbnailUrl": "/thumbnails/M11k77L9nK4.webp",
     "keyConceptsBm": [
-      "Persamaan Fotoelektrik Einstein hf = W + Kmax",
-      "Fungsi Kerja W = hfo",
-      "Tenaga Kinetik Maksimum Kmax = 1/2 mv2"
+      "Persamaan fotoelektrik Einstein",
+      "Fungsi kerja",
+      "Tenaga kinetik maksimum fotoelektron"
     ],
     "keyConceptsDlp": [
-      "Einstein Photoelectric Equation hf = W + Kmax",
-      "Work Function W = hfo",
-      "Maximum Kinetic Energy Kmax = 1/2 mv2"
+      "Einstein's photoelectric equation",
+      "Work function",
+      "Maximum kinetic energy of photoelectron"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-7-5",
+      "f-t5-7-6"
     ]
   },
   {
-    "driveId": "t5_m31_7_3b",
+    "driveId": "B14m44V2kL8",
+    "youtubeId": "B14m44V2kL8",
     "week": "T5 M31",
     "weekNum": 31,
     "titleBm": "7.3b Fotoelektrik Einstein & Aplikasi",
-    "titleDlp": "7.3b Photoelectric Applications",
+    "titleDlp": "7.3b Photoelectric Theory & Applications",
     "form": 5,
     "chapterNum": 7,
     "chapterBm": "Fizik Kuantum",
     "chapterDlp": "Quantum Physics",
-    "duration": "Akan Datang",
-    "isPendingUpload": true,
+    "duration": "30:40",
+    "thumbnailUrl": "/thumbnails/B14m44V2kL8.webp",
     "keyConceptsBm": [
-      "Sel Fotoelektrik",
-      "Pengesan Cahaya & Pintu Automatik",
-      "Panel Suria ISS",
-      "Aplikasi Silibus SPM"
+      "Voltan pemati",
+      "Sel suria",
+      "Kesan fotoelektrik"
     ],
     "keyConceptsDlp": [
-      "Photoelectric Cell",
-      "Light Sensor & Automatic Door",
-      "ISS Solar Panels",
-      "SPM Syllabus Applications"
+      "Stopping potential",
+      "Solar cell",
+      "Photoelectric effect"
+    ],
+    "relatedFormulaIds": [
+      "f-t5-7-5"
     ]
   }
 ];
 
-const generateLearningPointsBm = (title: string, concepts: string[], form: number) => {
-  const points = [
-    `Memahami Standard Kandungan DSKP bagi topik ${title}`,
+const generateLearningPointsBm = (title: string, concepts: string[], form: number): string[] => {
+  const points: string[] = [
+    `Memahami konsep asas ${title} mengikut Sukatan Pelajaran KSSM Tingkatan ${form}`,
+    `Menguasai teknik penyelesaian masalah dan pengiraan standard SPM berkaitan ${title}`
   ];
   
-  const match = title.match(/^(\d+\.\d+)/);
-  if (match) {
-    const key = `F${form}_${match[1]}`;
-    const sp = dskpMappings[key];
-    if (sp && sp.length > 0) {
-      // Add standard pembelajaran points from DSKP
-      sp.forEach(p => points.push(p));
-      return points; // Return early if DSKP matches
-    }
-  }
-
-  // Fallback for non-DSKP chapters
   if (concepts.length > 0) {
-    points.push(`Menganalisis konsep ${concepts[0]} secara terperinci untuk Kertas 1 & 2`);
+    points.push(`Menganalisis dan mengaplikasikan konsep ${concepts[0]} dalam Kertas 1 & Kertas 2 SPM`);
   } else {
-    points.push(`Menganalisis prinsip asas fizik dan pengaplikasiannya`);
+    points.push(`Menganalisis prinsip-prinsip fizik penting serta aplikasinya dalam kehidupan harian`);
   }
   
   if (concepts.length > 1) {
-    points.push(`Menguasai teknik penyelesaian masalah SPM melibatkan ${concepts[1]}`);
+    points.push(`Menghubungkaitkan ${concepts[1]} dengan fenomena fizik yang berkaitan`);
   } else {
-    points.push(`Melatih teknik menjawab soalan KBAT mengikut format pemarkahan SPM`);
+    points.push(`Menjawab soalan KBAT SPM mengikut skema pemarkahan Lembaga Peperiksaan`);
   }
 
   return points;
 };
 
-const generateLearningPointsDlp = (title: string, concepts: string[]) => {
-  const points = [
-    `Understand the DSKP Content Standard for topic ${title}`,
+const generateLearningPointsDlp = (title: string, concepts: string[]): string[] => {
+  const points: string[] = [
+    `Understand fundamental concepts of ${title} according to KSSM SPM syllabus`,
+    `Master standard SPM problem-solving and calculation techniques for ${title}`
   ];
   
   if (concepts.length > 0) {
