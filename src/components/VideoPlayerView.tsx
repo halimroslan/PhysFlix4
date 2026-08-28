@@ -20,7 +20,9 @@ import {
   Copy,
   Check,
   BookOpen,
-  ArrowRightLeft
+  ArrowRightLeft,
+  Lightbulb,
+  GraduationCap
 } from "lucide-react";
 import QuizComponent from "./QuizComponent";
 import { useLanguage } from "@/context/LanguageContext";
@@ -28,6 +30,7 @@ import { VideoLesson, allVideoLessons } from "@/data/physicsData";
 import { conceptDefinitions } from "@/data/conceptDefinitions";
 import { allKamusTerms, DictTerm } from "@/data/kamusData";
 import { allFormulas, FormulaItem } from "@/data/formulaData";
+import { getLessonCheatNote } from "@/data/cheatNotesData";
 import { MathFormula } from "@/components/MathFormula";
 import { deobfuscateId } from "@/utils/security";
 import { useUserActivity } from "@/context/UserActivityContext";
@@ -745,68 +748,119 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               </div>
             )}
 
-            {activeTab === "notes" && (
-              <div className="p-5 rounded-2xl bg-[#111624] border border-slate-800 space-y-5 text-xs text-slate-300 leading-relaxed">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-red-400" />
-                    {lang === "bm" ? "Ringkasan Nota & Rumus Topik Ini" : "Topic Summary Notes & Formulas"}
-                  </h3>
-                  <span className="text-[11px] text-slate-400">
-                    {currentLesson.chapterBm} (Tingkatan {currentLesson.form})
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 bg-slate-900/80 border border-slate-800 rounded-xl space-y-2">
-                    <h4 className="font-bold text-slate-200 text-xs">
-                      {lang === "bm" ? "Panduan Menjawab SPM:" : "SPM Answering Guide:"}
-                    </h4>
-                    <ul className="space-y-1.5 list-disc list-inside text-slate-400 text-[11px]">
-                      <li>Pastikan semua kuantiti fizik ditukar kepada unit asas S.I. sebelum pengiraan.</li>
-                      <li>Tulis rumus fizik yang betul sebelum menggantikan nilai pembolehubah.</li>
-                      <li>Nyatakan jawapan akhir dengan unit S.I. dan bilangan angka bererti yang tepat.</li>
-                    </ul>
-                  </div>
-
-                  <div className="p-4 bg-slate-900/80 border border-slate-800 rounded-xl space-y-2">
-                    <h4 className="font-bold text-slate-200 text-xs">
-                      {lang === "bm" ? "Kata Kunci Penting (Kamus):" : "Important Keywords:"}
-                    </h4>
-                    <div className="flex flex-wrap gap-1.5">
-                      {(lang === "bm" ? currentLesson.keyConceptsBm : currentLesson.keyConceptsDlp).map((c, idx) => (
-                        <span key={idx} className="px-2 py-0.5 bg-slate-800 border border-slate-700 text-slate-300 text-[10px] rounded">
-                          {c}
-                        </span>
-                      ))}
+            {activeTab === "notes" && (() => {
+              const cheatNote = getLessonCheatNote(currentLesson.id) || getLessonCheatNote(currentLesson.driveId);
+              return (
+                <div className="p-5 rounded-2xl bg-[#111624] border border-slate-800 space-y-6 text-xs text-slate-300 leading-relaxed">
+                  {/* Header */}
+                  <div className="flex items-center justify-between border-b border-slate-800/80 pb-4 flex-wrap gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 bg-red-600/20 text-red-400 border border-red-500/30 rounded-xl">
+                        <FileText className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                          {lang === "bm" ? "Ringkasan Nota" : "Summary Notes"}
+                        </h3>
+                        <p className="text-[11px] text-slate-400">
+                          {cheatNote?.dskpStandard || `${currentLesson.chapterBm} (Tingkatan ${currentLesson.form})`}
+                        </p>
+                      </div>
                     </div>
+                    <span className="px-3 py-1 bg-slate-800/90 border border-slate-700/80 text-slate-300 text-xs font-semibold rounded-lg">
+                      {currentLesson.chapterBm} • T{currentLesson.form}
+                    </span>
                   </div>
-                </div>
 
-                {relatedFormulas.length > 0 && (
-                  <div className="space-y-3 pt-2">
-                    <h4 className="font-bold text-slate-200 text-xs">
-                      {lang === "bm" ? "Formula Berkaitan Dalam Topik Ini:" : "Related Formulas in This Topic:"}
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {relatedFormulas.map((f) => (
-                        <div key={f.id} className="p-3 bg-[#161c2c] border border-slate-800 rounded-xl space-y-2">
-                          <div className="text-[10px] text-slate-400 font-semibold">
-                            {lang === "bm" ? f.topicBm : f.topicDlp}
-                          </div>
-                          <div className="py-1 flex justify-center">
-                            <MathFormula latex={f.formulaDisplay || f.formula} className="text-white text-base font-medium" />
-                          </div>
-                          <div className="text-[10px] text-slate-400">
-                            {lang === "bm" ? f.variablesBm : f.variablesDlp}
-                          </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                    {/* Core Summary Points from CheatNote (7 cols) */}
+                    <div className="lg:col-span-7 space-y-4">
+                      <div className="p-4 bg-slate-900/90 border border-slate-700/70 rounded-xl space-y-3">
+                        <h4 className="font-extrabold text-slate-200 text-xs uppercase tracking-wider flex items-center gap-2 text-cyan-400">
+                          <BookOpen className="w-4 h-4" />
+                          {lang === "bm" ? "Fakta & Konsep Utama (CheatNote):" : "Key Facts & Concepts (CheatNote):"}
+                        </h4>
+                        <ul className="space-y-2.5">
+                          {(cheatNote ? (lang === "bm" ? cheatNote.summaryPointsBm : cheatNote.summaryPointsDlp) : []).map(
+                            (point, idx) => (
+                              <li key={idx} className="flex items-start gap-2.5 text-slate-300 text-xs leading-relaxed">
+                                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0 mt-1.5" />
+                                <span>{point}</span>
+                              </li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    </div>
+
+                    {/* SPM Exam Tips & Keywords (5 cols) */}
+                    <div className="lg:col-span-5 space-y-4">
+                      <div className="p-4 bg-amber-950/20 border border-amber-800/50 rounded-xl space-y-3">
+                        <h4 className="font-extrabold text-amber-400 text-xs uppercase tracking-wider flex items-center gap-2">
+                          <Lightbulb className="w-4 h-4" />
+                          {lang === "bm" ? "Tip Peperiksaan & Perangkap SPM:" : "SPM Exam Tips & Common Traps:"}
+                        </h4>
+                        <ul className="space-y-2">
+                          {(cheatNote ? (lang === "bm" ? cheatNote.spmTipsBm : cheatNote.spmTipsDlp) : []).map(
+                            (tip, idx) => (
+                              <li key={idx} className="flex items-start gap-2 text-amber-200/90 text-[11px] leading-relaxed">
+                                <span className="text-amber-400 font-bold shrink-0">💡</span>
+                                <span>{tip}</span>
+                              </li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+
+                      {/* Important Keywords */}
+                      <div className="p-4 bg-slate-900/80 border border-slate-800 rounded-xl space-y-2">
+                        <h4 className="font-bold text-slate-300 text-xs flex items-center gap-1.5">
+                          <GraduationCap className="w-4 h-4 text-purple-400" />
+                          {lang === "bm" ? "Kata Kunci Penting (Kamus):" : "Essential Keywords:"}
+                        </h4>
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          {(lang === "bm" ? currentLesson.keyConceptsBm : currentLesson.keyConceptsDlp).map((c, idx) => (
+                            <span key={idx} className="px-2.5 py-1 bg-slate-800/90 border border-slate-700/80 text-slate-200 text-[11px] font-medium rounded-lg">
+                              {c}
+                            </span>
+                          ))}
                         </div>
-                      ))}
+                      </div>
                     </div>
                   </div>
-                )}
-              </div>
-            )}
+
+                  {/* Related Formulas if available */}
+                  {relatedFormulas.length > 0 && (
+                    <div className="space-y-3 pt-2 border-t border-slate-800/80">
+                      <h4 className="font-bold text-slate-200 text-xs flex items-center gap-2">
+                        <Sigma className="w-4 h-4 text-red-400" />
+                        {lang === "bm" ? "Formula Terlibat Dalam Topik Ini:" : "Formulas Involved in This Topic:"}
+                      </h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {relatedFormulas.map((f) => (
+                          <div key={f.id} className="p-3.5 bg-[#151b2d] border border-slate-700/70 rounded-xl space-y-2">
+                            <div className="text-[11px] text-slate-400 font-semibold flex items-center justify-between">
+                              <span>{lang === "bm" ? f.topicBm : f.topicDlp}</span>
+                              {f.unit && (
+                                <span className="px-1.5 py-0.5 bg-slate-800 text-slate-300 text-[10px] font-mono rounded">
+                                  {f.unit}
+                                </span>
+                              )}
+                            </div>
+                            <div className="py-1.5 flex justify-center bg-black/40 rounded-lg border border-slate-800">
+                              <MathFormula latex={f.formulaDisplay || f.formula} className="text-white text-base font-medium" />
+                            </div>
+                            <div className="text-[11px] text-slate-400 leading-relaxed">
+                              {lang === "bm" ? f.variablesBm : f.variablesDlp}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {activeTab === "qa" && (
               <div className="p-5 rounded-2xl bg-[#111624] border border-slate-800 space-y-4">
