@@ -190,49 +190,43 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     }
   }, [sidebarTab, currentLesson.id]);
 
-  const getBaseLikes = (id: string) => {
-    let hash = 0;
-    for (let i = 0; i < id.length; i++) hash = id.charCodeAt(i) + ((hash << 5) - hash);
-    return 1200 + (Math.abs(hash) % 4000);
-  };
-
   useEffect(() => {
     if (!currentLesson?.id) return;
     
     const localLiked = localStorage.getItem(`liked_${currentLesson.id}`) === "true";
     setLiked(localLiked);
 
-    const fetchLikes = async () => {
-      const baseLikes = getBaseLikes(currentLesson.id);
+    const trackViewAndFetchStats = async () => {
       if (!isSupabaseConfigured) {
-        setLikeCount(baseLikes + (localLiked ? 1 : 0));
+        setLikeCount(localLiked ? 1 : 0);
         return;
       }
 
       try {
         const { data, error } = await supabase
           .from("video_stats")
-          .select("likes")
+          .select("likes, views")
           .eq("id", currentLesson.id)
           .maybeSingle();
 
-        if (error) {
-          setLikeCount(baseLikes + (localLiked ? 1 : 0));
-        } else if (data && typeof data.likes === "number") {
-          setLikeCount(data.likes);
-        } else {
-          await supabase.from("video_stats").upsert({
-            id: currentLesson.id,
-            likes: baseLikes,
-            updated_at: new Date().toISOString(),
-          });
-          setLikeCount(baseLikes + (localLiked ? 1 : 0));
-        }
+        const currentLikes = (data && typeof data.likes === "number") ? data.likes : (localLiked ? 1 : 0);
+        const currentViews = (data && typeof data.views === "number") ? data.views : 0;
+        const newViews = currentViews + 1;
+
+        setLikeCount(currentLikes);
+
+        // Record real view increment
+        await supabase.from("video_stats").upsert({
+          id: currentLesson.id,
+          likes: currentLikes,
+          views: newViews,
+          updated_at: new Date().toISOString(),
+        });
       } catch (e) {
-        setLikeCount(baseLikes + (localLiked ? 1 : 0));
+        setLikeCount(localLiked ? 1 : 0);
       }
     };
-    fetchLikes();
+    trackViewAndFetchStats();
   }, [currentLesson]);
 
   const [comments, setComments] = useState([
@@ -251,11 +245,10 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     
     if (isSupabaseConfigured) {
       try {
-        await supabase.from("video_stats").upsert({
-          id: currentLesson.id,
+        await supabase.from("video_stats").update({
           likes: newCount,
           updated_at: new Date().toISOString(),
-        });
+        }).eq("id", currentLesson.id);
       } catch (e) {
         console.warn("Error updating likes in Supabase", e);
       }
