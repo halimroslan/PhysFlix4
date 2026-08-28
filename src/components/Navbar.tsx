@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Search, Bell, LogOut, Menu, X, ChevronDown, Book, FileText, Target, Calculator } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
+import { NotificationDropdown } from "./NotificationDropdown";
 
 interface NavbarProps {
   onSearchChange?: (val: string) => void;
@@ -30,6 +31,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(3);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
@@ -171,13 +174,36 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
 
-          {/* Notifications */}
-          <button className="relative text-white hover:text-gray-300 transition hidden sm:block">
-            <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-              3
-            </span>
-          </button>
+          {/* Notifications Dropdown */}
+          <div className="relative">
+            <button 
+              onClick={() => {
+                setIsNotificationsOpen((prev) => !prev);
+                setIsToolsDropdownOpen(false);
+              }}
+              className="relative text-white hover:text-gray-300 transition p-1.5 rounded-full hover:bg-white/10 cursor-pointer flex items-center justify-center"
+              title={lang === "bm" ? "Pemberitahuan Sistem" : "System Notifications"}
+            >
+              <Bell className="w-5 h-5" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 bg-red-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-lg shadow-red-600/50 animate-pulse">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+
+            <NotificationDropdown
+              isOpen={isNotificationsOpen}
+              onClose={() => setIsNotificationsOpen(false)}
+              onOpenDict={onOpenDict}
+              onOpenFormula={onOpenFormula}
+              onOpenCheatNote={() => {
+                setIsNotificationsOpen(false);
+                if (onTabChange) onTabChange("home");
+              }}
+              onUnreadCountChange={(count) => setUnreadCount(count)}
+            />
+          </div>
 
           {/* Profile & Tools Dropdown */}
           <div 
