@@ -28,7 +28,7 @@ import {
 import QuizComponent from "./QuizComponent";
 import { useLanguage } from "@/context/LanguageContext";
 import { VideoLesson, allVideoLessons } from "@/data/physicsData";
-import { conceptDefinitions } from "@/data/conceptDefinitions";
+import { conceptDefinitions, conceptDefinitionsDlp } from "@/data/conceptDefinitions";
 import { allKamusTerms, DictTerm } from "@/data/kamusData";
 import { allFormulas, FormulaItem } from "@/data/formulaData";
 import { getLessonCheatNote } from "@/data/cheatNotesData";
@@ -218,8 +218,9 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     if (match) return match;
 
     // 3. Fallback to conceptDefinitions (exact key)
-    const directDef = conceptDefinitions[conceptName];
-    if (directDef) {
+    const directDefBm = conceptDefinitions[conceptName];
+    const directDefDlp = conceptDefinitionsDlp[conceptName] || directDefBm;
+    if (directDefBm) {
       return {
         id: `custom-${conceptName}`,
         form: currentLesson.form,
@@ -228,8 +229,8 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
         chapterDlp: currentLesson.chapterDlp,
         bm: conceptName,
         dlp: conceptName,
-        defBm: directDef,
-        defDlp: directDef,
+        defBm: directDefBm,
+        defDlp: directDefDlp,
       };
     }
 
@@ -247,7 +248,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
         bm: defKey,
         dlp: defKey,
         defBm: conceptDefinitions[defKey],
-        defDlp: conceptDefinitions[defKey],
+        defDlp: conceptDefinitionsDlp[defKey] || conceptDefinitions[defKey],
       };
     }
 
@@ -682,10 +683,9 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                               </div>
                             ) : (
                               <p className="text-slate-300">
-                                {conceptDefinitions[selectedConcept] || 
-                                  (lang === "bm" 
-                                    ? "Definisi untuk konsep ini selaras dengan Sukatan DSKP KSSM Fizik." 
-                                    : "The definition for this concept aligns with KSSM SPM Physics DSKP standard.")}
+                                {lang === "bm"
+                                  ? (conceptDefinitions[selectedConcept] || "Definisi untuk konsep ini selaras dengan Sukatan DSKP KSSM Fizik.")
+                                  : (conceptDefinitionsDlp[selectedConcept] || "The definition for this concept aligns with KSSM SPM Physics DSKP standard.")}
                               </p>
                             )}
                           </div>
@@ -934,10 +934,9 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                                   </div>
                                 ) : (
                                   <p className="text-slate-300">
-                                    {conceptDefinitions[selectedConcept] ||
-                                      (lang === "bm"
-                                        ? "Definisi untuk konsep ini selaras dengan Sukatan DSKP KSSM Fizik."
-                                        : "The definition for this concept aligns with KSSM SPM Physics DSKP standard.")}
+                                    {lang === "bm"
+                                      ? (conceptDefinitions[selectedConcept] || "Definisi untuk konsep ini selaras dengan Sukatan DSKP KSSM Fizik.")
+                                      : (conceptDefinitionsDlp[selectedConcept] || "The definition for this concept aligns with KSSM SPM Physics DSKP standard.")}
                                   </p>
                                 )}
                               </div>

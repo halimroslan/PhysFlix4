@@ -392,9 +392,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "3.1",
     "symbol": "",
     "bm": "Gerakan membulat seragam",
-    "dlp": "Gerakan membulat seragam",
+    "dlp": "Uniform circular motion",
     "defBm": "Apabila suatu jasad bergerak dalam bulatan dan laju seragam",
-    "defDlp": "Apabila suatu jasad bergerak dalam bulatan dan laju seragam"
+    "defDlp": "Motion of an object moving around a circular path at a constant speed."
   },
   {
     "id": "t4-3-30",
@@ -431,9 +431,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "3.1",
     "symbol": "R",
     "bm": "Jejari Bumi",
-    "dlp": "Jejari Bumi",
+    "dlp": "Radius of the Earth",
     "defBm": "Jarak dari permukaan bumi ke pusat bumi",
-    "defDlp": "Jarak dari permukaan bumi ke pusat bumi"
+    "defDlp": "The distance from the surface of the Earth to the centre of the Earth."
   },
   {
     "id": "t4-3-33",
@@ -444,9 +444,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "3.1",
     "symbol": "h",
     "bm": "Ketinggian satelit",
-    "dlp": "Ketinggian satelit",
+    "dlp": "Altitude / Height of satellite",
     "defBm": "Jarak dari pusat satelit ke permukaan bumi",
-    "defDlp": "Jarak dari pusat satelit ke permukaan bumi"
+    "defDlp": "The vertical distance from the Earth's surface to the satellite (h)."
   },
   {
     "id": "t4-3-34",
@@ -457,9 +457,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "3.1",
     "symbol": "r",
     "bm": "Jejari orbit",
-    "dlp": "Jejari orbit",
+    "dlp": "Orbital radius",
     "defBm": "1. Jarak satelit itu dari pusat Bumi. 2. Nilai purata bagi jarak di antara planet dengan Matahari.",
-    "defDlp": "1. Jarak satelit itu dari pusat Bumi. 2. Nilai purata bagi jarak di antara planet dengan Matahari."
+    "defDlp": "1. The distance of a satellite from the centre of the Earth (r = R + h). 2. The average distance between a planet and the Sun."
   },
   {
     "id": "t4-3-35",
@@ -561,9 +561,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "4.1",
     "symbol": "",
     "bm": "Sifat termometrik",
-    "dlp": "Sifat termometrik",
+    "dlp": "Thermometric property",
     "defBm": "Sifat fizikal yang boleh diukur (seperti panjang turus cecair dalam termometer) yang berubah dengan perubahan suhu.",
-    "defDlp": "Sifat fizikal yang boleh diukur (seperti panjang turus cecair dalam termometer) yang berubah dengan perubahan suhu."
+    "defDlp": "A measurable physical property (such as the length of a liquid column in a thermometer) that changes continuously with temperature."
   },
   {
     "id": "t4-4-43",
@@ -574,9 +574,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "4.1",
     "symbol": "",
     "bm": "Penentu ukuran",
-    "dlp": "Penentu ukuran",
+    "dlp": "Calibration",
     "defBm": "Proses penskalaan pada termometer untuk membuat pengukuran suhu. Suhu 0°C ialah takat tetap bawah dan suhu 100°C ialah takat tetap atas.",
-    "defDlp": "Proses penskalaan pada termometer untuk membuat pengukuran suhu. Suhu 0°C ialah takat tetap bawah dan suhu 100°C ialah takat tetap atas."
+    "defDlp": "The process of scaling a thermometer to measure temperature using two fixed reference points (ice point and steam point)."
   },
   {
     "id": "t4-4-44",
@@ -665,9 +665,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "4.3",
     "symbol": "",
     "bm": "Teori Kinetik Jirim",
-    "dlp": "Teori Kinetik Jirim",
+    "dlp": "Kinetic Theory of Matter",
     "defBm": "Semakin tinggi tenaga kinetik purata molekul, semakin tinggi suhu suatu objek.",
-    "defDlp": "Semakin tinggi tenaga kinetik purata molekul, semakin tinggi suhu suatu objek."
+    "defDlp": "States that matter consists of particles in continuous random motion, where temperature is directly proportional to the average kinetic energy of the particles."
   },
   {
     "id": "t4-4-51",
@@ -730,9 +730,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "4.4",
     "symbol": "",
     "bm": "Sifar mutlak",
-    "dlp": "Sifar mutlak",
+    "dlp": "Absolute zero",
     "defBm": "Suhu paling rendah yang mungkin iaitu –273°C atau 0 K",
-    "defDlp": "Suhu paling rendah yang mungkin iaitu –273°C atau 0 K"
+    "defDlp": "The lowest theoretical temperature possible (0 K or –273.15°C) at which particles have zero kinetic energy and gas volume/pressure theoretically drops to zero."
   },
   {
     "id": "t4-5-56",
@@ -1003,9 +1003,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "5.6",
     "symbol": "",
     "bm": "Interferens gelombang",
-    "dlp": "Interferens gelombang",
+    "dlp": "Wave interference",
     "defBm": "Superposisi dua atau lebih gelombang dari sumber gelombang yang koheren",
-    "defDlp": "Superposisi dua atau lebih gelombang dari sumber gelombang yang koheren"
+    "defDlp": "The superposition of two or more waves originating from coherent wave sources."
   },
   {
     "id": "t4-5-77",
@@ -1016,9 +1016,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "5.6",
     "symbol": "",
     "bm": "Dua sumber gelombang yang koheren",
-    "dlp": "Dua sumber gelombang yang koheren",
+    "dlp": "Two coherent wave sources",
     "defBm": "Dua sumber gelombang yang mempunyai frekuensi dan fasa yang sama",
-    "defDlp": "Dua sumber gelombang yang mempunyai frekuensi dan fasa yang sama"
+    "defDlp": "Two wave sources that have the same frequency, wavelength, and maintain a constant phase difference."
   },
   {
     "id": "t4-5-78",
@@ -1042,9 +1042,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "5.6",
     "symbol": "",
     "bm": "Interferens memusnah",
-    "dlp": "Interferens memusnah",
+    "dlp": "Destructive interference",
     "defBm": "Apabila satu puncak dan satu lembangan bersuperposisi untuk menghasilkan sesaran paduan sifar",
-    "defDlp": "Apabila satu puncak dan satu lembangan bersuperposisi untuk menghasilkan sesaran paduan sifar"
+    "defDlp": "Occurs when a wave crest and a trough superpose to produce zero resultant displacement (node)."
   },
   {
     "id": "t4-5-80",
@@ -1055,9 +1055,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "5.6",
     "symbol": "",
     "bm": "Titik antinod",
-    "dlp": "Titik antinod",
+    "dlp": "Antinode point",
     "defBm": "Tempat dimana interferens membina berlaku",
-    "defDlp": "Tempat dimana interferens membina berlaku"
+    "defDlp": "A point in a wave interference pattern where constructive interference occurs, producing maximum amplitude."
   },
   {
     "id": "t4-5-81",
@@ -1068,9 +1068,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "5.6",
     "symbol": "",
     "bm": "Titik nod",
-    "dlp": "Titik nod",
+    "dlp": "Node point",
     "defBm": "Tempat dimana interferens memusnah berlaku",
-    "defDlp": "Tempat dimana interferens memusnah berlaku"
+    "defDlp": "A point in a wave interference pattern where destructive interference occurs, producing minimum or zero amplitude."
   },
   {
     "id": "t4-5-82",
@@ -1081,9 +1081,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "5.6",
     "symbol": "",
     "bm": "Eksperimen dwicelah Young",
-    "dlp": "Eksperimen dwicelah Young",
+    "dlp": "Young's double-slit experiment",
     "defBm": "Eksperimen menunjukkan cahaya bersifat gelombang melalui eksperimen yang menghasilkan pinggir cerah dan gelap.",
-    "defDlp": "Eksperimen menunjukkan cahaya bersifat gelombang melalui eksperimen yang menghasilkan pinggir cerah dan gelap."
+    "defDlp": "An experiment demonstrating light wave interference using a monochromatic light source and two narrow slits to produce alternating bright and dark fringes."
   },
   {
     "id": "t4-5-83",
@@ -1094,9 +1094,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "5.7",
     "symbol": "",
     "bm": "Spektrum elektromagnet",
-    "dlp": "Spektrum elektromagnet",
+    "dlp": "Electromagnetic spectrum",
     "defBm": "Tujuh jenis gelombang elektromagnet membentuk satu spektrum selanjar (RMINUXG)",
-    "defDlp": "Tujuh jenis gelombang elektromagnet membentuk satu spektrum selanjar (RMINUXG)"
+    "defDlp": "A continuous spectrum of seven types of electromagnetic waves arranged in order of increasing frequency or decreasing wavelength."
   },
   {
     "id": "t4-5-84",
@@ -1185,9 +1185,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "6.2",
     "symbol": "",
     "bm": "Logamaya",
-    "dlp": "Logamaya",
+    "dlp": "Mirage",
     "defBm": "Fenomena semula jadi yang disebabkan oleh pembiasan dan pantulan dalam penuh cahaya",
-    "defDlp": "Fenomena semula jadi yang disebabkan oleh pembiasan dan pantulan dalam penuh cahaya"
+    "defDlp": "A natural optical illusion caused by refraction and total internal reflection of light rays passing through air layers of differing temperatures."
   },
   {
     "id": "t4-6-91",
@@ -1198,9 +1198,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "6.3",
     "symbol": "O",
     "bm": "Pusat optik",
-    "dlp": "Pusat optik",
+    "dlp": "Optical centre",
     "defBm": "Titik pusat di kanta",
-    "defDlp": "Titik pusat di kanta"
+    "defDlp": "The central point of a lens through which light rays pass without experiencing deviation."
   },
   {
     "id": "t4-6-92",
@@ -1211,9 +1211,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "6.3",
     "symbol": "",
     "bm": "Paksi utama",
-    "dlp": "Paksi utama",
+    "dlp": "Principal axis",
     "defBm": "Garis lurus yang menerusi pusat optik suatu kanta dan bersambung dengan pusat-pusat kelengkungan dua permukaan kanta itu",
-    "defDlp": "Garis lurus yang menerusi pusat optik suatu kanta dan bersambung dengan pusat-pusat kelengkungan dua permukaan kanta itu"
+    "defDlp": "The straight line passing through the optical centre of a lens, perpendicular to the plane of the lens."
   },
   {
     "id": "t4-6-93",
@@ -1224,9 +1224,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "6.3",
     "symbol": "",
     "bm": "Paksi kanta",
-    "dlp": "Paksi kanta",
+    "dlp": "Axis of lens",
     "defBm": "Garis lurus yang menerusi pusat optik dan berserenjang dengan paksi utama",
-    "defDlp": "Garis lurus yang menerusi pusat optik dan berserenjang dengan paksi utama"
+    "defDlp": "The central vertical line passing through the optical centre, perpendicular to the principal axis."
   },
   {
     "id": "t4-6-94",
@@ -1302,9 +1302,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "6.5",
     "symbol": "",
     "bm": "Pelarasan normal (mikroskop majmuk)",
-    "dlp": "Pelarasan normal (mikroskop majmuk)",
+    "dlp": "Normal adjustment (compound microscope)",
     "defBm": "Pelarasan kanta mata supaya imej akhir terbentuk pada jarak penglihatan terdekat, dari kanta mata, iaitu 25 cm.",
-    "defDlp": "Pelarasan kanta mata supaya imej akhir terbentuk pada jarak penglihatan terdekat, dari kanta mata, iaitu 25 cm."
+    "defDlp": "Adjustment of the eyepiece so that the final virtual image is formed at the near point of distinct vision (25 cm from the eye)."
   },
   {
     "id": "t4-6-100",
@@ -1315,9 +1315,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "6.5",
     "symbol": "",
     "bm": "Pelarasan normal (teleskop astronomi)",
-    "dlp": "Pelarasan normal (teleskop astronomi)",
+    "dlp": "Normal adjustment (astronomical telescope)",
     "defBm": "Pelarasan jarak di antara kanta objek dengan kanta mata sebagai L = f + f . Keadaan ini membolehkan imej akhir o m terbentuk di infiniti untuk penglihatan yang paling selesa.",
-    "defDlp": "Pelarasan jarak di antara kanta objek dengan kanta mata sebagai L = f + f . Keadaan ini membolehkan imej akhir o m terbentuk di infiniti untuk penglihatan yang paling selesa."
+    "defDlp": "Adjustment where the distance between the objective lens and eyepiece equals the sum of their focal lengths (L = fo + fe), forming the final image at infinity for relaxed viewing."
   },
   {
     "id": "t4-6-101",
@@ -1354,9 +1354,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "6.6",
     "symbol": "",
     "bm": "Paksi utama",
-    "dlp": "Paksi utama",
+    "dlp": "Principal axis (spherical mirror)",
     "defBm": "Garis lurus yang menerusi pusat kelengkungan dan kutub cermin sfera, P",
-    "defDlp": "Garis lurus yang menerusi pusat kelengkungan dan kutub cermin sfera, P"
+    "defDlp": "The straight line passing through the centre of curvature (C) and the pole (P) of a spherical mirror."
   },
   {
     "id": "t4-6-104",
@@ -1367,9 +1367,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "6.6",
     "symbol": "C",
     "bm": "Pusat kelengkungan",
-    "dlp": "Pusat kelengkungan",
+    "dlp": "Centre of curvature",
     "defBm": "Pusat sfera yang menhasilkan cermin cekung atau cermin cembung",
-    "defDlp": "Pusat sfera yang menhasilkan cermin cekung atau cermin cembung"
+    "defDlp": "The centre of the sphere of which the curved mirror or lens surface forms a part (point C)."
   },
   {
     "id": "t4-6-105",
@@ -1380,9 +1380,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "6.6",
     "symbol": "r",
     "bm": "Jejari kelengkungan cermin",
-    "dlp": "Jejari kelengkungan cermin",
+    "dlp": "Radius of curvature of mirror",
     "defBm": "Jarak di antara kutub cermin sfera, P dengan pusat kelengkungan, C. r = 2f",
-    "defDlp": "Jarak di antara kutub cermin sfera, P dengan pusat kelengkungan, C. r = 2f"
+    "defDlp": "The distance from the pole (P) of the spherical mirror to the centre of curvature (C), where r = 2f."
   },
   {
     "id": "t4-6-106",
@@ -1536,9 +1536,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "1.4",
     "symbol": "x",
     "bm": "Pemanjangan spring",
-    "dlp": "Pemanjangan spring",
+    "dlp": "Extension of spring",
     "defBm": "Penambahan panjang spring apabila daya regangan dikenakan ke atas spring itu",
-    "defDlp": "Penambahan panjang spring apabila daya regangan dikenakan ke atas spring itu"
+    "defDlp": "The increase in the length of a spring when a tensile stretching force is applied to it (x = l - l₀)."
   },
   {
     "id": "t5-1-118",
@@ -1575,9 +1575,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "2.1",
     "symbol": "",
     "bm": "Kadar pemindahan cecair",
-    "dlp": "Kadar pemindahan cecair",
+    "dlp": "Fluid flow rate",
     "defBm": "Isi padu cecair yang dipindah dalam masa satu saat.",
-    "defDlp": "Isi padu cecair yang dipindah dalam masa satu saat."
+    "defDlp": "The volume of liquid transferred per unit time (dV/dt = A × v)."
   },
   {
     "id": "t5-2-121",
@@ -1601,9 +1601,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "2.2",
     "symbol": "",
     "bm": "Barometer Fortin",
-    "dlp": "Barometer Fortin",
+    "dlp": "Fortin barometer",
     "defBm": "Barometer merkuri yang boleh mengukur tekanan atmosfera dengan kejituan yang tinggi. Ketinggian hampir satu meter dan biasanya digunakan di pusat kaji cuaca.",
-    "defDlp": "Barometer merkuri yang boleh mengukur tekanan atmosfera dengan kejituan yang tinggi. Ketinggian hampir satu meter dan biasanya digunakan di pusat kaji cuaca."
+    "defDlp": "A high-precision mercury barometer used in meteorological weather stations with an adjustable leather reservoir to measure atmospheric pressure."
   },
   {
     "id": "t5-2-123",
@@ -1614,9 +1614,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "2.2",
     "symbol": "",
     "bm": "Barometer Aneroid",
-    "dlp": "Barometer Aneroid",
+    "dlp": "Aneroid barometer",
     "defBm": "Barometer yang berfungsi secara mekanikal. Kotak logam separa vakum berupaya mengubah saiz apabila terdapat perubahan tekanan atmosfera.",
-    "defDlp": "Barometer yang berfungsi secara mekanikal. Kotak logam separa vakum berupaya mengubah saiz apabila terdapat perubahan tekanan atmosfera."
+    "defDlp": "A mechanical non-liquid barometer containing a partially evacuated corrugated metallic capsule that expands or contracts with changes in atmospheric pressure."
   },
   {
     "id": "t5-2-124",
@@ -1627,9 +1627,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "2.2",
     "symbol": "",
     "bm": "Angkasa lepas",
-    "dlp": "Angkasa lepas",
+    "dlp": "Outer space",
     "defBm": "Ruang di luar atmosfera bumi. Tekanan dalam angkasa lepas adalah hampir sifar.",
-    "defDlp": "Ruang di luar atmosfera bumi. Tekanan dalam angkasa lepas adalah hampir sifar."
+    "defDlp": "The physical universe beyond the Earth's atmosphere, where atmospheric pressure is virtually zero."
   },
   {
     "id": "t5-2-125",
@@ -1642,7 +1642,7 @@ export const allKamusTerms: DictTerm[] = [
     "bm": "Manometer",
     "dlp": "Manometer",
     "defBm": "Terdiri daripada sebatang tiub-U kaca yang mengandungi cecair berwarna digunakan untuk mengukur tekanan gas.",
-    "defDlp": "Terdiri daripada sebatang tiub-U kaca yang mengandungi cecair berwarna digunakan untuk mengukur tekanan gas."
+    "defDlp": "A U-tube apparatus containing colored liquid used to measure gas pressure relative to atmospheric pressure."
   },
   {
     "id": "t5-2-126",
@@ -1653,9 +1653,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "2.3",
     "symbol": "h",
     "bm": "Ketinggian bagi turus air manometer",
-    "dlp": "Ketinggian bagi turus air manometer",
+    "dlp": "Height difference of liquid column in manometer",
     "defBm": "Mewakili perbezaan antara tekanan gas itu dengan tekanan atmosfera",
-    "defDlp": "Mewakili perbezaan antara tekanan gas itu dengan tekanan atmosfera"
+    "defDlp": "Represents the difference between gas pressure and atmospheric pressure (ΔP = hρg)."
   },
   {
     "id": "t5-2-127",
@@ -1679,9 +1679,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "2.4",
     "symbol": "",
     "bm": "Sistem hidraulik",
-    "dlp": "Sistem hidraulik",
+    "dlp": "Hydraulic system",
     "defBm": "Suatu sistem pengganda daya. Apabila nilai luas permukaan A adalah lebih besar daripada luas permukaan A , daya ke 2 1 atas omboh output, F adalah lebih besar daripada daya ke 2 atas omboh input, F . 1",
-    "defDlp": "Suatu sistem pengganda daya. Apabila nilai luas permukaan A adalah lebih besar daripada luas permukaan A , daya ke 2 1 atas omboh output, F adalah lebih besar daripada daya ke 2 atas omboh input, F . 1"
+    "defDlp": "A force-multiplying fluid system based on Pascal's Principle where pressure applied to input piston A1 produces a multiplied output force on larger piston A2 (F1/A1 = F2/A2)."
   },
   {
     "id": "t5-2-129",
@@ -1705,9 +1705,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "2.5",
     "symbol": "",
     "bm": "Bendalir",
-    "dlp": "Bendalir",
+    "dlp": "Fluid",
     "defBm": "Terdiri daripada cecair dan gas.",
-    "defDlp": "Terdiri daripada cecair dan gas."
+    "defDlp": "A substance that flows and deforms under applied shear stress, comprising liquids and gases."
   },
   {
     "id": "t5-2-131",
@@ -1731,9 +1731,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "2.5",
     "symbol": "",
     "bm": "Hidrometer",
-    "dlp": "Hidrometer",
+    "dlp": "Hydrometer",
     "defBm": "Alat pengukur ketumpatan cecair yang mengaplikasikan prinsip Archimedes. Terapung pada aras kedalaman yang berbeza dalam cecair yang berlainan ketumpatan.",
-    "defDlp": "Alat pengukur ketumpatan cecair yang mengaplikasikan prinsip Archimedes. Terapung pada aras kedalaman yang berbeza dalam cecair yang berlainan ketumpatan."
+    "defDlp": "An instrument for measuring liquid density based on Archimedes' Principle, floating at different levels depending on liquid density."
   },
   {
     "id": "t5-2-133",
@@ -1770,9 +1770,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "2.6",
     "symbol": "",
     "bm": "Sudut serang",
-    "dlp": "Sudut serang",
+    "dlp": "Angle of attack",
     "defBm": "Sudut tertentu yang menyebabkan aerofoil mengenakan satu daya pada aliran udara. Menurut Hukum Gerakan Newton Ketiga, satu daya tindak balas akan bertindak pada sayap kapal terbang dan menyumbang daya angkat yang bertindak ke atas kapal terbang. TasFiz",
-    "defDlp": "Sudut tertentu yang menyebabkan aerofoil mengenakan satu daya pada aliran udara. Menurut Hukum Gerakan Newton Ketiga, satu daya tindak balas akan bertindak pada sayap kapal terbang dan menyumbang daya angkat yang bertindak ke atas kapal terbang. TasFiz"
+    "defDlp": "The angle between the chord line of an aerofoil and the oncoming airflow, generating aerodynamic upward lift according to Newton's Third Law and Bernoulli's Principle."
   },
   {
     "id": "t5-3-136",
@@ -1848,9 +1848,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "3.2",
     "symbol": "",
     "bm": "Konduktor Ohm",
-    "dlp": "Konduktor Ohm",
+    "dlp": "Ohmic conductor",
     "defBm": "Konduktor elektrik yang mematuhi Hukum Ohm.",
-    "defDlp": "Konduktor elektrik yang mematuhi Hukum Ohm."
+    "defDlp": "An electrical conductor that obeys Ohm's Law, maintaining constant resistance at constant temperature."
   },
   {
     "id": "t5-3-142",
@@ -1887,9 +1887,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "3.2",
     "symbol": "",
     "bm": "Nilai s.w.g. (standard wire gauge)",
-    "dlp": "Nilai s.w.g. (standard wire gauge)",
+    "dlp": "Standard wire gauge (s.w.g.) value",
     "defBm": "Mewakili diameter bagi setiap jenis dawai. Semakin besar nilai s.w.g., semakin kecil diameter dawai.",
-    "defDlp": "Mewakili diameter bagi setiap jenis dawai. Semakin besar nilai s.w.g., semakin kecil diameter dawai."
+    "defDlp": "A standard numerical index representing wire thickness; a higher s.w.g. number indicates a smaller wire diameter."
   },
   {
     "id": "t5-3-145",
@@ -1900,9 +1900,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "3.2",
     "symbol": "",
     "bm": "Bukan Konduktor",
-    "dlp": "Bukan Konduktor",
+    "dlp": "Non-conductor / Insulator",
     "defBm": "Bahan yang tidak mengkonduksi elektrik dan penebat yang baik.",
-    "defDlp": "Bahan yang tidak mengkonduksi elektrik dan penebat yang baik."
+    "defDlp": "A material that does not conduct electricity due to the absence of free charge carriers."
   },
   {
     "id": "t5-3-146",
@@ -1913,9 +1913,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "3.2",
     "symbol": "",
     "bm": "Semikonduktor",
-    "dlp": "Semikonduktor",
+    "dlp": "Semiconductor",
     "defBm": "Bahan yang mengkonduksi elektrik lebih baik daripada penebat tetapi tidak sebaik konduktor.",
-    "defDlp": "Bahan yang mengkonduksi elektrik lebih baik daripada penebat tetapi tidak sebaik konduktor."
+    "defDlp": "A material whose electrical conductivity is between that of a conductor and an insulator, with conductivity increasing as temperature rises."
   },
   {
     "id": "t5-3-147",
@@ -1926,9 +1926,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "3.2",
     "symbol": "",
     "bm": "Konduktor",
-    "dlp": "Konduktor",
+    "dlp": "Conductor",
     "defBm": "Bahan yang dapat mengkonduksi elektrik.",
-    "defDlp": "Bahan yang dapat mengkonduksi elektrik."
+    "defDlp": "A material that readily allows the flow of electric current through it due to abundant free electrons."
   },
   {
     "id": "t5-3-148",
@@ -1991,9 +1991,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "3.3",
     "symbol": "",
     "bm": "Maksud label “240V.1500 W pada peralatan elektrik",
-    "dlp": "Maksud label “240V.1500 W pada peralatan elektrik",
+    "dlp": "Meaning of label '240V, 1500W' on electrical appliance",
     "defBm": "Apabila peralatan elektrik tersebut disambung kepada bekalan voltan 240V, sebanyak 1500 J tenaga elektrik digunakan dalam masa 1 saat.",
-    "defDlp": "Apabila peralatan elektrik tersebut disambung kepada bekalan voltan 240V, sebanyak 1500 J tenaga elektrik digunakan dalam masa 1 saat."
+    "defDlp": "When the appliance is connected to a 240 V electrical supply, it consumes 1500 Joules of electrical energy per second."
   },
   {
     "id": "t5-3-153",
@@ -2056,9 +2056,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "4.1",
     "symbol": "",
     "bm": "Motor arus terus/ ulang-alik",
-    "dlp": "Motor arus terus/ ulang-alik",
+    "dlp": "Direct current (d.c.) / Alternating current (a.c.) motor",
     "defBm": "Mengubah tenaga elektrik kepada tenaga kinetik menggunakan kesan putaran gegelung pembawa arus dalam medan magnet.",
-    "defDlp": "Mengubah tenaga elektrik kepada tenaga kinetik menggunakan kesan putaran gegelung pembawa arus dalam medan magnet."
+    "defDlp": "Converts electrical energy into mechanical rotational kinetic energy via the turning effect on a current-carrying coil in a magnetic field."
   },
   {
     "id": "t5-4-158",
@@ -2147,9 +2147,9 @@ export const allKamusTerms: DictTerm[] = [
     "sk": "4.2",
     "symbol": "",
     "bm": "Penjana arus terus/ ulang- alik",
-    "dlp": "Penjana arus terus/ ulang- alik",
+    "dlp": "Direct current (d.c.) / Alternating current (a.c.) generator",
     "defBm": "Mengubah tenaga kinetik kepada tenaga elektrik dengan mengaplikasikan aruhan elektromagnet untuk menghasilkan d.g.e. aruhan.",
-    "defDlp": "Mengubah tenaga kinetik kepada tenaga elektrik dengan mengaplikasikan aruhan elektromagnet untuk menghasilkan d.g.e. aruhan."
+    "defDlp": "Converts mechanical kinetic energy into electrical energy using electromagnetic induction to produce induced electromotive force (e.m.f.)."
   },
   {
     "id": "t5-4-165",
