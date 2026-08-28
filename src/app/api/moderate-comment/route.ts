@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
 
     const trimmed = text.trim();
 
-    // 1. Instant heuristic profanity & insult check
+    // 1. Instant heuristic profanity, insult & cynicism check
     const quickCheck = checkQuickAbusive(trimmed);
     if (quickCheck.isAbusive) {
       return NextResponse.json({
@@ -28,24 +28,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ isAbusive: false, reason: "" });
     }
 
-    const prompt = `You are an AI content moderator for an educational SPM physics learning platform (PhysFlix).
-Analyze the following user-submitted question, comment, or reply for:
-1. Abusive, profane, vulgar, insulting, or toxic language (in Malay, English, Manglish, or local slang).
-2. Sarcastic, mocking, disrespectful, or derogatory attacks against teachers or students (e.g., 'gila ke cikgu ni', 'cikgu bodoh', 'lawak bodoh', 'buang masa').
-3. Bullying, personal attacks, hate speech, or harassment.
-4. Sexually explicit, obscene, or inappropriate content.
-5. Malicious spam, scams, or non-educational advertising.
+    const prompt = `You are a strict AI content moderation guardian for PhysFlix, a professional SPM Physics learning platform.
+Your duty is to enforce a high standard of respect, constructive discourse, and academic decorum.
 
-If the text contains ANY abusive, insulting, disrespectful, or prohibited content, return strictly valid JSON:
-{
-  "isAbusive": true,
-  "reason": "Penerangan ringkas dalam Bahasa Melayu mengapa soalan/komen ini disekat (contoh: Komen mengandungi kata-kata menghina guru)"
-}
+STRICTLY BLOCK (isAbusive: true) if the text contains:
+1. Vulgarity, profanity, insults, abusive language, or harassment (in Malay, English, slang, or Manglish).
+2. Cynical, derogatory, dismissive, or mocking remarks aimed at disparaging the teacher, lesson, or platform (e.g., "buang masa", "membazir masa", "tak guna", "bosan gila", "merepek", "hambar", "menyampah", "mengajar apa ni", "cringe").
+3. Non-educational trolling, personal attacks, or spam.
 
-If the text is polite, constructive, a genuine physics/study question, a greeting, or helpful discussion, return strictly valid JSON:
+ALLOW (isAbusive: false) ONLY IF:
+- The text is a genuine physics question, educational inquiry, polite request for clarification, constructive doubt, or polite greeting/thank you.
+
+Return strictly valid JSON only:
 {
-  "isAbusive": false,
-  "reason": ""
+  "isAbusive": true | false,
+  "reason": "Penerangan ringkas dalam Bahasa Melayu jika disekat (contoh: Komen berunsur memperlekehkan pengajaran/buang masa tidak dibenarkan)"
 }
 
 Teks untuk disemak:
