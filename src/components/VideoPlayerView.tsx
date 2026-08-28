@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   ArrowLeft,
   ThumbsUp,
@@ -338,52 +338,52 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
   const userEmail = user?.email?.toLowerCase().trim() || "";
   const isSuperAdmin = ["ahalimroslan@gmail.com", "abdulhalimroslan@gmail.com"].includes(userEmail);
 
+  // Public Real-Time Q&A Synchronization
+  const fetchPublicQA = useCallback(async () => {
+    try {
+      const vid = currentLesson.id || currentLesson.youtubeId || currentLesson.driveId;
+      if (!vid) return;
+      const res = await fetch(`/api/qa?videoId=${encodeURIComponent(vid)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.questions)) {
+          setQaList(data.questions);
+          try {
+            localStorage.setItem(`physflix_qa_${vid}`, JSON.stringify(data.questions));
+          } catch {}
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to fetch public QA:", err);
+    }
+  }, [currentLesson.id, currentLesson.youtubeId, currentLesson.driveId]);
+
   useEffect(() => {
     setModerationError(null);
-    const storageKey = `physflix_qa_${currentLesson.id}`;
+    const vid = currentLesson.id || currentLesson.youtubeId || currentLesson.driveId;
+    const storageKey = `physflix_qa_${vid}`;
     const savedQA = localStorage.getItem(storageKey);
     if (savedQA) {
       try {
         const parsed = JSON.parse(savedQA);
         if (Array.isArray(parsed)) {
-          // Filter out any legacy dummy/mock items AND any abusive comments that slipped in
-          const realItems = parsed.filter(
-            (item) =>
-              item.id &&
-              !item.id.startsWith("qa-gen-") &&
-              !item.id.startsWith("qa-1-") &&
-              !item.id.startsWith("qa-2-") &&
-              !item.id.startsWith("qa-3-") &&
-              !item.id.startsWith("qa-4-") &&
-              !item.id.startsWith("qa-5-") &&
-              !checkQuickAbusive(item.question).isAbusive
-          );
-          setQaList(realItems);
-          try {
-            localStorage.setItem(storageKey, JSON.stringify(realItems));
-          } catch {
-            // ignore
-          }
-          return;
+          setQaList(parsed);
         }
       } catch (e) {
-        console.warn("Failed to parse saved QA", e);
+        console.warn("Failed to parse cached QA", e);
       }
     }
 
-    setQaList([]);
-  }, [currentLesson.id]);
+    // Fetch latest public QA immediately
+    fetchPublicQA();
 
-  const saveQAList = (newList: QAItem[]) => {
-    setQaList(newList);
-    try {
-      localStorage.setItem(`physflix_qa_${currentLesson.id}`, JSON.stringify(newList));
-    } catch (e) {
-      console.warn("Failed to persist QA list", e);
-    }
-  };
+    // Poll every 8 seconds so other users' comments and AI answers sync live
+    const interval = setInterval(fetchPublicQA, 8000);
+    return () => clearInterval(interval);
+  }, [currentLesson.id, currentLesson.youtubeId, currentLesson.driveId, fetchPublicQA]);
 
   const triggerAIAnswer = async (targetQuestion: QAItem) => {
+    const vid = currentLesson.id || currentLesson.youtubeId || currentLesson.driveId;
     setIsGeneratingAIAnswer((prev) => ({ ...prev, [targetQuestion.id]: true }));
     try {
       const res = await fetch("/api/ai-answer", {
@@ -401,36 +401,30 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
       if (res.ok) {
         const data = await res.json();
         if (data.answer) {
-          const aiReply: QAReply = {
-            id: `reply-ai-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-            authorName: lang === "bm" ? "Sir Halim (AI Tutor)" : "Sir Halim (AI Tutor)",
-            authorRole: "guru",
-            isVerified: true,
-            text: data.answer,
-            timestamp: lang === "bm" ? "Baru sahaja" : "Just now",
-            createdAt: Date.now(),
-            likes: 0,
-          };
-
-          setQaList((current) => {
-            const updatedList = current.map((q) => {
-              if (q.id === targetQuestion.id) {
-                const alreadyHasAI = q.replies.some((r) => r.text === data.answer);
-                if (alreadyHasAI) return q;
-                return {
-                  ...q,
-                  replies: [...q.replies, aiReply],
-                };
-              }
-              return q;
-            });
-            try {
-              localStorage.setItem(`physflix_qa_${currentLesson.id}`, JSON.stringify(updatedList));
-            } catch (e) {
-              console.warn("Failed to persist QA with AI reply", e);
-            }
-            return updatedList;
+          // Persist the AI reply to public store so all users see it
+          const saveRes = await fetch("/api/qa", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "add_reply",
+              videoId: vid,
+              questionId: targetQuestion.id,
+              text: data.answer,
+              authorName: "Sir Halim (AI Tutor)",
+              authorRole: "guru",
+              isVerified: true,
+            }),
           });
+
+          if (saveRes.ok) {
+            const saveData = await saveRes.json();
+            if (saveData.questions) {
+              setQaList(saveData.questions);
+              try {
+                localStorage.setItem(`physflix_qa_${vid}`, JSON.stringify(saveData.questions));
+              } catch {}
+            }
+          }
         }
       }
     } catch (err) {
@@ -484,46 +478,79 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
       console.warn("Moderation check error:", err);
     }
 
+    const vid = currentLesson.id || currentLesson.youtubeId || currentLesson.driveId;
     const authorName = user?.displayName || (user?.email ? user.email.split("@")[0] : (lang === "bm" ? "Pelajar Fizik SPM" : "Physics Student"));
-    const newQA: QAItem = {
-      id: `qa-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      lessonId: currentLesson.id,
-      chapterNum: currentLesson.chapterNum,
-      form: currentLesson.form,
-      authorName,
-      authorRole: isSuperAdmin ? "admin" : "pelajar",
-      authorAvatar: user?.photoURL || undefined,
-      question: newQuestionText.trim(),
-      category: newQuestionCategory,
-      timestamp: lang === "bm" ? "Baru sahaja" : "Just now",
-      createdAt: Date.now(),
-      likes: 0,
-      isLiked: false,
-      replies: []
-    };
+    const authorRole = isSuperAdmin ? "guru" : "pelajar";
 
-    const updated = [newQA, ...qaList];
-    saveQAList(updated);
-    setNewQuestionText("");
+    try {
+      // Save question publicly to server
+      const qaRes = await fetch("/api/qa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "add_question",
+          videoId: vid,
+          question: newQuestionText.trim(),
+          category: newQuestionCategory,
+          authorName,
+          authorRole,
+        }),
+      });
+
+      if (qaRes.ok) {
+        const data = await qaRes.json();
+        if (data.questions) {
+          setQaList(data.questions);
+          try {
+            localStorage.setItem(`physflix_qa_${vid}`, JSON.stringify(data.questions));
+          } catch {}
+        }
+        setNewQuestionText("");
+        setIsModerating(false);
+
+        if (data.item) {
+          // Automatically trigger conversational AI tutor explanation from Sir Halim AI
+          triggerAIAnswer(data.item);
+        }
+        return;
+      }
+    } catch (err) {
+      console.error("Failed to add public question:", err);
+    }
+
     setIsModerating(false);
-
-    // Automatically trigger conversational AI tutor explanation from Sir Halim AI
-    triggerAIAnswer(newQA);
   };
 
-  const handleLikeQuestion = (id: string) => {
-    const updated = qaList.map((item) => {
-      if (item.id === id) {
-        const isLiked = !item.isLiked;
-        return {
-          ...item,
-          isLiked,
-          likes: isLiked ? item.likes + 1 : Math.max(0, item.likes - 1)
-        };
-      }
-      return item;
-    });
-    saveQAList(updated);
+  const handleLikeQuestion = async (id: string) => {
+    const vid = currentLesson.id || currentLesson.youtubeId || currentLesson.driveId;
+    // Optimistic UI update
+    setQaList((prev) =>
+      prev.map((item) => {
+        if (item.id === id) {
+          const isLiked = !item.isLiked;
+          return {
+            ...item,
+            isLiked,
+            likes: isLiked ? item.likes + 1 : Math.max(0, item.likes - 1),
+          };
+        }
+        return item;
+      })
+    );
+
+    try {
+      await fetch("/api/qa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "like_question",
+          videoId: vid,
+          questionId: id,
+        }),
+      });
+    } catch (e) {
+      console.warn("Failed to like question:", e);
+    }
   };
 
   const handleAddReply = async (questionId: string) => {
@@ -569,70 +596,146 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
       console.warn("Moderation check error:", err);
     }
 
+    const vid = currentLesson.id || currentLesson.youtubeId || currentLesson.driveId;
     const authorName = user?.displayName || (isSuperAdmin ? "Sir Halim (Guru Fizik)" : (lang === "bm" ? "Pelajar Fizik SPM" : "Physics Student"));
     const authorRole = isSuperAdmin ? "guru" : "pelajar";
-    const newReply: QAReply = {
-      id: `rep-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-      authorName,
-      authorRole,
-      authorAvatar: user?.photoURL || undefined,
-      text: replyText.trim(),
-      timestamp: lang === "bm" ? "Baru sahaja" : "Just now",
-      createdAt: Date.now(),
-      likes: 0,
-      isVerified: isSuperAdmin
-    };
 
-    const updated = qaList.map((item) => {
-      if (item.id === questionId) {
-        return {
-          ...item,
-          replies: [...item.replies, newReply]
-        };
+    try {
+      const res = await fetch("/api/qa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "add_reply",
+          videoId: vid,
+          questionId,
+          text: replyText.trim(),
+          authorName,
+          authorRole,
+          isVerified: isSuperAdmin,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.questions) {
+          setQaList(data.questions);
+          try {
+            localStorage.setItem(`physflix_qa_${vid}`, JSON.stringify(data.questions));
+          } catch {}
+        }
       }
-      return item;
-    });
+    } catch (err) {
+      console.error("Failed to add reply:", err);
+    }
 
-    saveQAList(updated);
     setReplyText("");
     setActiveReplyId(null);
     setIsModerating(false);
   };
 
-  const handleLikeReply = (questionId: string, replyId: string) => {
-    const updated = qaList.map((item) => {
-      if (item.id === questionId) {
-        const newReplies = item.replies.map((r) => {
-          if (r.id === replyId) {
-            return { ...r, likes: r.likes + 1 };
-          }
-          return r;
-        });
-        return { ...item, replies: newReplies };
-      }
-      return item;
-    });
-    saveQAList(updated);
+  const handleLikeReply = async (questionId: string, replyId: string) => {
+    const vid = currentLesson.id || currentLesson.youtubeId || currentLesson.driveId;
+    setQaList((prev) =>
+      prev.map((item) => {
+        if (item.id === questionId) {
+          return {
+            ...item,
+            replies: item.replies.map((r) => (r.id === replyId ? { ...r, likes: r.likes + 1 } : r)),
+          };
+        }
+        return item;
+      })
+    );
+
+    try {
+      await fetch("/api/qa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "like_reply",
+          videoId: vid,
+          questionId,
+          replyId,
+        }),
+      });
+    } catch (e) {
+      console.warn("Failed to like reply:", e);
+    }
   };
 
-  const handleDeleteQuestion = (id: string) => {
+  const handleDeleteQuestion = async (id: string) => {
     if (!isSuperAdmin) return;
-    const updated = qaList.filter((item) => item.id !== id);
-    saveQAList(updated);
+    const vid = currentLesson.id || currentLesson.youtubeId || currentLesson.driveId;
+    
+    // Optimistic UI update
+    setQaList((prev) => prev.filter((item) => item.id !== id));
+
+    try {
+      const res = await fetch("/api/qa", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          videoId: vid,
+          questionId: id,
+          userEmail: user?.email || "",
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.questions) {
+          setQaList(data.questions);
+          try {
+            localStorage.setItem(`physflix_qa_${vid}`, JSON.stringify(data.questions));
+          } catch {}
+        }
+      }
+    } catch (err) {
+      console.error("Failed to delete question:", err);
+    }
   };
 
-  const handleDeleteReply = (questionId: string, replyId: string) => {
+  const handleDeleteReply = async (questionId: string, replyId: string) => {
     if (!isSuperAdmin) return;
-    const updated = qaList.map((item) => {
-      if (item.id === questionId) {
-        return {
-          ...item,
-          replies: item.replies.filter((r) => r.id !== replyId),
-        };
+    const vid = currentLesson.id || currentLesson.youtubeId || currentLesson.driveId;
+
+    // Optimistic UI update
+    setQaList((prev) =>
+      prev.map((item) => {
+        if (item.id === questionId) {
+          return {
+            ...item,
+            replies: item.replies.filter((r) => r.id !== replyId),
+          };
+        }
+        return item;
+      })
+    );
+
+    try {
+      const res = await fetch("/api/qa", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          videoId: vid,
+          questionId,
+          replyId,
+          userEmail: user?.email || "",
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.questions) {
+          setQaList(data.questions);
+          try {
+            localStorage.setItem(`physflix_qa_${vid}`, JSON.stringify(data.questions));
+          } catch {}
+        }
       }
-      return item;
-    });
-    saveQAList(updated);
+    } catch (err) {
+      console.error("Failed to delete reply:", err);
+    }
   };
 
   const filteredQAList = qaList.filter((item) => {

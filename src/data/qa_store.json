@@ -1,0 +1,27 @@
+{
+  "oyweI4GDIsM": [
+    {
+      "id": "qa-real-5-6b-interferens",
+      "videoId": "oyweI4GDIsM",
+      "authorName": "Abdul Halim Roslan",
+      "authorRole": "pelajar",
+      "timestamp": "Baru sahaja",
+      "createdAt": 1787920000000,
+      "category": "Konsep",
+      "question": "cikgu interference tu macam mana?",
+      "likes": 0,
+      "replies": [
+        {
+          "id": "reply-ai-5-6b-interferens",
+          "authorName": "Sir Halim (AI Tutor)",
+          "authorRole": "guru",
+          "isVerified": true,
+          "text": "Ha, interference ni mudah je faham. Ia berlaku bila dua gelombang koheren (frekuensi sama, fasa tetap) bertemu dan bertindih, kita panggil prinsip superposisi. Bila puncak bertemu puncak atau lembah bertemu lembah, gelombang tu jadi kuat, ni lah interferens membina (constructive interference). Tapi bila puncak bertemu lembah, diorang cancel antara satu sama lain, jadi lemah atau hilang terus, tu pulak interferens membinasa (destructive interference).",
+          "timestamp": "Baru sahaja",
+          "createdAt": 1787920001000,
+          "likes": 0
+        }
+      ]
+    }
+  ]
+}
