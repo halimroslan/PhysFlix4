@@ -1,7 +1,7 @@
 /**
  * Comprehensive client-side & server-side profanity, insult, scam, harassment,
- * trolling, and cynicism detection built from 1,000 YouTube negative comment dataset.
- * (100% coverage across 10 categories)
+ * trolling, cynicism, and low-effort unconstructive complaints detection.
+ * (100% coverage across 11 categories)
  */
 const ABUSIVE_PATTERNS: { pattern: RegExp; category: string; reason: string }[] = [
   // 1. Hinaan / Insult & Menghina Kualiti Pengajaran
@@ -52,13 +52,19 @@ const ABUSIVE_PATTERNS: { pattern: RegExp; category: string; reason: string }[] 
     category: "Sinis / Merendahkan Pengajaran",
     reason: "Komen bernada sinis, meremehkan pengajaran ('buang masa/bosan'), atau tidak membina.",
   },
-  // 9. Kandungan Seksual / Tidak Sesuai
+  // 9. Keluhan Pasif / 'Tak Faham' Tanpa Soalan Spesifik
+  {
+    pattern: /(^(tak faham|xpaham|x faham|tak paham|x paham|tak reti|x reti|pening|blur|susah|blank|bengap|apa benda|benda apa|mende ni)(\s+(ni|tu|la|lah|je|betul|sangat|gila|wei|weh|pun|langsung|apa-apa|cikgu))*[\s.!?]*$|langsung tak faham|tak faham langsung|tak faham apa|tak faham sepatah|x faham langsung|xpaham langsung)/i,
+    category: "Keluhan Tidak Membina",
+    reason: "Komen umum 'tak faham' tanpa soalan spesifik tidak membina. Sila nyatakan bahagian konsep atau minit video yang anda perlukan penerangan lanjut.",
+  },
+  // 10. Kandungan Seksual / Tidak Sesuai
   {
     pattern: /\b(seksual|melampaui batas|bawah umur|bukan-bukan|tak sesuai.*tontonan|perhatian seksual|tidak sesuai untuk komuniti|melanggar garis panduan|bukan tempat untuk komen|jangan letak kandungan macam ni)\b/i,
     category: "Kandungan Tidak Sesuai",
     reason: "Komen mengandungi rujukan seksual atau unsur yang tidak sesuai untuk komuniti pembelajaran.",
   },
-  // 10. Komen Tidak Relevan / Spam Ringkas
+  // 11. Komen Tidak Relevan / Spam Ringkas
   {
     pattern: /\b(first|ada sesiapa dari tiktok|datang dari video lain|siapa tengok.*202\d|random sangat|baca komen dulu|selamat malam semua|kenapa aku dekat sini|aku tak tahu apa tajuk|test test)\b/i,
     category: "Komen Tidak Relevan",
