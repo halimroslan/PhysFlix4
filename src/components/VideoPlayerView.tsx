@@ -334,6 +334,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
   const [moderationError, setModerationError] = useState<string | null>(null);
 
   const [isGeneratingAIAnswer, setIsGeneratingAIAnswer] = useState<{ [id: string]: boolean }>({});
+  const [isCommentServiceDisabled, setIsCommentServiceDisabled] = useState(false);
 
   const userEmail = user?.email?.toLowerCase().trim() || "";
   const isSuperAdmin = ["ahalimroslan@gmail.com", "abdulhalimroslan@gmail.com"].includes(userEmail);
@@ -463,6 +464,17 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
 
       if (modRes.ok) {
         const modData = await modRes.json();
+        if (modData.serviceDisabled) {
+          setIsCommentServiceDisabled(true);
+          setModerationError(
+            modData.error ||
+              (lang === "bm"
+                ? "Ruang Soal Jawab ditutup sementara waktu kerana kuota AI Moderasi (Ox Alpha) telah habis / sedang diselenggara."
+                : "Q&A section is temporarily closed for AI quota maintenance.")
+          );
+          setIsModerating(false);
+          return;
+        }
         if (modData.isAbusive) {
           setModerationError(
             modData.reason ||
@@ -581,6 +593,17 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
 
       if (modRes.ok) {
         const modData = await modRes.json();
+        if (modData.serviceDisabled) {
+          setIsCommentServiceDisabled(true);
+          setModerationError(
+            modData.error ||
+              (lang === "bm"
+                ? "Ruang Soal Jawab ditutup sementara waktu kerana kuota AI Moderasi (Ox Alpha) telah habis / sedang diselenggara."
+                : "Q&A section is temporarily closed for AI quota maintenance.")
+          );
+          setIsModerating(false);
+          return;
+        }
         if (modData.isAbusive) {
           setModerationError(
             modData.reason ||
@@ -1444,8 +1467,25 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                   </div>
                 </div>
 
+                {/* AI Service Disabled Maintenance Warning Banner */}
+                {isCommentServiceDisabled && (
+                  <div className="p-4 bg-amber-950/60 border border-amber-500/80 rounded-2xl text-amber-200 text-xs flex items-start gap-3 animate-in fade-in shadow-lg shadow-amber-950/40">
+                    <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                    <div className="space-y-1 flex-1">
+                      <p className="font-bold text-amber-300 text-xs sm:text-sm">
+                        {lang === "bm" ? "Ruang Soal Jawab Ditutup Sementara Waktu:" : "Q&A Section Temporarily Closed:"}
+                      </p>
+                      <p className="text-amber-200/90 leading-relaxed">
+                        {lang === "bm"
+                          ? "Fungsi menghantar soalan dan balasan baharu ditutup secara automatik sementara kuota AI Moderasi (Ox Alpha) diselenggara / diisi semula. Semua soalan dan jawapan sedia ada tetap boleh dibaca seperti biasa."
+                          : "Posting new questions is automatically paused while Ox Alpha AI moderation quota is maintained. Existing Q&A remains readable."}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Moderation Error Warning Banner */}
-                {moderationError && (
+                {moderationError && !isCommentServiceDisabled && (
                   <div className="p-4 bg-red-950/90 border border-red-500 rounded-2xl text-red-200 text-xs flex items-start gap-3 animate-in fade-in slide-in-from-top-2 shadow-lg shadow-red-950/50">
                     <ShieldAlert className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                     <div className="space-y-1 flex-1">
@@ -1474,8 +1514,9 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                       <span className="text-[10px] text-slate-400">{lang === "bm" ? "Kategori:" : "Category:"}</span>
                       <select
                         value={newQuestionCategory}
+                        disabled={isCommentServiceDisabled}
                         onChange={(e) => setNewQuestionCategory(e.target.value as any)}
-                        className="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1 focus:outline-none focus:border-red-500"
+                        className="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1 focus:outline-none focus:border-red-500 disabled:opacity-50"
                       >
                         <option value="Konsep">Konsep</option>
                         <option value="Pengiraan">Pengiraan</option>
@@ -1490,16 +1531,19 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                     <textarea
                       rows={3}
                       value={newQuestionText}
+                      disabled={isCommentServiceDisabled || isModerating}
                       onChange={(e) => {
                         setNewQuestionText(e.target.value);
                         if (moderationError) setModerationError(null);
                       }}
                       placeholder={
-                        lang === "bm"
-                          ? `Tulis soalan anda tentang topik ${currentLesson.titleBm} di sini...`
-                          : `Type your question about ${currentLesson.titleDlp} here...`
+                        isCommentServiceDisabled
+                          ? (lang === "bm" ? "Ruang Soal Jawab ditutup sementara waktu untuk penyelenggaraan kuota AI..." : "Q&A section is temporarily paused...")
+                          : (lang === "bm"
+                              ? `Tulis soalan anda tentang topik ${currentLesson.titleBm} di sini...`
+                              : `Type your question about ${currentLesson.titleDlp} here...`)
                       }
-                      className="w-full px-4 py-3 bg-[#0d121f] border border-slate-700/80 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/50 resize-y"
+                      className="w-full px-4 py-3 bg-[#0d121f] border border-slate-700/80 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/50 resize-y disabled:opacity-60 disabled:cursor-not-allowed"
                     />
                   </div>
 
@@ -1515,7 +1559,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
 
                     <button
                       type="submit"
-                      disabled={!newQuestionText.trim() || isModerating}
+                      disabled={!newQuestionText.trim() || isModerating || isCommentServiceDisabled}
                       className="px-5 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-xs rounded-xl transition cursor-pointer flex items-center gap-2 shadow-lg shadow-red-600/30"
                     >
                       {isModerating ? (
@@ -1774,15 +1818,20 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                               <input
                                 type="text"
                                 autoFocus
+                                disabled={isCommentServiceDisabled || isModerating}
                                 value={replyText}
                                 onChange={(e) => {
                                   setReplyText(e.target.value);
                                   if (moderationError) setModerationError(null);
                                 }}
-                                placeholder={lang === "bm" ? "Tulis jawapan atau ulasan anda..." : "Write your response..."}
-                                className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                                placeholder={
+                                  isCommentServiceDisabled
+                                    ? (lang === "bm" ? "Ruang Soal Jawab ditutup sementara waktu..." : "Q&A section is temporarily closed...")
+                                    : (lang === "bm" ? "Tulis jawapan atau ulasan anda..." : "Write your response...")
+                                }
+                                className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500 disabled:opacity-60 disabled:cursor-not-allowed"
                                 onKeyDown={(e) => {
-                                  if (e.key === "Enter") {
+                                  if (e.key === "Enter" && !isCommentServiceDisabled) {
                                     e.preventDefault();
                                     handleAddReply(item.id);
                                   }
@@ -1790,7 +1839,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                               />
                               <button
                                 onClick={() => handleAddReply(item.id)}
-                                disabled={!replyText.trim() || isModerating}
+                                disabled={!replyText.trim() || isModerating || isCommentServiceDisabled}
                                 className="px-4 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-bold text-xs rounded-lg transition cursor-pointer flex items-center gap-1.5"
                               >
                                 {isModerating ? (

@@ -8,8 +8,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Question is required" }, { status: 400 });
     }
 
-    const apiKey = process.env.OPENROUTER_API_KEY;
-    if (!apiKey) {
+    const apiKeys = [
+      process.env.OPENROUTER_API_KEY,
+      process.env.OPENROUTER_BACKUP_API_KEY,
+    ].filter(Boolean) as string[];
+
+    const uniqueKeys = Array.from(new Set(apiKeys));
+
+    if (uniqueKeys.length === 0) {
       return NextResponse.json(
         { answer: "Harap maaf, sistem AI Tutor sedang offline sementara. Sila hubungi Sir Halim secara terus." },
         { status: 200 }
@@ -47,27 +53,21 @@ SYARAT FORMAT & GAYA JAWAPAN (SANGAT KETAT):
 
 Sila jawab soalan ini dengan lengkap (1-2 perenggan), santai guna short forms dan panggil pelajar sebagai 'awak' (bukan kau), tanpa sebarang simbol * atau em dash —, dan pastikan ayat dihabiskan sepenuhnya dengan titik (.):`;
 
-    // Primary AI: Ox Alpha (z-ai/glm-5.3-flash) with generous token headroom for reasoning + completion
-    const modelsToTry = [
-      "z-ai/glm-5.3-flash",
-      "meta-llama/llama-3.3-70b-instruct",
-      "deepseek/deepseek-chat",
-    ];
-
     let rawAnswer = "";
 
-    for (const model of modelsToTry) {
+    // Primary and Backup API Key iteration on Ox Alpha (z-ai/glm-5.3-flash)
+    for (const key of uniqueKeys) {
       try {
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${apiKey}`,
+            "Authorization": `Bearer ${key}`,
             "HTTP-Referer": "https://physflix.vercel.app",
             "X-Title": "PhysFlix SPM Physics AI Tutor (Ox Alpha)",
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model,
+            model: "z-ai/glm-5.3-flash",
             messages: [
               { role: "system", content: systemPrompt },
               { role: "user", content: userPrompt },
@@ -81,9 +81,11 @@ Sila jawab soalan ini dengan lengkap (1-2 perenggan), santai guna short forms da
           const data = await response.json();
           rawAnswer = data.choices?.[0]?.message?.content?.trim() || "";
           if (rawAnswer) break;
+        } else {
+          console.warn(`OpenRouter AI answer with key failed (status ${response.status}), trying backup key...`);
         }
       } catch (e) {
-        console.warn(`Model ${model} failed, falling back...`, e);
+        console.warn(`Model request failed on key, falling back...`, e);
       }
     }
 
