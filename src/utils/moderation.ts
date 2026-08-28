@@ -16,11 +16,11 @@ const ABUSIVE_PATTERNS: { pattern: RegExp; category: string; reason: string }[] 
     category: "Hinaan / Insult",
     reason: "Komen mengandungi unsur penghinaan terhadap kualiti pengajaran atau pendidik.",
   },
-  // 3. Kata Kasar / Profanity
+  // 3. Kata Kasar / Profanity & Abusive Words
   {
-    pattern: /\b(menyampah|celaka|mengarut|bodoh|babi|anjing|sial|pantek|puki|butoh|lancau|bangsat|sampah|pukimak|pepek|fuck|shit|bitch|asshole|idiot|cunt|gila|bodo|bebal|bahlol|bangang|tolol|palui|bongok|pundek|kote|tetek|burit|sundal)\b/i,
+    pattern: /\b(tavis|menyampah|celaka|mengarut|bodoh|babi|anjing|sial|pantek|puki|butoh|lancau|bangsat|sampah|pukimak|pepek|fuck|shit|bitch|asshole|idiot|cunt|gila|bodo|bebal|bahlol|bangang|tolol|palui|bongok|pundek|kote|tetek|burit|sundal)\b/i,
     category: "Kata Kasar / Profanity",
-    reason: "Teks dikesan mengandungi kata-kata kesat, carutan, atau makian terlarang.",
+    reason: "Teks dikesan mengandungi kata-kata kesat, carutan, atau perkataan terlarang.",
   },
   // 4. Gangguan / Harassment & Gesaan Berhenti
   {

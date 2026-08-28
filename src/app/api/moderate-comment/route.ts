@@ -35,7 +35,7 @@ Your duty is to enforce a high standard of respect, constructive discourse, and 
 STRICTLY BLOCK (isAbusive: true) if the text matches ANY of these abusive/negative categories:
 1. Meremehkan / Slanga Menghina: Dismissive slang, claiming nonsense or uselessness (e.g., 'ntah apa2', 'entah apa apa', 'ntah pape', 'merapu', 'mengarut', 'hauk', 'cringe', 'poyo', 'sembang kari', 'acah pandai').
 2. Hinaan / Insult: Criticizing or insulting the teacher, voice, presentation, or calling the content useless or terrible (e.g., 'penerangan tak masuk akal', 'teruk gila', 'langsung tak tahu apa buat', 'kualiti mengecewakan').
-3. Kata Kasar / Profanity: Any vulgarity, profanity, or rude swearing words (e.g., 'bodoh', 'babi', 'sial', 'pantek', 'puki', 'butoh', 'lancau', 'fuck', 'shit', 'bitch').
+3. Kata Kasar / Profanity: Any vulgarity, profanity, abusive terms, or rude swearing words (e.g., 'tavis', 'bodoh', 'babi', 'sial', 'pantek', 'puki', 'butoh', 'lancau', 'fuck', 'shit', 'bitch').
 4. Gangguan / Harassment: Demanding the creator stop, telling them not to appear on feed, or repetitive harassment (e.g., 'patut berhenti buat video', 'tak layak', 'jangan muncul lagi').
 5. Spam & Self-Promotion: Promoting external channels, asking for subscribers/sub4sub, or spamming (e.g., 'follow channel saya', 'sub4sub', 'klik channel saya').
 6. Scam / Penipuan: Promises of free money, fake giveaways, WhatsApp links, or get-rich-quick schemes (e.g., 'jana RM1000', 'menang hadiah', 'pelaburan tanpa risiko').
