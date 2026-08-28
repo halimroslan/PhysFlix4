@@ -1722,7 +1722,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                             ) : (
                               <>
                                 <Sparkles className="w-3 h-3 text-cyan-400" />
-                                <span className="text-[11px]">{lang === "bm" ? "Jawapan Sir Halim AI" : "Sir Halim AI Answer"}</span>
+                                <span className="text-[11px]">{lang === "bm" ? "Jawapan Balas" : "AI Reply"}</span>
                               </>
                             )}
                           </button>
