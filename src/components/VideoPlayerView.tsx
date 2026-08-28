@@ -616,7 +616,22 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
   };
 
   const handleDeleteQuestion = (id: string) => {
+    if (!isSuperAdmin) return;
     const updated = qaList.filter((item) => item.id !== id);
+    saveQAList(updated);
+  };
+
+  const handleDeleteReply = (questionId: string, replyId: string) => {
+    if (!isSuperAdmin) return;
+    const updated = qaList.map((item) => {
+      if (item.id === questionId) {
+        return {
+          ...item,
+          replies: item.replies.filter((r) => r.id !== replyId),
+        };
+      }
+      return item;
+    });
     saveQAList(updated);
   };
 
@@ -1506,12 +1521,12 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                             <span className="px-2 py-0.5 bg-slate-800/90 border border-slate-700 text-slate-300 text-[10px] font-bold rounded-md">
                               {item.category}
                             </span>
-                            {/* Delete button if user authored it */}
-                            {(item.authorName === (user?.displayName || user?.email?.split("@")[0]) || isSuperAdmin) && (
+                            {/* Delete button: SuperAdmin ONLY */}
+                            {isSuperAdmin && (
                               <button
                                 onClick={() => handleDeleteQuestion(item.id)}
                                 className="p-1 text-slate-500 hover:text-red-400 rounded transition cursor-pointer"
-                                title="Padam Soalan"
+                                title="Padam Soalan (Superadmin Sahaja)"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -1639,7 +1654,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                                     {reply.text}
                                   </p>
 
-                                  <div className="flex items-center justify-end pl-8 pt-1">
+                                  <div className="flex items-center justify-end pl-8 pt-1 gap-2">
                                     <button
                                       onClick={() => handleLikeReply(item.id, reply.id)}
                                       className="text-[10px] text-slate-400 hover:text-emerald-400 flex items-center gap-1 font-semibold transition cursor-pointer"
@@ -1647,6 +1662,18 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                                       <ThumbsUp className="w-3 h-3" />
                                       <span>{reply.likes > 0 ? reply.likes : ""} Bermanfaat</span>
                                     </button>
+
+                                    {/* Delete reply: Superadmin ONLY */}
+                                    {isSuperAdmin && (
+                                      <button
+                                        onClick={() => handleDeleteReply(item.id, reply.id)}
+                                        className="text-[10px] text-slate-500 hover:text-red-400 flex items-center gap-1 font-semibold transition cursor-pointer ml-2"
+                                        title="Padam Balasan (Superadmin Sahaja)"
+                                      >
+                                        <Trash2 className="w-3 h-3" />
+                                        <span>Padam</span>
+                                      </button>
+                                    )}
                                   </div>
                                 </div>
                               );
