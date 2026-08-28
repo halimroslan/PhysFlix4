@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 2. Ox Alpha AI Deep Contextual Moderation via OpenRouter
+    // 2. AI Deep Contextual Moderation via Ox Alpha (OpenRouter)
     const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (!apiKey) {
@@ -58,56 +58,66 @@ Return strictly valid JSON only:
 Teks untuk disemak:
 """${trimmed}"""`;
 
-    const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "HTTP-Referer": "https://physflix.vercel.app",
-        "X-Title": "PhysFlix SPM Physics AI Moderator",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "z-ai/glm-5.3-flash",
-        messages: [
-          {
-            role: "system",
-            content: "You are a strict, helpful AI content moderator for an educational SPM physics platform. Always respond in JSON format.",
+    // Primary AI: Ox Alpha (z-ai/glm-5.3-flash)
+    const modelsToTry = [
+      "z-ai/glm-5.3-flash",
+      "meta-llama/llama-3.3-70b-instruct",
+      "deepseek/deepseek-chat",
+    ];
+
+    for (const model of modelsToTry) {
+      try {
+        const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "HTTP-Referer": "https://physflix.vercel.app",
+            "X-Title": "PhysFlix SPM Physics AI Moderator (Ox Alpha)",
+            "Content-Type": "application/json",
           },
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.1,
-      }),
-    });
+          body: JSON.stringify({
+            model,
+            messages: [
+              {
+                role: "system",
+                content: "You are a strict, helpful AI content moderator for an educational SPM physics platform. Always respond in JSON format.",
+              },
+              {
+                role: "user",
+                content: prompt,
+              },
+            ],
+            response_format: { type: "json_object" },
+            max_tokens: 300,
+            temperature: 0.1,
+          }),
+        });
 
-    if (!openRouterResponse.ok) {
-      console.warn("OpenRouter API error:", await openRouterResponse.text());
-      return NextResponse.json({ isAbusive: false, reason: "" });
+        if (openRouterResponse.ok) {
+          const data = await openRouterResponse.json();
+          const content = data.choices?.[0]?.message?.content;
+          if (content) {
+            try {
+              const parsed = JSON.parse(content);
+              return NextResponse.json({
+                isAbusive: Boolean(parsed.isAbusive),
+                reason: parsed.reason || "",
+              });
+            } catch {
+              const isAbusive = content.toLowerCase().includes('"isabusive": true') || content.toLowerCase().includes('"isabusive":true');
+              return NextResponse.json({
+                isAbusive,
+                reason: isAbusive ? "Kandungan dikesan mengandungi perkataan atau unsur yang tidak sopan." : "",
+              });
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(`Moderation model ${model} failed, falling back...`, e);
+      }
     }
 
-    const data = await openRouterResponse.json();
-    const content = data.choices?.[0]?.message?.content;
-
-    if (!content) {
-      return NextResponse.json({ isAbusive: false, reason: "" });
-    }
-
-    try {
-      const parsed = JSON.parse(content);
-      return NextResponse.json({
-        isAbusive: Boolean(parsed.isAbusive),
-        reason: parsed.reason || "",
-      });
-    } catch {
-      const isAbusive = content.toLowerCase().includes('"isabusive": true') || content.toLowerCase().includes('"isabusive":true');
-      return NextResponse.json({
-        isAbusive,
-        reason: isAbusive ? "Kandungan dikesan mengandungi perkataan atau unsur yang tidak sopan." : "",
-      });
-    }
+    return NextResponse.json({ isAbusive: false, reason: "" });
   } catch (error) {
     console.error("Error in moderate-comment API route:", error);
     return NextResponse.json({ isAbusive: false, reason: "" }, { status: 200 });
