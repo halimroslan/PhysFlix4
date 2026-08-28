@@ -51,7 +51,6 @@ export const rawForm4Videos = [
     "chapterBm": "Pengukuran",
     "chapterDlp": "Measurement",
     "duration": "51:03",
-    "thumbnailUrl": "/thumbnails/HifOFbw3gDk.webp",
     "keyConceptsBm": [
       "Kuantiti Fizik",
       "Kuantiti Asas",
@@ -66,6 +65,7 @@ export const rawForm4Videos = [
       "Scalar Quantity",
       "Vector Quantity"
     ],
+    "thumbnailUrl": "/thumbnails/HifOFbw3gDk.webp",
     "relatedFormulaIds": []
   },
   {
@@ -80,7 +80,6 @@ export const rawForm4Videos = [
     "chapterBm": "Pengukuran",
     "chapterDlp": "Measurement",
     "duration": "23:17",
-    "thumbnailUrl": "/thumbnails/MrRD2TOnp54.webp",
     "keyConceptsBm": [
       "Kejituan",
       "Kepersisan",
@@ -95,6 +94,7 @@ export const rawForm4Videos = [
       "Random error",
       "Systematic error"
     ],
+    "thumbnailUrl": "/thumbnails/MrRD2TOnp54.webp",
     "relatedFormulaIds": []
   },
   {
@@ -103,13 +103,12 @@ export const rawForm4Videos = [
     "week": "T4 M3",
     "weekNum": 3,
     "titleBm": "1.2b Penyiasatan Saintifik",
-    "titleDlp": "1.2b Scientific Investigation",
+    "titleDlp": "1.2b Scientific Investigation Part 2",
     "form": 4,
     "chapterNum": 1,
     "chapterBm": "Pengukuran",
     "chapterDlp": "Measurement",
-    "duration": "21:38",
-    "thumbnailUrl": "/thumbnails/90mxEb59yZI.webp",
+    "duration": "59:25",
     "keyConceptsBm": [
       "Kuantiti Fizik",
       "Kejituan",
@@ -120,11 +119,12 @@ export const rawForm4Videos = [
       "Accuracy",
       "Consistency / Precision"
     ],
+    "thumbnailUrl": "/thumbnails/90mxEb59yZI.webp",
     "relatedFormulaIds": []
   },
   {
-    "driveId": "85j8Hw5hV3U",
-    "youtubeId": "85j8Hw5hV3U",
+    "driveId": "2OeHdtXaeyM",
+    "youtubeId": "2OeHdtXaeyM",
     "week": "T4 M5",
     "weekNum": 5,
     "titleBm": "2.2 Graf Gerakan Linear",
@@ -133,8 +133,7 @@ export const rawForm4Videos = [
     "chapterNum": 2,
     "chapterBm": "Daya dan Gerakan I",
     "chapterDlp": "Force and Motion I",
-    "duration": "57:33",
-    "thumbnailUrl": "/thumbnails/85j8Hw5hV3U.webp",
+    "duration": "59:53",
     "keyConceptsBm": [
       "Gerakan linear",
       "Sesaran",
@@ -149,6 +148,7 @@ export const rawForm4Videos = [
       "Velocity",
       "Acceleration"
     ],
+    "thumbnailUrl": "/thumbnails/2OeHdtXaeyM.webp",
     "relatedFormulaIds": [
       "f-t4-2-1",
       "f-t4-2-2",
@@ -157,8 +157,8 @@ export const rawForm4Videos = [
     ]
   },
   {
-    "driveId": "l6L19Q2sWks",
-    "youtubeId": "l6L19Q2sWks",
+    "driveId": "l1aYWXec21Q",
+    "youtubeId": "l1aYWXec21Q",
     "week": "T4 M6",
     "weekNum": 6,
     "titleBm": "2.3 Gerakan Jatuh Bebas",
@@ -167,8 +167,7 @@ export const rawForm4Videos = [
     "chapterNum": 2,
     "chapterBm": "Daya dan Gerakan I",
     "chapterDlp": "Force and Motion I",
-    "duration": "24:26",
-    "thumbnailUrl": "/thumbnails/l6L19Q2sWks.webp",
+    "duration": "58:34",
     "keyConceptsBm": [
       "Jatuh bebas",
       "Pecutan graviti",
@@ -181,6 +180,7 @@ export const rawForm4Videos = [
       "Linear motion",
       "Velocity"
     ],
+    "thumbnailUrl": "/thumbnails/l1aYWXec21Q.webp",
     "relatedFormulaIds": [
       "f-t4-2-5",
       "f-t4-2-6",
@@ -189,8 +189,8 @@ export const rawForm4Videos = [
     ]
   },
   {
-    "driveId": "r0U0h2j3bL4",
-    "youtubeId": "r0U0h2j3bL4",
+    "driveId": "uQwyU34HH28",
+    "youtubeId": "uQwyU34HH28",
     "week": "T4 M7",
     "weekNum": 7,
     "titleBm": "2.4 Inersia",
@@ -199,8 +199,7 @@ export const rawForm4Videos = [
     "chapterNum": 2,
     "chapterBm": "Daya dan Gerakan I",
     "chapterDlp": "Force and Motion I",
-    "duration": "18:45",
-    "thumbnailUrl": "/thumbnails/r0U0h2j3bL4.webp",
+    "duration": "54:04",
     "keyConceptsBm": [
       "Inersia",
       "Hukum Gerakan Newton Pertama",
@@ -211,11 +210,12 @@ export const rawForm4Videos = [
       "Newton's First Law of Motion",
       "Mass"
     ],
+    "thumbnailUrl": "/thumbnails/uQwyU34HH28.webp",
     "relatedFormulaIds": []
   },
   {
-    "driveId": "Y2g14N6rL7U",
-    "youtubeId": "Y2g14N6rL7U",
+    "driveId": "gqbZ3grngvg",
+    "youtubeId": "gqbZ3grngvg",
     "week": "T4 M8",
     "weekNum": 8,
     "titleBm": "2.5 Momentum",
@@ -224,8 +224,7 @@ export const rawForm4Videos = [
     "chapterNum": 2,
     "chapterBm": "Daya dan Gerakan I",
     "chapterDlp": "Force and Motion I",
-    "duration": "32:10",
-    "thumbnailUrl": "/thumbnails/Y2g14N6rL7U.webp",
+    "duration": "51:48",
     "keyConceptsBm": [
       "Momentum",
       "Prinsip Keabadian Momentum",
@@ -240,6 +239,7 @@ export const rawForm4Videos = [
       "Inelastic collision",
       "Explosion"
     ],
+    "thumbnailUrl": "/thumbnails/gqbZ3grngvg.webp",
     "relatedFormulaIds": [
       "f-t4-2-9",
       "f-t4-2-10",
@@ -248,8 +248,8 @@ export const rawForm4Videos = [
     ]
   },
   {
-    "driveId": "K8g92B5nQ1x",
-    "youtubeId": "K8g92B5nQ1x",
+    "driveId": "QZtocJnhel4",
+    "youtubeId": "QZtocJnhel4",
     "week": "T4 M9",
     "weekNum": 9,
     "titleBm": "2.6 Daya",
@@ -258,8 +258,7 @@ export const rawForm4Videos = [
     "chapterNum": 2,
     "chapterBm": "Daya dan Gerakan I",
     "chapterDlp": "Force and Motion I",
-    "duration": "28:15",
-    "thumbnailUrl": "/thumbnails/K8g92B5nQ1x.webp",
+    "duration": "57:22",
     "keyConceptsBm": [
       "Daya",
       "Hukum Gerakan Newton Kedua",
@@ -272,13 +271,14 @@ export const rawForm4Videos = [
       "Acceleration",
       "Mass"
     ],
+    "thumbnailUrl": "/thumbnails/QZtocJnhel4.webp",
     "relatedFormulaIds": [
       "f-t4-2-13"
     ]
   },
   {
-    "driveId": "P3m47V1kL9z",
-    "youtubeId": "P3m47V1kL9z",
+    "driveId": "m90zg3HyU_8",
+    "youtubeId": "m90zg3HyU_8",
     "week": "T4 M10",
     "weekNum": 10,
     "titleBm": "2.7 Daya Impuls & 2.8 Berat",
@@ -287,8 +287,7 @@ export const rawForm4Videos = [
     "chapterNum": 2,
     "chapterBm": "Daya dan Gerakan I",
     "chapterDlp": "Force and Motion I",
-    "duration": "35:40",
-    "thumbnailUrl": "/thumbnails/P3m47V1kL9z.webp",
+    "duration": "55:28",
     "keyConceptsBm": [
       "Impuls",
       "Daya impuls",
@@ -303,6 +302,7 @@ export const rawForm4Videos = [
       "Weight",
       "Newton's Third Law of Motion"
     ],
+    "thumbnailUrl": "/thumbnails/m90zg3HyU_8.webp",
     "relatedFormulaIds": [
       "f-t4-2-14",
       "f-t4-2-15",
@@ -310,8 +310,8 @@ export const rawForm4Videos = [
     ]
   },
   {
-    "driveId": "W5n82L0pK1q",
-    "youtubeId": "W5n82L0pK1q",
+    "driveId": "hsjQe4dnpl0",
+    "youtubeId": "hsjQe4dnpl0",
     "week": "T4 M11",
     "weekNum": 11,
     "titleBm": "3.1a Hukum Kegravitian Semesta Newton",
@@ -320,8 +320,7 @@ export const rawForm4Videos = [
     "chapterNum": 3,
     "chapterBm": "Kegravitian",
     "chapterDlp": "Gravitation",
-    "duration": "41:20",
-    "thumbnailUrl": "/thumbnails/W5n82L0pK1q.webp",
+    "duration": "52:42",
     "keyConceptsBm": [
       "Hukum Kegravitian Semesta Newton",
       "Daya graviti",
@@ -332,6 +331,7 @@ export const rawForm4Videos = [
       "Gravitational force",
       "Gravitational acceleration"
     ],
+    "thumbnailUrl": "/thumbnails/hsjQe4dnpl0.webp",
     "relatedFormulaIds": [
       "f-t4-3-1",
       "f-t4-3-2",
@@ -339,18 +339,17 @@ export const rawForm4Videos = [
     ]
   },
   {
-    "driveId": "B7x31M9nL4v",
-    "youtubeId": "B7x31M9nL4v",
+    "driveId": "x-wilmj9cxE",
+    "youtubeId": "x-wilmj9cxE",
     "week": "T4 M12",
     "weekNum": 12,
     "titleBm": "3.1b Hukum Kegravitian Semesta Newton",
-    "titleDlp": "3.1b Newton's Universal Law of Gravitation",
+    "titleDlp": "3.1b Newton's Universal Law of Gravitation Part 2",
     "form": 4,
     "chapterNum": 3,
     "chapterBm": "Kegravitian",
     "chapterDlp": "Gravitation",
-    "duration": "26:50",
-    "thumbnailUrl": "/thumbnails/B7x31M9nL4v.webp",
+    "duration": "59:39",
     "keyConceptsBm": [
       "Daya graviti",
       "Pecutan graviti",
@@ -361,24 +360,24 @@ export const rawForm4Videos = [
       "Gravitational acceleration",
       "Earth radius"
     ],
+    "thumbnailUrl": "/thumbnails/x-wilmj9cxE.webp",
     "relatedFormulaIds": [
       "f-t4-3-1",
       "f-t4-3-2"
     ]
   },
   {
-    "driveId": "Z9v44K2mL7x",
-    "youtubeId": "Z9v44K2mL7x",
+    "driveId": "i4WgQ_Azegc",
+    "youtubeId": "i4WgQ_Azegc",
     "week": "T4 M12",
-    "weekNum": 12,
+    "weekNum": 12.5,
     "titleBm": "3.1c Daya Memusat & Gerakan Membulat",
     "titleDlp": "3.1c Centripetal Force & Circular Motion",
     "form": 4,
     "chapterNum": 3,
     "chapterBm": "Kegravitian",
     "chapterDlp": "Gravitation",
-    "duration": "29:15",
-    "thumbnailUrl": "/thumbnails/Z9v44K2mL7x.webp",
+    "duration": "58:06",
     "keyConceptsBm": [
       "Daya memusat",
       "Gerakan membulat seragam",
@@ -389,6 +388,7 @@ export const rawForm4Videos = [
       "Uniform circular motion",
       "Linear speed"
     ],
+    "thumbnailUrl": "/thumbnails/i4WgQ_Azegc.webp",
     "relatedFormulaIds": [
       "f-t4-3-4",
       "f-t4-3-5",
@@ -396,8 +396,8 @@ export const rawForm4Videos = [
     ]
   },
   {
-    "driveId": "D1k88P4nL3w",
-    "youtubeId": "D1k88P4nL3w",
+    "driveId": "snbt6GpD0C4",
+    "youtubeId": "snbt6GpD0C4",
     "week": "T4 M13",
     "weekNum": 13,
     "titleBm": "3.2 Hukum Kepler",
@@ -406,8 +406,7 @@ export const rawForm4Videos = [
     "chapterNum": 3,
     "chapterBm": "Kegravitian",
     "chapterDlp": "Gravitation",
-    "duration": "38:00",
-    "thumbnailUrl": "/thumbnails/D1k88P4nL3w.webp",
+    "duration": "57:02",
     "keyConceptsBm": [
       "Hukum Kepler Pertama",
       "Hukum Kepler Kedua",
@@ -418,13 +417,14 @@ export const rawForm4Videos = [
       "Kepler's Second Law",
       "Kepler's Third Law"
     ],
+    "thumbnailUrl": "/thumbnails/snbt6GpD0C4.webp",
     "relatedFormulaIds": [
       "f-t4-3-7"
     ]
   },
   {
-    "driveId": "N4m22V8kL6y",
-    "youtubeId": "N4m22V8kL6y",
+    "driveId": "09jX9qGHwSQ",
+    "youtubeId": "09jX9qGHwSQ",
     "week": "T4 M14",
     "weekNum": 14,
     "titleBm": "3.3a Satelit Buatan Manusia",
@@ -433,8 +433,7 @@ export const rawForm4Videos = [
     "chapterNum": 3,
     "chapterBm": "Kegravitian",
     "chapterDlp": "Gravitation",
-    "duration": "31:45",
-    "thumbnailUrl": "/thumbnails/N4m22V8kL6y.webp",
+    "duration": "56:55",
     "keyConceptsBm": [
       "Satelit geopegun",
       "Satelit bukan geopegun",
@@ -447,24 +446,25 @@ export const rawForm4Videos = [
       "Linear speed",
       "Orbital period"
     ],
+    "thumbnailUrl": "/thumbnails/09jX9qGHwSQ.webp",
     "relatedFormulaIds": [
       "f-t4-3-6",
       "f-t4-3-8"
     ]
   },
   {
-    "driveId": "G6h77K3nL9v",
-    "youtubeId": "G6h77K3nL9v",
+    "driveId": "sn7_SSzSURM",
+    "youtubeId": "sn7_SSzSURM",
+    "thumbnailUrl": "/thumbnails/sn7_SSzSURM.webp",
     "week": "T4 M15",
     "weekNum": 15,
     "titleBm": "3.3b Satelit Buatan Manusia",
-    "titleDlp": "3.3b Man-made Satellites",
+    "titleDlp": "3.3b Man-made Satellites Part 2",
     "form": 4,
     "chapterNum": 3,
     "chapterBm": "Kegravitian",
     "chapterDlp": "Gravitation",
-    "duration": "27:10",
-    "thumbnailUrl": "/thumbnails/G6h77K3nL9v.webp",
+    "duration": "56:14",
     "keyConceptsBm": [
       "Tenaga keupayaan graviti",
       "Halaju lepas",
@@ -481,8 +481,8 @@ export const rawForm4Videos = [
     ]
   },
   {
-    "driveId": "T2r99L1mK4z",
-    "youtubeId": "T2r99L1mK4z",
+    "driveId": "XzSTapojxMU",
+    "youtubeId": "XzSTapojxMU",
     "week": "T4 M16",
     "weekNum": 16,
     "titleBm": "4.1 Keseimbangan Terma",
@@ -491,8 +491,7 @@ export const rawForm4Videos = [
     "chapterNum": 4,
     "chapterBm": "Haba",
     "chapterDlp": "Heat",
-    "duration": "33:25",
-    "thumbnailUrl": "/thumbnails/T2r99L1mK4z.webp",
+    "duration": "56:57",
     "keyConceptsBm": [
       "Suhu",
       "Haba",
@@ -507,13 +506,14 @@ export const rawForm4Videos = [
       "Thermometric property",
       "Calibration"
     ],
+    "thumbnailUrl": "/thumbnails/XzSTapojxMU.webp",
     "relatedFormulaIds": [
       "f-t4-4-1"
     ]
   },
   {
-    "driveId": "X8v33N5kL2w",
-    "youtubeId": "X8v33N5kL2w",
+    "driveId": "GK4PZO-9hos",
+    "youtubeId": "GK4PZO-9hos",
     "week": "T4 M17",
     "weekNum": 17,
     "titleBm": "4.2a Muatan Haba Tentu",
@@ -522,8 +522,7 @@ export const rawForm4Videos = [
     "chapterNum": 4,
     "chapterBm": "Haba",
     "chapterDlp": "Heat",
-    "duration": "42:15",
-    "thumbnailUrl": "/thumbnails/X8v33N5kL2w.webp",
+    "duration": "58:43",
     "keyConceptsBm": [
       "Muatan haba",
       "Muatan haba tentu",
@@ -534,24 +533,24 @@ export const rawForm4Videos = [
       "Specific heat capacity",
       "Thermal equilibrium"
     ],
+    "thumbnailUrl": "/thumbnails/GK4PZO-9hos.webp",
     "relatedFormulaIds": [
       "f-t4-4-2",
       "f-t4-4-3"
     ]
   },
   {
-    "driveId": "M5k44P8nL1v",
-    "youtubeId": "M5k44P8nL1v",
+    "driveId": "BSKVOMr_NWU",
+    "youtubeId": "BSKVOMr_NWU",
     "week": "T4 M18",
     "weekNum": 18,
     "titleBm": "4.2b Muatan Haba Tentu",
-    "titleDlp": "4.2b Specific Heat Capacity",
+    "titleDlp": "4.2b Specific Heat Capacity Part 2",
     "form": 4,
     "chapterNum": 4,
     "chapterBm": "Haba",
     "chapterDlp": "Heat",
-    "duration": "30:50",
-    "thumbnailUrl": "/thumbnails/M5k44P8nL1v.webp",
+    "duration": "57:34",
     "keyConceptsBm": [
       "Muatan haba tentu",
       "Suhu",
@@ -562,13 +561,14 @@ export const rawForm4Videos = [
       "Temperature",
       "Heat"
     ],
+    "thumbnailUrl": "/thumbnails/BSKVOMr_NWU.webp",
     "relatedFormulaIds": [
       "f-t4-4-3"
     ]
   },
   {
-    "driveId": "C7m11V9kL4x",
-    "youtubeId": "C7m11V9kL4x",
+    "driveId": "nLaJH-EH3Ko",
+    "youtubeId": "nLaJH-EH3Ko",
     "week": "T4 M19",
     "weekNum": 19,
     "titleBm": "4.3a Haba Pendam Tentu",
@@ -577,8 +577,7 @@ export const rawForm4Videos = [
     "chapterNum": 4,
     "chapterBm": "Haba",
     "chapterDlp": "Heat",
-    "duration": "36:40",
-    "thumbnailUrl": "/thumbnails/C7m11V9kL4x.webp",
+    "duration": "56:29",
     "keyConceptsBm": [
       "Haba pendam tentu",
       "Haba pendam tentu pelakuran",
@@ -589,23 +588,23 @@ export const rawForm4Videos = [
       "Specific latent heat of fusion",
       "Specific latent heat of vaporisation"
     ],
+    "thumbnailUrl": "/thumbnails/nLaJH-EH3Ko.webp",
     "relatedFormulaIds": [
       "f-t4-4-4"
     ]
   },
   {
-    "driveId": "L9n66K2mL8y",
-    "youtubeId": "L9n66K2mL8y",
+    "driveId": "BqZIb-bVYk0",
+    "youtubeId": "BqZIb-bVYk0",
     "week": "T4 M20",
     "weekNum": 20,
     "titleBm": "4.3b Haba Pendam Tentu",
-    "titleDlp": "4.3b Specific Latent Heat",
+    "titleDlp": "4.3b Specific Latent Heat Applications",
     "form": 4,
     "chapterNum": 4,
     "chapterBm": "Haba",
     "chapterDlp": "Heat",
-    "duration": "28:10",
-    "thumbnailUrl": "/thumbnails/L9n66K2mL8y.webp",
+    "duration": "58:37",
     "keyConceptsBm": [
       "Haba pendam tentu",
       "Peleburan",
@@ -616,13 +615,14 @@ export const rawForm4Videos = [
       "Melting",
       "Boiling"
     ],
+    "thumbnailUrl": "/thumbnails/BqZIb-bVYk0.webp",
     "relatedFormulaIds": [
       "f-t4-4-4"
     ]
   },
   {
-    "driveId": "V3r77P1nL5w",
-    "youtubeId": "V3r77P1nL5w",
+    "driveId": "Lrq-a0624Y8",
+    "youtubeId": "Lrq-a0624Y8",
     "week": "T4 M21",
     "weekNum": 21,
     "titleBm": "4.4 Hukum-hukum Gas",
@@ -631,8 +631,7 @@ export const rawForm4Videos = [
     "chapterNum": 4,
     "chapterBm": "Haba",
     "chapterDlp": "Heat",
-    "duration": "48:30",
-    "thumbnailUrl": "/thumbnails/V3r77P1nL5w.webp",
+    "duration": "1:01:20",
     "keyConceptsBm": [
       "Hukum Boyle",
       "Hukum Charles",
@@ -645,6 +644,7 @@ export const rawForm4Videos = [
       "Gay-Lussac's law",
       "Absolute zero"
     ],
+    "thumbnailUrl": "/thumbnails/Lrq-a0624Y8.webp",
     "relatedFormulaIds": [
       "f-t4-4-5",
       "f-t4-4-6",
@@ -653,18 +653,17 @@ export const rawForm4Videos = [
     ]
   },
   {
-    "driveId": "K1h55N8kL3z",
-    "youtubeId": "K1h55N8kL3z",
+    "driveId": "FoOtEc3jlts",
+    "youtubeId": "FoOtEc3jlts",
     "week": "T4 M22",
     "weekNum": 22,
     "titleBm": "5.1 Asas Gelombang",
-    "titleDlp": "5.1 Wave Fundamentals",
+    "titleDlp": "5.1 Fundamentals of Waves",
     "form": 4,
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "39:15",
-    "thumbnailUrl": "/thumbnails/K1h55N8kL3z.webp",
+    "duration": "58:28",
     "keyConceptsBm": [
       "Gelombang progresif",
       "Gelombang pegun",
@@ -681,14 +680,15 @@ export const rawForm4Videos = [
       "Amplitude",
       "Wavelength"
     ],
+    "thumbnailUrl": "/thumbnails/FoOtEc3jlts.webp",
     "relatedFormulaIds": [
       "f-t4-5-1",
       "f-t4-5-2"
     ]
   },
   {
-    "driveId": "R4m88L2nK7v",
-    "youtubeId": "R4m88L2nK7v",
+    "driveId": "LwJhb5ey-q8",
+    "youtubeId": "LwJhb5ey-q8",
     "week": "T4 M23",
     "weekNum": 23,
     "titleBm": "5.2 Pelembapan & Resonans",
@@ -697,8 +697,7 @@ export const rawForm4Videos = [
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "25:40",
-    "thumbnailUrl": "/thumbnails/R4m88L2nK7v.webp",
+    "duration": "57:25",
     "keyConceptsBm": [
       "Pelembapan",
       "Resonans",
@@ -711,21 +710,21 @@ export const rawForm4Videos = [
       "Natural frequency",
       "Amplitude"
     ],
+    "thumbnailUrl": "/thumbnails/LwJhb5ey-q8.webp",
     "relatedFormulaIds": []
   },
   {
-    "driveId": "P7k22V6mL1w",
-    "youtubeId": "P7k22V6mL1w",
+    "driveId": "Y7yT4-9R6do",
+    "youtubeId": "Y7yT4-9R6do",
     "week": "T4 M24",
     "weekNum": 24,
     "titleBm": "5.3 Pantulan Gelombang",
-    "titleDlp": "5.3 Wave Reflection",
+    "titleDlp": "5.3 Reflection of Waves",
     "form": 4,
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "27:50",
-    "thumbnailUrl": "/thumbnails/P7k22V6mL1w.webp",
+    "duration": "56:59",
     "keyConceptsBm": [
       "Pantulan gelombang",
       "Muka gelombang",
@@ -740,23 +739,23 @@ export const rawForm4Videos = [
       "Angle of incidence",
       "Angle of reflection"
     ],
+    "thumbnailUrl": "/thumbnails/Y7yT4-9R6do.webp",
     "relatedFormulaIds": [
       "f-t4-5-3"
     ]
   },
   {
-    "driveId": "W2n99K4nL8x",
-    "youtubeId": "W2n99K4nL8x",
+    "driveId": "GIbs4ZhEPVY",
+    "youtubeId": "GIbs4ZhEPVY",
     "week": "T4 M25",
     "weekNum": 25,
     "titleBm": "5.4 Pembiasan Gelombang",
-    "titleDlp": "5.4 Wave Refraction",
+    "titleDlp": "5.4 Refraction of Waves",
     "form": 4,
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "31:20",
-    "thumbnailUrl": "/thumbnails/W2n99K4nL8x.webp",
+    "duration": "58:24",
     "keyConceptsBm": [
       "Pembiasan gelombang",
       "Laju gelombang",
@@ -769,23 +768,23 @@ export const rawForm4Videos = [
       "Wavelength",
       "Wave frequency"
     ],
+    "thumbnailUrl": "/thumbnails/GIbs4ZhEPVY.webp",
     "relatedFormulaIds": [
       "f-t4-5-4"
     ]
   },
   {
-    "driveId": "Z5v33P7kL2y",
-    "youtubeId": "Z5v33P7kL2y",
+    "driveId": "jbBMpSkhVbE",
+    "youtubeId": "jbBMpSkhVbE",
     "week": "T4 M26",
     "weekNum": 26,
     "titleBm": "5.5 Pembelauan Gelombang",
-    "titleDlp": "5.5 Wave Diffraction",
+    "titleDlp": "5.5 Diffraction of Waves",
     "form": 4,
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "26:30",
-    "thumbnailUrl": "/thumbnails/Z5v33P7kL2y.webp",
+    "duration": "57:05",
     "keyConceptsBm": [
       "Pembelauan gelombang",
       "Kesan pembelauan",
@@ -796,21 +795,21 @@ export const rawForm4Videos = [
       "Diffraction effect",
       "Wavefront"
     ],
+    "thumbnailUrl": "/thumbnails/jbBMpSkhVbE.webp",
     "relatedFormulaIds": []
   },
   {
-    "driveId": "T8r11N5mL6v",
-    "youtubeId": "T8r11N5mL6v",
+    "driveId": "hgnSRVa-lcY",
+    "youtubeId": "hgnSRVa-lcY",
     "week": "T4 M27",
     "weekNum": 27,
     "titleBm": "5.6a Interferens Gelombang",
-    "titleDlp": "5.6a Wave Interference",
+    "titleDlp": "5.6a Interference of Waves",
     "form": 4,
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "44:10",
-    "thumbnailUrl": "/thumbnails/T8r11N5mL6v.webp",
+    "duration": "55:53",
     "keyConceptsBm": [
       "Prinsip superposisi",
       "Interferens membina",
@@ -827,23 +826,23 @@ export const rawForm4Videos = [
       "Antinode",
       "Node"
     ],
+    "thumbnailUrl": "/thumbnails/hgnSRVa-lcY.webp",
     "relatedFormulaIds": [
       "f-t4-5-5"
     ]
   },
   {
-    "driveId": "M1k77L9nK4w",
-    "youtubeId": "M1k77L9nK4w",
+    "driveId": "oyweI4GDIsM",
+    "youtubeId": "oyweI4GDIsM",
     "week": "T4 M28",
     "weekNum": 28,
     "titleBm": "5.6b Interferens Gelombang",
-    "titleDlp": "5.6b Wave Interference",
+    "titleDlp": "5.6b Interference of Waves Part 2",
     "form": 4,
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "33:45",
-    "thumbnailUrl": "/thumbnails/M1k77L9nK4w.webp",
+    "duration": "57:04",
     "keyConceptsBm": [
       "Interferens membina",
       "Interferens membinasa",
@@ -854,13 +853,14 @@ export const rawForm4Videos = [
       "Destructive interference",
       "Wavelength"
     ],
+    "thumbnailUrl": "/thumbnails/oyweI4GDIsM.webp",
     "relatedFormulaIds": [
       "f-t4-5-5"
     ]
   },
   {
-    "driveId": "B4m44V2kL8z",
-    "youtubeId": "B4m44V2kL8z",
+    "driveId": "4v3ygAyaP68",
+    "youtubeId": "4v3ygAyaP68",
     "week": "T4 M29",
     "weekNum": 29,
     "titleBm": "5.7 Gelombang EM",
@@ -869,8 +869,7 @@ export const rawForm4Videos = [
     "chapterNum": 5,
     "chapterBm": "Gelombang",
     "chapterDlp": "Waves",
-    "duration": "28:50",
-    "thumbnailUrl": "/thumbnails/B4m44V2kL8z.webp",
+    "duration": "58:33",
     "keyConceptsBm": [
       "Spektrum elektromagnet",
       "Gelombang melintang",
@@ -881,13 +880,14 @@ export const rawForm4Videos = [
       "Transverse wave",
       "Speed of light"
     ],
+    "thumbnailUrl": "/thumbnails/4v3ygAyaP68.webp",
     "relatedFormulaIds": [
       "f-t4-5-1"
     ]
   },
   {
-    "driveId": "G7h99P3nL1x",
-    "youtubeId": "G7h99P3nL1x",
+    "driveId": "3Wy8-kNGrcc",
+    "youtubeId": "3Wy8-kNGrcc",
     "week": "T4 M30",
     "weekNum": 30,
     "titleBm": "6.1 Pembiasan Cahaya",
@@ -896,8 +896,7 @@ export const rawForm4Videos = [
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "43:20",
-    "thumbnailUrl": "/thumbnails/G7h99P3nL1x.webp",
+    "duration": "58:17",
     "keyConceptsBm": [
       "Pembiasan cahaya",
       "Ketumpatan optik",
@@ -914,6 +913,7 @@ export const rawForm4Videos = [
       "Real depth",
       "Apparent depth"
     ],
+    "thumbnailUrl": "/thumbnails/3Wy8-kNGrcc.webp",
     "relatedFormulaIds": [
       "f-t4-6-1",
       "f-t4-6-2",
@@ -921,8 +921,8 @@ export const rawForm4Videos = [
     ]
   },
   {
-    "driveId": "X1v66K8mL5y",
-    "youtubeId": "X1v66K8mL5y",
+    "driveId": "bViYGWMIHoI",
+    "youtubeId": "bViYGWMIHoI",
     "week": "T4 M31",
     "weekNum": 31,
     "titleBm": "6.2 Pantulan Dalam Penuh",
@@ -931,8 +931,7 @@ export const rawForm4Videos = [
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "35:10",
-    "thumbnailUrl": "/thumbnails/X1v66K8mL5y.webp",
+    "duration": "56:54",
     "keyConceptsBm": [
       "Pantulan dalam penuh",
       "Sudut genting",
@@ -945,13 +944,14 @@ export const rawForm4Videos = [
       "Optical fibre",
       "Mirage"
     ],
+    "thumbnailUrl": "/thumbnails/bViYGWMIHoI.webp",
     "relatedFormulaIds": [
       "f-t4-6-4"
     ]
   },
   {
-    "driveId": "D9k33N1mL7v",
-    "youtubeId": "D9k33N1mL7v",
+    "driveId": "9sJ9a5rToVs",
+    "youtubeId": "9sJ9a5rToVs",
     "week": "T4 M32",
     "weekNum": 32,
     "titleBm": "6.3 Pembentukan Imej oleh Kanta",
@@ -960,8 +960,7 @@ export const rawForm4Videos = [
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "37:40",
-    "thumbnailUrl": "/thumbnails/D9k33N1mL7v.webp",
+    "duration": "46:59",
     "keyConceptsBm": [
       "Kanta cembung",
       "Kanta cekung",
@@ -976,23 +975,23 @@ export const rawForm4Videos = [
       "Focal point",
       "Focal length"
     ],
+    "thumbnailUrl": "/thumbnails/9sJ9a5rToVs.webp",
     "relatedFormulaIds": [
       "f-t4-6-6"
     ]
   },
   {
-    "driveId": "L2n88P5kL9w",
-    "youtubeId": "L2n88P5kL9w",
+    "driveId": "BRgIHlXbr_k",
+    "youtubeId": "BRgIHlXbr_k",
     "week": "T4 M33",
     "weekNum": 33,
     "titleBm": "6.4 Pembentukan Imej oleh Kanta",
-    "titleDlp": "6.4 Image Formation by Lenses",
+    "titleDlp": "6.4 Lens Formula & Magnification",
     "form": 4,
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "32:15",
-    "thumbnailUrl": "/thumbnails/L2n88P5kL9w.webp",
+    "duration": "57:15",
     "keyConceptsBm": [
       "Pembesaran linear",
       "Formula kanta nipis",
@@ -1007,6 +1006,7 @@ export const rawForm4Videos = [
       "Real image",
       "Virtual image"
     ],
+    "thumbnailUrl": "/thumbnails/BRgIHlXbr_k.webp",
     "relatedFormulaIds": [
       "f-t4-6-5",
       "f-t4-6-6",
@@ -1014,8 +1014,8 @@ export const rawForm4Videos = [
     ]
   },
   {
-    "driveId": "V5r22V4mL3z",
-    "youtubeId": "V5r22V4mL3z",
+    "driveId": "yuY1N9zgEEc",
+    "youtubeId": "yuY1N9zgEEc",
     "week": "T4 M34",
     "weekNum": 34,
     "titleBm": "6.5 Peralatan Optik",
@@ -1024,8 +1024,7 @@ export const rawForm4Videos = [
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "40:30",
-    "thumbnailUrl": "/thumbnails/V5r22V4mL3z.webp",
+    "duration": "55:43",
     "keyConceptsBm": [
       "Kanta pembesar",
       "Mikroskop majmuk",
@@ -1038,14 +1037,15 @@ export const rawForm4Videos = [
       "Astronomical telescope",
       "Normal adjustment"
     ],
+    "thumbnailUrl": "/thumbnails/yuY1N9zgEEc.webp",
     "relatedFormulaIds": [
       "f-t4-6-8",
       "f-t4-6-9"
     ]
   },
   {
-    "driveId": "P8k55K9nL2x",
-    "youtubeId": "P8k55K9nL2x",
+    "driveId": "AceZCzCckqc",
+    "youtubeId": "AceZCzCckqc",
     "week": "T4 M36",
     "weekNum": 36,
     "titleBm": "6.6a Pembentukan Imej Oleh Cermin Sfera",
@@ -1054,8 +1054,7 @@ export const rawForm4Videos = [
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "29:50",
-    "thumbnailUrl": "/thumbnails/P8k55K9nL2x.webp",
+    "duration": "57:10",
     "keyConceptsBm": [
       "Cermin cekung",
       "Cermin cembung",
@@ -1068,21 +1067,21 @@ export const rawForm4Videos = [
       "Centre of curvature",
       "Focal point"
     ],
+    "thumbnailUrl": "/thumbnails/AceZCzCckqc.webp",
     "relatedFormulaIds": []
   },
   {
-    "driveId": "W1n77L3nK8v",
-    "youtubeId": "W1n77L3nK8v",
+    "driveId": "8Ci_wF-Pvps",
+    "youtubeId": "8Ci_wF-Pvps",
     "week": "T4 M36",
-    "weekNum": 36,
+    "weekNum": 36.5,
     "titleBm": "6.6b Pembentukan Imej Oleh Cermin Sfera",
-    "titleDlp": "6.6b Image Formation by Spherical Mirrors",
+    "titleDlp": "6.6b Image Formation by Spherical Mirrors Part 2",
     "form": 4,
     "chapterNum": 6,
     "chapterBm": "Cahaya dan Optik",
     "chapterDlp": "Light and Optics",
-    "duration": "24:15",
-    "thumbnailUrl": "/thumbnails/W1n77L3nK8v.webp",
+    "duration": "58:19",
     "keyConceptsBm": [
       "Cermin cekung",
       "Cermin cembung",
@@ -1095,14 +1094,14 @@ export const rawForm4Videos = [
       "Real image",
       "Virtual image"
     ],
+    "thumbnailUrl": "/thumbnails/8Ci_wF-Pvps.webp",
     "relatedFormulaIds": []
   }
 ];
 
 export const rawForm5Videos = [
   {
-    "driveId": "H1fOFbw3gDk",
-    "youtubeId": "H1fOFbw3gDk",
+    "driveId": "t5_m1_1_1",
     "week": "T5 M1",
     "weekNum": 1,
     "titleBm": "1.1 Daya Paduan",
@@ -1111,8 +1110,8 @@ export const rawForm5Videos = [
     "chapterNum": 1,
     "chapterBm": "Daya dan Gerakan II",
     "chapterDlp": "Force and Motion II",
-    "duration": "45:12",
-    "thumbnailUrl": "/thumbnails/H1fOFbw3gDk.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Daya Paduan",
       "Gambar rajah jasad bebas",
@@ -1128,18 +1127,17 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "M1rRD2TOnp5",
-    "youtubeId": "M1rRD2TOnp5",
+    "driveId": "t5_m2_1_3",
     "week": "T5 M2",
     "weekNum": 2,
     "titleBm": "1.3 Keseimbangan Daya",
-    "titleDlp": "1.3 Equilibrium of Forces",
+    "titleDlp": "1.3 Forces in Equilibrium",
     "form": 5,
     "chapterNum": 1,
     "chapterBm": "Daya dan Gerakan II",
     "chapterDlp": "Force and Motion II",
-    "duration": "38:40",
-    "thumbnailUrl": "/thumbnails/M1rRD2TOnp5.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Leraian Daya",
       "Keseimbangan Daya",
@@ -1157,8 +1155,7 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "910mxEb59yZ",
-    "youtubeId": "910mxEb59yZ",
+    "driveId": "t5_m4_1_4",
     "week": "T5 M4",
     "weekNum": 4,
     "titleBm": "1.4 Kekenyalan",
@@ -1167,8 +1164,8 @@ export const rawForm5Videos = [
     "chapterNum": 1,
     "chapterBm": "Daya dan Gerakan II",
     "chapterDlp": "Force and Motion II",
-    "duration": "52:10",
-    "thumbnailUrl": "/thumbnails/910mxEb59yZ.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Kekenyalan",
       "Had kenyal",
@@ -1190,8 +1187,7 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "815j8Hw5hV3",
-    "youtubeId": "815j8Hw5hV3",
+    "driveId": "t5_m6_2_2",
     "week": "T5 M6",
     "weekNum": 6,
     "titleBm": "2.2 Tekanan Atmosfera",
@@ -1200,8 +1196,8 @@ export const rawForm5Videos = [
     "chapterNum": 2,
     "chapterBm": "Tekanan",
     "chapterDlp": "Pressure",
-    "duration": "41:30",
-    "thumbnailUrl": "/thumbnails/815j8Hw5hV3.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Tekanan atmosfera",
       "Tekanan cecair",
@@ -1222,8 +1218,7 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "l16L19Q2sWk",
-    "youtubeId": "l16L19Q2sWk",
+    "driveId": "t5_m7_2_3",
     "week": "T5 M7",
     "weekNum": 7,
     "titleBm": "2.3 Tekanan Gas & 2.4 Prinsip Pascal",
@@ -1232,8 +1227,8 @@ export const rawForm5Videos = [
     "chapterNum": 2,
     "chapterBm": "Tekanan",
     "chapterDlp": "Pressure",
-    "duration": "49:15",
-    "thumbnailUrl": "/thumbnails/l16L19Q2sWk.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Manometer",
       "Tekanan gas",
@@ -1252,8 +1247,7 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "r10U0h2j3bL",
-    "youtubeId": "r10U0h2j3bL",
+    "driveId": "t5_m8_2_5",
     "week": "T5 M8",
     "weekNum": 8,
     "titleBm": "2.5 Prinsip Archimedes",
@@ -1262,8 +1256,8 @@ export const rawForm5Videos = [
     "chapterNum": 2,
     "chapterBm": "Tekanan",
     "chapterDlp": "Pressure",
-    "duration": "46:20",
-    "thumbnailUrl": "/thumbnails/r10U0h2j3bL.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Prinsip Archimedes",
       "Daya apungan",
@@ -1281,8 +1275,7 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "Y12g14N6rL7",
-    "youtubeId": "Y12g14N6rL7",
+    "driveId": "t5_m9_2_6",
     "week": "T5 M9",
     "weekNum": 9,
     "titleBm": "2.6 Prinsip Bernoulli",
@@ -1291,8 +1284,8 @@ export const rawForm5Videos = [
     "chapterNum": 2,
     "chapterBm": "Tekanan",
     "chapterDlp": "Pressure",
-    "duration": "34:50",
-    "thumbnailUrl": "/thumbnails/Y12g14N6rL7.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Prinsip Bernoulli",
       "Kesan Venturi",
@@ -1308,8 +1301,7 @@ export const rawForm5Videos = [
     "relatedFormulaIds": []
   },
   {
-    "driveId": "K18g92B5nQ1",
-    "youtubeId": "K18g92B5nQ1",
+    "driveId": "t5_m10_3_1",
     "week": "T5 M10",
     "weekNum": 10,
     "titleBm": "3.1 Arus & Beza Keupayaan",
@@ -1318,8 +1310,8 @@ export const rawForm5Videos = [
     "chapterNum": 3,
     "chapterBm": "Elektrik",
     "chapterDlp": "Electricity",
-    "duration": "44:15",
-    "thumbnailUrl": "/thumbnails/K18g92B5nQ1.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Medan Elektrik",
       "Kekuatan Medan Elektrik",
@@ -1339,8 +1331,7 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "P13m47V1kL9",
-    "youtubeId": "P13m47V1kL9",
+    "driveId": "t5_m11_3_2a",
     "week": "T5 M11",
     "weekNum": 11,
     "titleBm": "3.2a Rintangan",
@@ -1349,8 +1340,8 @@ export const rawForm5Videos = [
     "chapterNum": 3,
     "chapterBm": "Elektrik",
     "chapterDlp": "Electricity",
-    "duration": "37:30",
-    "thumbnailUrl": "/thumbnails/P13m47V1kL9.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Hukum Ohm",
       "Konduktor Ohm",
@@ -1370,18 +1361,17 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "W15n82L0pK1",
-    "youtubeId": "W15n82L0pK1",
+    "driveId": "t5_m12_3_2b",
     "week": "T5 M12",
     "weekNum": 12,
     "titleBm": "3.2b Rintangan",
-    "titleDlp": "3.2b Resistance",
+    "titleDlp": "3.2b Resistance in Circuits",
     "form": 5,
     "chapterNum": 3,
     "chapterBm": "Elektrik",
     "chapterDlp": "Electricity",
-    "duration": "29:45",
-    "thumbnailUrl": "/thumbnails/W15n82L0pK1.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Kerintangan dawai",
       "Superkonduktor",
@@ -1399,8 +1389,7 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "B17x31M9nL4",
-    "youtubeId": "B17x31M9nL4",
+    "driveId": "t5_m13_3_3",
     "week": "T5 M13",
     "weekNum": 13,
     "titleBm": "3.3 DGE & Rintangan Dalam",
@@ -1409,8 +1398,8 @@ export const rawForm5Videos = [
     "chapterNum": 3,
     "chapterBm": "Elektrik",
     "chapterDlp": "Electricity",
-    "duration": "42:10",
-    "thumbnailUrl": "/thumbnails/B17x31M9nL4.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Daya gerak elektrik (d.g.e.)",
       "Rintangan dalam",
@@ -1426,8 +1415,7 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "Z19v44K2mL7",
-    "youtubeId": "Z19v44K2mL7",
+    "driveId": "t5_m14_3_4",
     "week": "T5 M14",
     "weekNum": 14,
     "titleBm": "3.4 Tenaga & Kuasa Elektrik",
@@ -1436,8 +1424,8 @@ export const rawForm5Videos = [
     "chapterNum": 3,
     "chapterBm": "Elektrik",
     "chapterDlp": "Electricity",
-    "duration": "36:20",
-    "thumbnailUrl": "/thumbnails/Z19v44K2mL7.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Tenaga elektrik",
       "Kuasa elektrik",
@@ -1455,18 +1443,17 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "D11k88P4nL3",
-    "youtubeId": "D11k88P4nL3",
+    "driveId": "t5_m15_4_1a",
     "week": "T5 M15",
     "weekNum": 15,
     "titleBm": "4.1a Fleming Kiri",
-    "titleDlp": "4.1a Fleming's Left-Hand Rule",
+    "titleDlp": "4.1a Fleming's Left Hand Rule",
     "form": 5,
     "chapterNum": 4,
     "chapterBm": "Keelektromagnetan",
     "chapterDlp": "Electromagnetism",
-    "duration": "35:10",
-    "thumbnailUrl": "/thumbnails/D11k88P4nL3.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Medan lastik",
       "Petua tangan kiri Fleming",
@@ -1480,18 +1467,17 @@ export const rawForm5Videos = [
     "relatedFormulaIds": []
   },
   {
-    "driveId": "N14m22V8kL6",
-    "youtubeId": "N14m22V8kL6",
+    "driveId": "t5_m16_4_1b",
     "week": "T5 M16",
     "weekNum": 16,
     "titleBm": "4.1b Fleming Kiri",
-    "titleDlp": "4.1b Fleming's Left-Hand Rule",
+    "titleDlp": "4.1b Fleming's Left Hand Applications",
     "form": 5,
     "chapterNum": 4,
     "chapterBm": "Keelektromagnetan",
     "chapterDlp": "Electromagnetism",
-    "duration": "28:40",
-    "thumbnailUrl": "/thumbnails/N14m22V8kL6.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Motor arus terus/ ulang-alik",
       "Petua tangan kiri Fleming",
@@ -1505,8 +1491,7 @@ export const rawForm5Videos = [
     "relatedFormulaIds": []
   },
   {
-    "driveId": "G16h77K3nL9",
-    "youtubeId": "G16h77K3nL9",
+    "driveId": "t5_m17_4_2",
     "week": "T5 M17",
     "weekNum": 17,
     "titleBm": "4.2 Induksi Elektromagnet",
@@ -1515,8 +1500,8 @@ export const rawForm5Videos = [
     "chapterNum": 4,
     "chapterBm": "Keelektromagnetan",
     "chapterDlp": "Electromagnetism",
-    "duration": "43:50",
-    "thumbnailUrl": "/thumbnails/G16h77K3nL9.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Aruhan elektromagnet",
       "Fluks magnet",
@@ -1534,8 +1519,7 @@ export const rawForm5Videos = [
     "relatedFormulaIds": []
   },
   {
-    "driveId": "T12r99L1mK4",
-    "youtubeId": "T12r99L1mK4",
+    "driveId": "t5_m18_4_3a",
     "week": "T5 M18",
     "weekNum": 18,
     "titleBm": "4.3a Transformer",
@@ -1544,8 +1528,8 @@ export const rawForm5Videos = [
     "chapterNum": 4,
     "chapterBm": "Keelektromagnetan",
     "chapterDlp": "Electromagnetism",
-    "duration": "39:15",
-    "thumbnailUrl": "/thumbnails/T12r99L1mK4.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Transformer injak naik",
       "Transformer injak turun",
@@ -1561,18 +1545,17 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "X18v33N5kL2",
-    "youtubeId": "X18v33N5kL2",
+    "driveId": "t5_m19_4_3b",
     "week": "T5 M19",
     "weekNum": 19,
     "titleBm": "4.3b Transformer",
-    "titleDlp": "4.3b Transformer",
+    "titleDlp": "4.3b Transformer Efficiency",
     "form": 5,
     "chapterNum": 4,
     "chapterBm": "Keelektromagnetan",
     "chapterDlp": "Electromagnetism",
-    "duration": "31:00",
-    "thumbnailUrl": "/thumbnails/X18v33N5kL2.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Kecekapan transformer",
       "Transformer unggul",
@@ -1589,18 +1572,17 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "M15k44P8nL1",
-    "youtubeId": "M15k44P8nL1",
+    "driveId": "t5_m20_5_1",
     "week": "T5 M20",
     "weekNum": 20,
     "titleBm": "5.1 Elektron",
-    "titleDlp": "5.1 Electron",
+    "titleDlp": "5.1 Electrons & Thermionic Emission",
     "form": 5,
     "chapterNum": 5,
     "chapterBm": "Elektronik",
     "chapterDlp": "Electronics",
-    "duration": "34:20",
-    "thumbnailUrl": "/thumbnails/M15k44P8nL1.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Pancaran termion",
       "Sinar katod",
@@ -1617,8 +1599,7 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "C17m11V9kL4",
-    "youtubeId": "C17m11V9kL4",
+    "driveId": "t5_m21_5_2",
     "week": "T5 M21",
     "weekNum": 21,
     "titleBm": "5.2 Diod Semikonduktor",
@@ -1627,8 +1608,8 @@ export const rawForm5Videos = [
     "chapterNum": 5,
     "chapterBm": "Elektronik",
     "chapterDlp": "Electronics",
-    "duration": "40:50",
-    "thumbnailUrl": "/thumbnails/C17m11V9kL4.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Diod semikonduktor",
       "Pendopan",
@@ -1648,8 +1629,7 @@ export const rawForm5Videos = [
     "relatedFormulaIds": []
   },
   {
-    "driveId": "L19n66K2mL8",
-    "youtubeId": "L19n66K2mL8",
+    "driveId": "t5_m22_5_3",
     "week": "T5 M22",
     "weekNum": 22,
     "titleBm": "5.3 Transistor",
@@ -1658,8 +1638,8 @@ export const rawForm5Videos = [
     "chapterNum": 5,
     "chapterBm": "Elektronik",
     "chapterDlp": "Electronics",
-    "duration": "47:15",
-    "thumbnailUrl": "/thumbnails/L19n66K2mL8.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Transistor npn/pnp",
       "Arus tapak",
@@ -1680,8 +1660,7 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "V13r77P1nL5",
-    "youtubeId": "V13r77P1nL5",
+    "driveId": "t5_m23_6_1a",
     "week": "T5 M23",
     "weekNum": 23,
     "titleBm": "6.1a Reputan Radioaktif",
@@ -1690,8 +1669,8 @@ export const rawForm5Videos = [
     "chapterNum": 6,
     "chapterBm": "Fizik Nuklear",
     "chapterDlp": "Nuclear Physics",
-    "duration": "33:40",
-    "thumbnailUrl": "/thumbnails/V13r77P1nL5.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Reputan alfa",
       "Reputan beta",
@@ -1705,18 +1684,17 @@ export const rawForm5Videos = [
     "relatedFormulaIds": []
   },
   {
-    "driveId": "K11h55N8kL3",
-    "youtubeId": "K11h55N8kL3",
+    "driveId": "t5_m24_6_1b",
     "week": "T5 M24",
     "weekNum": 24,
     "titleBm": "6.1b Reputan Radioaktif & Separuh Hayat",
-    "titleDlp": "6.1b Radioactive Decay & Half-Life",
+    "titleDlp": "6.1b Half-life & Decay Curve",
     "form": 5,
     "chapterNum": 6,
     "chapterBm": "Fizik Nuklear",
     "chapterDlp": "Nuclear Physics",
-    "duration": "38:20",
-    "thumbnailUrl": "/thumbnails/K11h55N8kL3.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Separuh hayat",
       "Keaktifan",
@@ -1732,8 +1710,7 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "R14m88L2nK7",
-    "youtubeId": "R14m88L2nK7",
+    "driveId": "t5_m25_6_2a",
     "week": "T5 M25",
     "weekNum": 25,
     "titleBm": "6.2a Tenaga Nuklear",
@@ -1742,8 +1719,8 @@ export const rawForm5Videos = [
     "chapterNum": 6,
     "chapterBm": "Fizik Nuklear",
     "chapterDlp": "Nuclear Physics",
-    "duration": "36:10",
-    "thumbnailUrl": "/thumbnails/R14m88L2nK7.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Pembelahan nukleus",
       "Tindak balas berantai",
@@ -1762,18 +1739,17 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "P17k22V6mL1",
-    "youtubeId": "P17k22V6mL1",
+    "driveId": "t5_m26_6_2b",
     "week": "T5 M26",
     "weekNum": 26,
     "titleBm": "6.2b Tenaga Nuklear & Pelakuran",
-    "titleDlp": "6.2b Nuclear Energy & Fusion",
+    "titleDlp": "6.2b Nuclear Fusion & Reactor",
     "form": 5,
     "chapterNum": 6,
     "chapterBm": "Fizik Nuklear",
     "chapterDlp": "Nuclear Physics",
-    "duration": "32:00",
-    "thumbnailUrl": "/thumbnails/P17k22V6mL1.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Pelakuran nukleus",
       "Reaktor nuklear",
@@ -1790,8 +1766,7 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "W12n99K4nL8",
-    "youtubeId": "W12n99K4nL8",
+    "driveId": "t5_m27_7_1a",
     "week": "T5 M27",
     "weekNum": 27,
     "titleBm": "7.1a Teori Kuantum Cahaya",
@@ -1800,8 +1775,8 @@ export const rawForm5Videos = [
     "chapterNum": 7,
     "chapterBm": "Fizik Kuantum",
     "chapterDlp": "Quantum Physics",
-    "duration": "37:50",
-    "thumbnailUrl": "/thumbnails/W12n99K4nL8.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Jasad hitam",
       "Sinaran termal",
@@ -1819,18 +1794,17 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "Z15v33P7kL2",
-    "youtubeId": "Z15v33P7kL2",
+    "driveId": "t5_m28_7_1b",
     "week": "T5 M28",
     "weekNum": 28,
     "titleBm": "7.1b Teori Kuantum Cahaya",
-    "titleDlp": "7.1b Quantum Theory of Light",
+    "titleDlp": "7.1b Duality of Light & Wave-Particle",
     "form": 5,
     "chapterNum": 7,
     "chapterBm": "Fizik Kuantum",
     "chapterDlp": "Quantum Physics",
-    "duration": "34:15",
-    "thumbnailUrl": "/thumbnails/Z15v33P7kL2.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Duaan gelombang-zarah",
       "Panjang gelombang de Broglie",
@@ -1848,8 +1822,7 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "T18r11N5mL6",
-    "youtubeId": "T18r11N5mL6",
+    "driveId": "t5_m29_7_2",
     "week": "T5 M29",
     "weekNum": 29,
     "titleBm": "7.2 Kesan Fotoelektrik",
@@ -1858,8 +1831,8 @@ export const rawForm5Videos = [
     "chapterNum": 7,
     "chapterBm": "Fizik Kuantum",
     "chapterDlp": "Quantum Physics",
-    "duration": "42:30",
-    "thumbnailUrl": "/thumbnails/T18r11N5mL6.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Kesan fotoelektrik",
       "Fotoelektron",
@@ -1876,18 +1849,17 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "M11k77L9nK4",
-    "youtubeId": "M11k77L9nK4",
+    "driveId": "t5_m30_7_3a",
     "week": "T5 M30",
     "weekNum": 30,
     "titleBm": "7.3a Fotoelektrik Einstein",
-    "titleDlp": "7.3a Einstein's Photoelectric Theory",
+    "titleDlp": "7.3a Einstein's Photoelectric Equation",
     "form": 5,
     "chapterNum": 7,
     "chapterBm": "Fizik Kuantum",
     "chapterDlp": "Quantum Physics",
-    "duration": "45:00",
-    "thumbnailUrl": "/thumbnails/M11k77L9nK4.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Persamaan fotoelektrik Einstein",
       "Fungsi kerja",
@@ -1904,18 +1876,17 @@ export const rawForm5Videos = [
     ]
   },
   {
-    "driveId": "B14m44V2kL8",
-    "youtubeId": "B14m44V2kL8",
+    "driveId": "t5_m31_7_3b",
     "week": "T5 M31",
     "weekNum": 31,
     "titleBm": "7.3b Fotoelektrik Einstein & Aplikasi",
-    "titleDlp": "7.3b Photoelectric Theory & Applications",
+    "titleDlp": "7.3b Photoelectric Applications",
     "form": 5,
     "chapterNum": 7,
     "chapterBm": "Fizik Kuantum",
     "chapterDlp": "Quantum Physics",
-    "duration": "30:40",
-    "thumbnailUrl": "/thumbnails/B14m44V2kL8.webp",
+    "duration": "Akan Datang",
+    "isPendingUpload": true,
     "keyConceptsBm": [
       "Voltan pemati",
       "Sel suria",
@@ -2032,6 +2003,7 @@ export const form5VideoLessons: VideoLesson[] = rawForm5Videos.map((v, index) =>
   return {
     ...v,
     id: v.driveId,
+    thumbnailUrl: (v as any).thumbnailUrl || `/thumbnails/${v.driveId}.webp`,
     thumbnailBg: index % 5 === 0 ? "from-amber-950 via-red-950 to-slate-900" :
                  index % 5 === 1 ? "from-teal-950 via-emerald-900 to-slate-900" :
                  index % 5 === 2 ? "from-indigo-950 via-purple-900 to-slate-900" :
