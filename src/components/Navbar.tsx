@@ -50,8 +50,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     if (onSearchChange) onSearchChange(e.target.value);
   };
 
-  const email = user?.email?.toLowerCase() || "";
-  const isDev = email.includes("abdulhalimroslan") || email.includes("halimroslan");
+  const userEmail = user?.email?.toLowerCase().trim() || "";
+  const isSuperAdmin = ["ahalimroslan@gmail.com", "abdulhalimroslan@gmail.com"].includes(userEmail);
 
   const navLinks = [
     { id: "home", label: "Laman Utama" },
@@ -62,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: "experiments", label: "MyHomePhysics Lab" },
   ];
 
-  if (isDev) {
+  if (isSuperAdmin) {
     navLinks.push({ id: "analytics", label: "Analytic Board" });
   }
 

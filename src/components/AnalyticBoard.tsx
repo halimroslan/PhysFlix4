@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { useAuth } from "@/context/AuthContext";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { allVideoLessons } from "@/data/physicsData";
-import { Users, Eye, Clock, Activity, Loader2 } from "lucide-react";
+import { Users, Eye, Clock, Activity, Loader2, ShieldAlert } from "lucide-react";
 
 interface UserData {
   uid: string;
@@ -19,13 +20,23 @@ interface VideoStat {
   likes: number;
 }
 
+const SUPERADMIN_EMAILS = ["ahalimroslan@gmail.com", "abdulhalimroslan@gmail.com"];
+
 export const AnalyticBoard: React.FC = () => {
+  const { user } = useAuth();
   const [users, setUsers] = useState<UserData[]>([]);
   const [stats, setStats] = useState<VideoStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const userEmail = user?.email?.toLowerCase().trim() || "";
+  const isSuperAdmin = SUPERADMIN_EMAILS.includes(userEmail);
+
   useEffect(() => {
+    if (!isSuperAdmin) {
+      setLoading(false);
+      return;
+    }
     const fetchData = async () => {
       try {
         if (isSupabaseConfigured) {
@@ -91,6 +102,20 @@ export const AnalyticBoard: React.FC = () => {
 
     fetchData();
   }, []);
+
+  if (!isSuperAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32 space-y-4 text-center">
+        <div className="p-4 rounded-full bg-red-950/60 border border-red-500/40 text-red-400">
+          <ShieldAlert className="w-12 h-12" />
+        </div>
+        <h2 className="text-xl font-bold text-white">Akses Disekat</h2>
+        <p className="text-sm text-slate-400 max-w-md">
+          Halaman Analytic Board adalah terhad dan hanya boleh diakses oleh SuperAdmin rasmi sahaja.
+        </p>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

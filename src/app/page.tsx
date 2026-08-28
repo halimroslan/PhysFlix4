@@ -54,6 +54,9 @@ function MainDashboard() {
     return <LoginPage />;
   }
 
+  const userEmail = user?.email?.toLowerCase().trim() || "";
+  const isSuperAdmin = ["ahalimroslan@gmail.com", "abdulhalimroslan@gmail.com"].includes(userEmail);
+
   // Filter lessons based on search
   const filteredLessons = allVideoLessons.filter((item) => {
     const q = searchQuery.toLowerCase();
@@ -279,7 +282,7 @@ function MainDashboard() {
                 </div>
               )}
             </div>
-          ) : currentTab === "analytics" ? (
+          ) : currentTab === "analytics" && isSuperAdmin ? (
             <AnalyticBoard />
           ) : currentTab === "scoreboard" ? (
             <ScoreBoardView onPlayLesson={handlePlayLesson} />
