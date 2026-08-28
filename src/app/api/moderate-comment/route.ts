@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
 
     const trimmed = text.trim();
 
-    // 1. Instant 0ms heuristic profanity, insult, scam & cynicism check (11 categories)
+    // 1. Instant 0ms heuristic profanity, insult, scam & cynicism check (12 categories)
     const quickCheck = checkQuickAbusive(trimmed);
     if (quickCheck.isAbusive) {
       return NextResponse.json({
@@ -33,17 +33,18 @@ export async function POST(req: NextRequest) {
 Your duty is to enforce a high standard of respect, constructive discourse, and academic decorum.
 
 STRICTLY BLOCK (isAbusive: true) if the text matches ANY of these abusive/negative categories:
-1. Hinaan / Insult: Criticizing or insulting the teacher, voice, presentation, or calling the content useless, terrible, or senseless (e.g., 'penerangan tak masuk akal', 'teruk gila', 'langsung tak tahu apa buat', 'kualiti mengecewakan').
-2. Kata Kasar / Profanity: Any vulgarity, profanity, or rude swearing words (e.g., 'bodoh', 'babi', 'sial', 'pantek', 'puki', 'butoh', 'lancau', 'fuck', 'shit', 'bitch').
-3. Gangguan / Harassment: Demanding the creator stop, telling them not to appear on feed, or repetitive harassment (e.g., 'patut berhenti buat video', 'tak layak', 'jangan muncul lagi').
-4. Spam & Self-Promotion: Promoting external channels, asking for subscribers/sub4sub, or spamming (e.g., 'follow channel saya', 'sub4sub', 'klik channel saya').
-5. Scam / Penipuan: Promises of free money, fake giveaways, WhatsApp links, or get-rich-quick schemes (e.g., 'jana RM1000', 'menang hadiah', 'pelaburan tanpa risiko').
-6. Ancaman / Ugutan: Threats, hostility, or wishes of harm (e.g., 'aku cari kau', 'kau akan menyesal', 'jangan cabar kesabaran').
-7. Provokasi / Trolling: Sarcastic mocking, saying the video is a laughing stock, or malicious trolling (e.g., 'tengok komen orang marah', 'bahan ketawa', 'algoritma menyesal').
-8. Sinis & Buang Masa: Dismissive, cynical, or unconstructive complaints (e.g., 'buang masa', 'membazir masa', 'tak guna', 'bosan gila', 'hambar', 'merepek', 'cringe').
-9. Keluhan Pasif Tanpa Soalan: Vague complaints with no specific question (e.g., 'tak faham', 'tak faham langsung', 'pening', 'blur gila', 'susah betul').
-10. Kandungan Seksual / Tidak Sesuai: Any sexual innuendo, inappropriate comments, or violation of student-safe guidelines.
-11. Komen Tidak Relevan: Random noise, 'first', or off-topic chat unrelated to physics learning.
+1. Meremehkan / Slanga Menghina: Dismissive slang, claiming nonsense or uselessness (e.g., 'ntah apa2', 'entah apa apa', 'ntah pape', 'merapu', 'mengarut', 'hauk', 'cringe', 'poyo', 'sembang kari', 'acah pandai').
+2. Hinaan / Insult: Criticizing or insulting the teacher, voice, presentation, or calling the content useless or terrible (e.g., 'penerangan tak masuk akal', 'teruk gila', 'langsung tak tahu apa buat', 'kualiti mengecewakan').
+3. Kata Kasar / Profanity: Any vulgarity, profanity, or rude swearing words (e.g., 'bodoh', 'babi', 'sial', 'pantek', 'puki', 'butoh', 'lancau', 'fuck', 'shit', 'bitch').
+4. Gangguan / Harassment: Demanding the creator stop, telling them not to appear on feed, or repetitive harassment (e.g., 'patut berhenti buat video', 'tak layak', 'jangan muncul lagi').
+5. Spam & Self-Promotion: Promoting external channels, asking for subscribers/sub4sub, or spamming (e.g., 'follow channel saya', 'sub4sub', 'klik channel saya').
+6. Scam / Penipuan: Promises of free money, fake giveaways, WhatsApp links, or get-rich-quick schemes (e.g., 'jana RM1000', 'menang hadiah', 'pelaburan tanpa risiko').
+7. Ancaman / Ugutan: Threats, hostility, or wishes of harm (e.g., 'aku cari kau', 'kau akan menyesal', 'jangan cabar kesabaran').
+8. Provokasi / Trolling: Sarcastic mocking, saying the video is a laughing stock, or malicious trolling (e.g., 'tengok komen orang marah', 'bahan ketawa', 'algoritma menyesal').
+9. Sinis & Buang Masa: Dismissive, cynical, or unconstructive complaints (e.g., 'buang masa', 'membazir masa', 'tak guna', 'bosan gila', 'hambar', 'merepek').
+10. Keluhan Pasif Tanpa Soalan: Vague complaints with no specific question (e.g., 'tak faham', 'tak faham langsung', 'pening', 'blur gila', 'susah betul').
+11. Kandungan Seksual / Tidak Sesuai: Any sexual innuendo, inappropriate comments, or violation of student-safe guidelines.
+12. Komen Tidak Relevan: Random noise, 'first', or off-topic chat unrelated to physics learning.
 
 ALLOW (isAbusive: false) ONLY IF:
 - The text is a genuine, specific physics question, educational inquiry, polite request for clarification, constructive doubt, or polite greeting/thank you.
