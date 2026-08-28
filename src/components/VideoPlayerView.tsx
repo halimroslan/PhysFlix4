@@ -1684,29 +1684,6 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                           </button>
                         </div>
 
-                        {/* AI Tutor Generating Indicator Card */}
-                        {isGeneratingAIAnswer[item.id] && (
-                          <div className="p-3.5 rounded-xl bg-cyan-950/30 border border-cyan-700/60 shadow-lg animate-pulse flex items-start gap-3 mt-2">
-                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-[11px] font-bold shrink-0 mt-0.5 shadow-md shadow-cyan-500/30">
-                              <Sparkles className="w-3.5 h-3.5 animate-spin" />
-                            </div>
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold text-cyan-300">Sir Halim (AI Tutor)</span>
-                                <span className="px-1.5 py-0.2 bg-cyan-900/80 border border-cyan-600/80 text-cyan-200 text-[9px] font-bold rounded-full flex items-center gap-1">
-                                  <Sparkles className="w-2.5 h-2.5 text-cyan-300" />
-                                  {lang === "bm" ? "Sedang menaip jawapan santai..." : "Typing friendly answer..."}
-                                </span>
-                              </div>
-                              <p className="text-[11px] text-slate-300 leading-relaxed italic">
-                                {lang === "bm"
-                                  ? "Menyusun penjelasan mudah difahami & mengekalkan konsep serta kata kunci Fizik SPM..."
-                                  : "Crafting a student-friendly explanation with precise SPM physics concepts..."}
-                              </p>
-                            </div>
-                          </div>
-                        )}
-
                         {/* Replies Section */}
                         {item.replies.length > 0 && (
                           <div className="space-y-2.5 pt-2 pl-3 sm:pl-6 border-l-2 border-slate-800">
