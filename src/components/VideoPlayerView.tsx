@@ -29,7 +29,10 @@ import {
   MessageCircle,
   Trash2,
   HelpCircle,
-  Filter
+  Filter,
+  ShieldAlert,
+  ShieldCheck,
+  Loader2
 } from "lucide-react";
 import QuizComponent from "./QuizComponent";
 import { useLanguage } from "@/context/LanguageContext";
@@ -318,7 +321,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     trackViewAndFetchStats();
   }, [currentLesson]);
 
-  // Soal Jawab (Q&A) State & Logic
+  // Soal Jawab (Q&A) State & Logic - Real Student/Teacher Q&A
   const [qaList, setQaList] = useState<QAItem[]>([]);
   const [qaCategory, setQaCategory] = useState<"Semua" | "Konsep" | "Pengiraan" | "SPM Kertas 2" | "SPM Kertas 1" | "Amali">("Semua");
   const [newQuestionText, setNewQuestionText] = useState("");
@@ -326,18 +329,32 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
   const [activeReplyId, setActiveReplyId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
   const [qaFilterTeacherOnly, setQaFilterTeacherOnly] = useState(false);
+  const [isModerating, setIsModerating] = useState(false);
+  const [moderationError, setModerationError] = useState<string | null>(null);
 
   const userEmail = user?.email?.toLowerCase().trim() || "";
   const isSuperAdmin = ["ahalimroslan@gmail.com", "abdulhalimroslan@gmail.com"].includes(userEmail);
 
   useEffect(() => {
+    setModerationError(null);
     const storageKey = `physflix_qa_${currentLesson.id}`;
     const savedQA = localStorage.getItem(storageKey);
     if (savedQA) {
       try {
         const parsed = JSON.parse(savedQA);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setQaList(parsed);
+        if (Array.isArray(parsed)) {
+          // Filter out any legacy dummy/mock items
+          const realItems = parsed.filter(
+            (item) =>
+              item.id &&
+              !item.id.startsWith("qa-gen-") &&
+              !item.id.startsWith("qa-1-") &&
+              !item.id.startsWith("qa-2-") &&
+              !item.id.startsWith("qa-3-") &&
+              !item.id.startsWith("qa-4-") &&
+              !item.id.startsWith("qa-5-")
+          );
+          setQaList(realItems);
           return;
         }
       } catch (e) {
@@ -345,15 +362,8 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
       }
     }
 
-    const defaults = getLessonQAItems(
-      currentLesson.id,
-      currentLesson.titleBm,
-      currentLesson.chapterBm,
-      currentLesson.form,
-      currentLesson.chapterNum
-    );
-    setQaList(defaults);
-  }, [currentLesson.id, currentLesson.titleBm, currentLesson.chapterBm, currentLesson.form, currentLesson.chapterNum]);
+    setQaList([]);
+  }, [currentLesson.id]);
 
   const saveQAList = (newList: QAItem[]) => {
     setQaList(newList);
@@ -364,9 +374,37 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     }
   };
 
-  const handleAddQuestion = (e: React.FormEvent) => {
+  const handleAddQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newQuestionText.trim()) return;
+    if (!newQuestionText.trim() || isModerating) return;
+
+    setModerationError(null);
+    setIsModerating(true);
+
+    try {
+      // Content Moderation with Ox Alpha AI
+      const modRes = await fetch("/api/moderate-comment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: newQuestionText.trim() }),
+      });
+
+      if (modRes.ok) {
+        const modData = await modRes.json();
+        if (modData.isAbusive) {
+          setModerationError(
+            modData.reason ||
+              (lang === "bm"
+                ? "Soalan anda dikesan mengandungi perkataan atau unsur yang tidak sopan / dilarang. Sila gunakan bahasa yang berhemah."
+                : "Your question contains inappropriate or abusive language. Please use polite and educational terms.")
+          );
+          setIsModerating(false);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn("Moderation check error:", err);
+    }
 
     const authorName = user?.displayName || (user?.email ? user.email.split("@")[0] : (lang === "bm" ? "Pelajar Fizik SPM" : "Physics Student"));
     const newQA: QAItem = {
@@ -389,6 +427,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     const updated = [newQA, ...qaList];
     saveQAList(updated);
     setNewQuestionText("");
+    setIsModerating(false);
   };
 
   const handleLikeQuestion = (id: string) => {
@@ -406,8 +445,37 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     saveQAList(updated);
   };
 
-  const handleAddReply = (questionId: string) => {
-    if (!replyText.trim()) return;
+  const handleAddReply = async (questionId: string) => {
+    if (!replyText.trim() || isModerating) return;
+
+    setModerationError(null);
+    setIsModerating(true);
+
+    try {
+      // Content Moderation with Ox Alpha AI
+      const modRes = await fetch("/api/moderate-comment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: replyText.trim() }),
+      });
+
+      if (modRes.ok) {
+        const modData = await modRes.json();
+        if (modData.isAbusive) {
+          setModerationError(
+            modData.reason ||
+              (lang === "bm"
+                ? "Balasan anda dikesan mengandungi perkataan yang tidak sopan / dilarang."
+                : "Your reply contains inappropriate language.")
+          );
+          setIsModerating(false);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn("Moderation check error:", err);
+    }
+
     const authorName = user?.displayName || (isSuperAdmin ? "Sir Halim (Guru Fizik)" : (lang === "bm" ? "Pelajar Fizik SPM" : "Physics Student"));
     const authorRole = isSuperAdmin ? "guru" : "pelajar";
     const newReply: QAReply = {
@@ -435,6 +503,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     saveQAList(updated);
     setReplyText("");
     setActiveReplyId(null);
+    setIsModerating(false);
   };
 
   const handleLikeReply = (questionId: string, replyId: string) => {
@@ -1143,24 +1212,49 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                       </h3>
                       <p className="text-[11px] text-slate-400">
                         {lang === "bm"
-                          ? "Ajukan sebarang kemusykilan tentang video ini untuk dijawab oleh Cikgu Halim & rakan pelajar."
-                          : "Ask any questions regarding this video lesson to be answered by Sir Halim & fellow students."}
+                          ? "Ajukan sebarang soalan & kemusykilan fizik tentang video ini untuk dijawab oleh Sir Halim & rakan pelajar."
+                          : "Post your physics questions regarding this video to be answered by Sir Halim & fellow students."}
                       </p>
                     </div>
                   </div>
 
-                  {/* Teacher Answered Counter */}
-                  <div className="flex items-center gap-2 self-start sm:self-auto">
-                    <span className="px-3 py-1 bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs font-semibold rounded-lg flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                      {qaList.filter(q => q.replies.some(r => r.authorRole === "guru" || r.isVerified)).length} {lang === "bm" ? "Dijawab Cikgu" : "Answered by Teacher"}
+                  {/* AI Moderation & Stats Badge */}
+                  <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+                    <span className="px-3 py-1 bg-cyan-950/70 border border-cyan-800 text-cyan-300 text-xs font-semibold rounded-lg flex items-center gap-1.5 shadow-sm">
+                      <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>AI Moderasi Aktif (Ox Alpha)</span>
                     </span>
+                    {qaList.some(q => q.replies.some(r => r.authorRole === "guru" || r.isVerified)) && (
+                      <span className="px-3 py-1 bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs font-semibold rounded-lg flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        {qaList.filter(q => q.replies.some(r => r.authorRole === "guru" || r.isVerified)).length} {lang === "bm" ? "Dijawab Cikgu" : "Answered by Teacher"}
+                      </span>
+                    )}
                   </div>
                 </div>
 
+                {/* Moderation Error Warning Banner */}
+                {moderationError && (
+                  <div className="p-4 bg-red-950/90 border border-red-500 rounded-2xl text-red-200 text-xs flex items-start gap-3 animate-in fade-in slide-in-from-top-2 shadow-lg shadow-red-950/50">
+                    <ShieldAlert className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+                    <div className="space-y-1 flex-1">
+                      <p className="font-bold text-red-300 text-xs sm:text-sm">
+                        {lang === "bm" ? "Mesej Disekat oleh AI Moderasi (Ox Alpha):" : "Message Blocked by Ox Alpha AI Moderation:"}
+                      </p>
+                      <p className="text-red-200/90 leading-relaxed">{moderationError}</p>
+                    </div>
+                    <button
+                      onClick={() => setModerationError(null)}
+                      className="text-red-400 hover:text-white p-1 rounded transition cursor-pointer"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
                 {/* Ask a Question Form */}
-                <form onSubmit={handleAddQuestion} className="p-4 bg-[#141a29] border border-slate-700/80 rounded-2xl space-y-3 shadow-inner">
-                  <div className="flex items-center justify-between">
+                <form onSubmit={handleAddQuestion} className="p-4 sm:p-5 bg-[#141a29] border border-slate-700/80 rounded-2xl space-y-3.5 shadow-inner">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
                     <span className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
                       <HelpCircle className="w-4 h-4 text-cyan-400" />
                       {lang === "bm" ? "Tanya Soalan Baharu:" : "Ask a New Question:"}
@@ -1185,13 +1279,16 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                     <textarea
                       rows={3}
                       value={newQuestionText}
-                      onChange={(e) => setNewQuestionText(e.target.value)}
+                      onChange={(e) => {
+                        setNewQuestionText(e.target.value);
+                        if (moderationError) setModerationError(null);
+                      }}
                       placeholder={
                         lang === "bm"
-                          ? `Tulis soalan anda tentang topik ${currentLesson.titleBm} di sini... (Contoh: Mengapa formula v = √(2GM/R) tidak bergantung pada jisim roket?)`
+                          ? `Tulis soalan anda tentang topik ${currentLesson.titleBm} di sini...`
                           : `Type your question about ${currentLesson.titleDlp} here...`
                       }
-                      className="w-full px-4 py-3 bg-[#0d121f] border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/50 resize-y"
+                      className="w-full px-4 py-3 bg-[#0d121f] border border-slate-700/80 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/50 resize-y"
                     />
                   </div>
 
@@ -1207,61 +1304,80 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
 
                     <button
                       type="submit"
-                      disabled={!newQuestionText.trim()}
-                      className="px-5 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-xs rounded-xl transition cursor-pointer flex items-center gap-1.5 shadow-lg shadow-red-600/30"
+                      disabled={!newQuestionText.trim() || isModerating}
+                      className="px-5 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-xs rounded-xl transition cursor-pointer flex items-center gap-2 shadow-lg shadow-red-600/30"
                     >
-                      <Send className="w-3.5 h-3.5" />
-                      <span>{lang === "bm" ? "Hantar Soalan" : "Post Question"}</span>
+                      {isModerating ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>{lang === "bm" ? "Menyemak AI..." : "Checking AI..."}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-3.5 h-3.5" />
+                          <span>{lang === "bm" ? "Hantar Soalan" : "Post Question"}</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 </form>
 
-                {/* Filter Tabs */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-                  <span className="text-[11px] text-slate-400 font-semibold flex items-center gap-1 shrink-0 mr-1">
-                    <Filter className="w-3.5 h-3.5 text-slate-400" />
-                    {lang === "bm" ? "Tapis:" : "Filter:"}
-                  </span>
-                  {(["Semua", "Konsep", "Pengiraan", "SPM Kertas 2", "SPM Kertas 1", "Amali"] as const).map((cat) => (
+                {/* Filter Tabs if questions exist */}
+                {qaList.length > 0 && (
+                  <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+                    <span className="text-[11px] text-slate-400 font-semibold flex items-center gap-1 shrink-0 mr-1">
+                      <Filter className="w-3.5 h-3.5 text-slate-400" />
+                      {lang === "bm" ? "Tapis:" : "Filter:"}
+                    </span>
+                    {(["Semua", "Konsep", "Pengiraan", "SPM Kertas 2", "SPM Kertas 1", "Amali"] as const).map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => {
+                          setQaCategory(cat);
+                          setQaFilterTeacherOnly(false);
+                        }}
+                        className={`px-3 py-1 rounded-lg text-xs font-semibold transition shrink-0 cursor-pointer ${
+                          qaCategory === cat && !qaFilterTeacherOnly
+                            ? "bg-slate-700 text-white border border-slate-600"
+                            : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
                     <button
-                      key={cat}
-                      onClick={() => {
-                        setQaCategory(cat);
-                        setQaFilterTeacherOnly(false);
-                      }}
-                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition shrink-0 cursor-pointer ${
-                        qaCategory === cat && !qaFilterTeacherOnly
-                          ? "bg-slate-700 text-white border border-slate-600"
+                      onClick={() => setQaFilterTeacherOnly(!qaFilterTeacherOnly)}
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition shrink-0 cursor-pointer flex items-center gap-1 ${
+                        qaFilterTeacherOnly
+                          ? "bg-emerald-900/80 text-emerald-200 border border-emerald-700"
                           : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
                       }`}
                     >
-                      {cat}
+                      <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                      <span>{lang === "bm" ? "Jawapan Guru Sahaja" : "Teacher Answers Only"}</span>
                     </button>
-                  ))}
-                  <button
-                    onClick={() => setQaFilterTeacherOnly(!qaFilterTeacherOnly)}
-                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition shrink-0 cursor-pointer flex items-center gap-1 ${
-                      qaFilterTeacherOnly
-                        ? "bg-emerald-900/80 text-emerald-200 border border-emerald-700"
-                        : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
-                    }`}
-                  >
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                    <span>{lang === "bm" ? "Jawapan Guru Sahaja" : "Teacher Answers Only"}</span>
-                  </button>
-                </div>
+                  </div>
+                )}
 
                 {/* Questions Feed */}
                 <div className="space-y-4 pt-1">
                   {filteredQAList.length === 0 ? (
-                    <div className="p-8 text-center bg-slate-900/50 border border-slate-800/80 rounded-2xl space-y-2">
-                      <MessageSquare className="w-8 h-8 text-slate-600 mx-auto" />
-                      <p className="text-sm font-semibold text-slate-300">
-                        {lang === "bm" ? "Belum ada soalan dalam kategori ini." : "No questions in this category yet."}
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        {lang === "bm" ? "Jadilah yang pertama mengajukan soalan kepada Cikgu!" : "Be the first to ask a question!"}
-                      </p>
+                    <div className="p-8 sm:p-12 text-center bg-slate-900/40 border border-slate-800/80 rounded-2xl space-y-3">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center mx-auto text-slate-400">
+                        <MessageSquare className="w-6 h-6" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-bold text-slate-200">
+                          {lang === "bm"
+                            ? "Belum ada soalan dikemukakan untuk topik ini."
+                            : "No questions posted yet for this topic."}
+                        </h4>
+                        <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+                          {lang === "bm"
+                            ? "Jadilah yang pertama mengemukakan soalan atau kemusykilan Fizik anda di atas. Sir Halim & rakan pelajar sedia membantu!"
+                            : "Be the first to post a question above. Sir Halim and fellow students are here to help!"}
+                        </p>
+                      </div>
                     </div>
                   ) : (
                     filteredQAList.map((item) => (
@@ -1405,7 +1521,10 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                                 type="text"
                                 autoFocus
                                 value={replyText}
-                                onChange={(e) => setReplyText(e.target.value)}
+                                onChange={(e) => {
+                                  setReplyText(e.target.value);
+                                  if (moderationError) setModerationError(null);
+                                }}
                                 placeholder={lang === "bm" ? "Tulis jawapan atau ulasan anda..." : "Write your response..."}
                                 className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                                 onKeyDown={(e) => {
@@ -1417,10 +1536,14 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                               />
                               <button
                                 onClick={() => handleAddReply(item.id)}
-                                disabled={!replyText.trim()}
-                                className="px-4 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-bold text-xs rounded-lg transition cursor-pointer flex items-center gap-1"
+                                disabled={!replyText.trim() || isModerating}
+                                className="px-4 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-bold text-xs rounded-lg transition cursor-pointer flex items-center gap-1.5"
                               >
-                                <Send className="w-3 h-3" />
+                                {isModerating ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <Send className="w-3 h-3" />
+                                )}
                                 <span>{lang === "bm" ? "Hantar" : "Send"}</span>
                               </button>
                             </div>
