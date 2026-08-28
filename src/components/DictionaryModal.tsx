@@ -71,18 +71,13 @@ export const DictionaryModal: React.FC<{ isOpen: boolean; onClose: () => void }>
               <Book className="w-5 h-5" />
             </div>
             <div>
-              <div className="flex items-center space-x-2">
-                <h2 className="text-lg sm:text-xl font-extrabold text-white tracking-wide">
-                  {lang === "bm" ? "Kamus Fizik SPM (BM ↔ DLP)" : "SPM Physics Dictionary (BM ↔ DLP)"}
-                </h2>
-                <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">
-                  Modul TasFiz
-                </span>
-              </div>
+              <h2 className="text-lg sm:text-xl font-extrabold text-white tracking-wide">
+                {lang === "bm" ? "Kamus Fizik SPM (BM ↔ DLP)" : "SPM Physics Dictionary (BM ↔ DLP)"}
+              </h2>
               <p className="text-xs text-slate-400 font-medium">
                 {lang === "bm"
-                  ? "Glosari 100% Rasmi KSSM Tingkatan 4 & Tingkatan 5 daripada Modul TasFiz (Sir Halim)"
-                  : "Official 100% KSSM Form 4 & Form 5 Glossary from Modul TasFiz (Sir Halim)"}
+                  ? "Glosari istilah fizikal Dwibahasa KSSM Tingkatan 4 & Tingkatan 5"
+                  : "Bilingual physical terms glossary for KSSM Form 4 & Form 5"}
               </p>
             </div>
           </div>
@@ -233,7 +228,7 @@ export const DictionaryModal: React.FC<{ isOpen: boolean; onClose: () => void }>
                     <div>
                       <div className="flex items-center space-x-1.5 text-rose-400 font-bold mb-1.5 text-[11px]">
                         <span className="w-2 h-2 rounded-full bg-rose-400"></span>
-                        <span>Definisi Bahasa Melayu (TasFiz):</span>
+                        <span>Definisi Bahasa Melayu:</span>
                       </div>
                       <p className="text-slate-300 leading-relaxed font-normal">{item.defBm}</p>
                     </div>
@@ -255,12 +250,9 @@ export const DictionaryModal: React.FC<{ isOpen: boolean; onClose: () => void }>
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-slate-800 bg-[#080c14] flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
-          <div className="flex items-center space-x-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>Sumber: <strong>Modul TasFiz (Tasmik Fizik - Formula & Definisi)</strong> oleh Sir Halim</span>
-          </div>
-          <span>Jumlah Keseluruhan: <strong>{allKamusTerms.length} Istilah</strong></span>
+        <div className="px-6 py-3 border-t border-slate-800 bg-[#080c14] flex items-center justify-between text-xs text-slate-400">
+          <span>Glosari Fizik SPM (KSSM)</span>
+          <span>Jumlah Keseluruhan: <strong className="text-white">{allKamusTerms.length} Istilah</strong></span>
         </div>
 
       </div>
