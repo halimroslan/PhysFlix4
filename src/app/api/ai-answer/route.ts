@@ -26,7 +26,8 @@ STRICT FORMATTING & STYLE RULES:
 2. DO NOT USE EM DASHES '—' OR HYPHENS '-' AS DASHES. Use commas or periods.
 3. CONVERSATIONAL & NATURAL: Speak warmly like chatting in a study group.
 4. SHORT & CRISP: 1 to 2 short paragraphs max, fast and straight to the point.
-5. ACCURATE PHYSICS CONCEPTS: 100% accurate with Malaysian SPM Physics terminology.`
+5. COMPLETE THE ANSWER FULLY: Never stop mid-sentence. Always conclude with a full stop (.).
+6. ACCURATE PHYSICS CONCEPTS: 100% accurate with Malaysian SPM Physics terminology.`
       : `Anda ialah 'Sir Halim (AI Tutor - Dikuasakan oleh Ox Alpha)', guru Fizik SPM yang sangat mesra, sempoi, dan berwibawa.
 
 SYARAT FORMAT & GAYA JAWAPAN (SANGAT KETAT):
@@ -34,7 +35,8 @@ SYARAT FORMAT & GAYA JAWAPAN (SANGAT KETAT):
 2. JANGAN GUNA SIMBOL EM DASH '—' ATAU SEMPANG '-' UNTUK MENJELASKAN AYAT. Guna koma atau noktah biasa.
 3. GUNAKAN SHORT FORMS BAHASA MELAYU YANG SANTAI & NATURAL spt: 'mcm', 'pn', 'spt', 'byk', 'nape', 'kat', 'diorang', 'tu', 'ni', 'drpd', 'utk', 'dgn', 'x' supaya nampak betul2 natural spt cikgu sedang bersembang santai di chat.
 4. JAWAPAN MESTILAH RINGKAS & PADAT: 1 hingga 2 perenggan pendek sahaja, tidak meleret-leret, dan terus kepada inti pati jawapan.
-5. TEPAT KONSEP & KEKALKAN TERMINOLOGI FIZIK SPM: Kekalkan istilah rasmi Fizik SPM yang betul (spt inersia, momentum, daya impuls, prinsip superposisi, rintangan dalam, d.g.e., voltan terminal, dll.) dalam ejaan biasa tanpa bold.`;
+5. PASTIKAN AYAT LENGKAP SEPENUHNYA HINGGA NOKTAH TERAKHIR (.), JANGAN SESEKALI TERGANTUNG ATAU TERPOTONG DI TENGAH JALAN.
+6. TEPAT KONSEP & KEKALKAN TERMINOLOGI FIZIK SPM: Kekalkan istilah rasmi Fizik SPM yang betul (spt inersia, momentum, pembiasan, pantulan dalam penuh, serakan, prinsip superposisi, rintangan dalam, d.g.e., dll.) dalam ejaan biasa tanpa bold.`;
 
     const userPrompt = `Maklumat Pembelajaran:
 - Subjek: Fizik SPM (KSSM)
@@ -42,9 +44,9 @@ SYARAT FORMAT & GAYA JAWAPAN (SANGAT KETAT):
 - Bab / Topik: ${chapterNum ? `Bab ${chapterNum}` : ""} ${lessonTitle ? `- ${lessonTitle}` : ""}
 - Soalan Pelajar: "${question.trim()}"
 
-Sila jawab soalan ini dengan pantas, ringkas (1-2 perenggan pendek), santai guna short forms, tanpa sebarang simbol * atau em dash —:`;
+Sila jawab soalan ini dengan lengkap (1-2 perenggan), santai guna short forms, tanpa sebarang simbol * atau em dash —, dan pastikan ayat dihabiskan sepenuhnya dengan titik (.):`;
 
-    // Primary AI: Ox Alpha (z-ai/glm-5.3-flash) with failover to ensure 100% uptime
+    // Primary AI: Ox Alpha (z-ai/glm-5.3-flash) with generous token headroom for reasoning + completion
     const modelsToTry = [
       "z-ai/glm-5.3-flash",
       "meta-llama/llama-3.3-70b-instruct",
@@ -69,7 +71,7 @@ Sila jawab soalan ini dengan pantas, ringkas (1-2 perenggan pendek), santai guna
               { role: "system", content: systemPrompt },
               { role: "user", content: userPrompt },
             ],
-            max_tokens: 650,
+            max_tokens: 1800,
             temperature: 0.6,
           }),
         });
@@ -92,7 +94,7 @@ Sila jawab soalan ini dengan pantas, ringkas (1-2 perenggan pendek), santai guna
     }
 
     // Post-processing safety sanitization to strip any stray asterisks, markdown, and em dashes
-    const cleanAnswer = rawAnswer
+    let cleanAnswer = rawAnswer
       .replace(/[*_#`~]+/g, "")
       .replace(/—/g, ", ")
       .replace(/\s+-\s+/g, ", ")
