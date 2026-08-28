@@ -23,7 +23,13 @@ import {
   ArrowRightLeft,
   Lightbulb,
   GraduationCap,
-  X
+  X,
+  MessageSquare,
+  Send,
+  MessageCircle,
+  Trash2,
+  HelpCircle,
+  Filter
 } from "lucide-react";
 import QuizComponent from "./QuizComponent";
 import { useLanguage } from "@/context/LanguageContext";
@@ -33,6 +39,7 @@ import { allKamusTerms, DictTerm } from "@/data/kamusData";
 import { allFormulas, FormulaItem } from "@/data/formulaData";
 import { getLessonCheatNote } from "@/data/cheatNotesData";
 import { MathFormula } from "@/components/MathFormula";
+import { QAItem, QAReply, getLessonQAItems } from "@/data/qaDatabase";
 import { deobfuscateId } from "@/utils/security";
 import { useUserActivity } from "@/context/UserActivityContext";
 import { useAuth } from "@/context/AuthContext";
@@ -311,12 +318,153 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     trackViewAndFetchStats();
   }, [currentLesson]);
 
-  const [comments, setComments] = useState([
-    { name: "Ahmad Rizky", text: "Terbaik Cikgu! Sangat jelas dan mudah difahami.", time: "2 jam lepas" },
-    { name: "Siti Sarah", text: "Penerangan padat dan contoh soalan SPM sangat membantu!", time: "5 jam lepas" },
-    { name: "Cikgu Tan", text: "Sangat sesuai untuk ulangkaji murid SPM.", time: "1 hari lepas" }
-  ]);
-  const [newComment, setNewComment] = useState("");
+  // Soal Jawab (Q&A) State & Logic
+  const [qaList, setQaList] = useState<QAItem[]>([]);
+  const [qaCategory, setQaCategory] = useState<"Semua" | "Konsep" | "Pengiraan" | "SPM Kertas 2" | "SPM Kertas 1" | "Amali">("Semua");
+  const [newQuestionText, setNewQuestionText] = useState("");
+  const [newQuestionCategory, setNewQuestionCategory] = useState<"Konsep" | "Pengiraan" | "SPM Kertas 2" | "SPM Kertas 1" | "Amali">("Konsep");
+  const [activeReplyId, setActiveReplyId] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [qaFilterTeacherOnly, setQaFilterTeacherOnly] = useState(false);
+
+  const userEmail = user?.email?.toLowerCase().trim() || "";
+  const isSuperAdmin = ["ahalimroslan@gmail.com", "abdulhalimroslan@gmail.com"].includes(userEmail);
+
+  useEffect(() => {
+    const storageKey = `physflix_qa_${currentLesson.id}`;
+    const savedQA = localStorage.getItem(storageKey);
+    if (savedQA) {
+      try {
+        const parsed = JSON.parse(savedQA);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setQaList(parsed);
+          return;
+        }
+      } catch (e) {
+        console.warn("Failed to parse saved QA", e);
+      }
+    }
+
+    const defaults = getLessonQAItems(
+      currentLesson.id,
+      currentLesson.titleBm,
+      currentLesson.chapterBm,
+      currentLesson.form,
+      currentLesson.chapterNum
+    );
+    setQaList(defaults);
+  }, [currentLesson.id, currentLesson.titleBm, currentLesson.chapterBm, currentLesson.form, currentLesson.chapterNum]);
+
+  const saveQAList = (newList: QAItem[]) => {
+    setQaList(newList);
+    try {
+      localStorage.setItem(`physflix_qa_${currentLesson.id}`, JSON.stringify(newList));
+    } catch (e) {
+      console.warn("Failed to persist QA list", e);
+    }
+  };
+
+  const handleAddQuestion = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newQuestionText.trim()) return;
+
+    const authorName = user?.displayName || (user?.email ? user.email.split("@")[0] : (lang === "bm" ? "Pelajar Fizik SPM" : "Physics Student"));
+    const newQA: QAItem = {
+      id: `qa-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      lessonId: currentLesson.id,
+      chapterNum: currentLesson.chapterNum,
+      form: currentLesson.form,
+      authorName,
+      authorRole: isSuperAdmin ? "admin" : "pelajar",
+      authorAvatar: user?.photoURL || undefined,
+      question: newQuestionText.trim(),
+      category: newQuestionCategory,
+      timestamp: lang === "bm" ? "Baru sahaja" : "Just now",
+      createdAt: Date.now(),
+      likes: 0,
+      isLiked: false,
+      replies: []
+    };
+
+    const updated = [newQA, ...qaList];
+    saveQAList(updated);
+    setNewQuestionText("");
+  };
+
+  const handleLikeQuestion = (id: string) => {
+    const updated = qaList.map((item) => {
+      if (item.id === id) {
+        const isLiked = !item.isLiked;
+        return {
+          ...item,
+          isLiked,
+          likes: isLiked ? item.likes + 1 : Math.max(0, item.likes - 1)
+        };
+      }
+      return item;
+    });
+    saveQAList(updated);
+  };
+
+  const handleAddReply = (questionId: string) => {
+    if (!replyText.trim()) return;
+    const authorName = user?.displayName || (isSuperAdmin ? "Sir Halim (Guru Fizik)" : (lang === "bm" ? "Pelajar Fizik SPM" : "Physics Student"));
+    const authorRole = isSuperAdmin ? "guru" : "pelajar";
+    const newReply: QAReply = {
+      id: `rep-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      authorName,
+      authorRole,
+      authorAvatar: user?.photoURL || undefined,
+      text: replyText.trim(),
+      timestamp: lang === "bm" ? "Baru sahaja" : "Just now",
+      createdAt: Date.now(),
+      likes: 0,
+      isVerified: isSuperAdmin
+    };
+
+    const updated = qaList.map((item) => {
+      if (item.id === questionId) {
+        return {
+          ...item,
+          replies: [...item.replies, newReply]
+        };
+      }
+      return item;
+    });
+
+    saveQAList(updated);
+    setReplyText("");
+    setActiveReplyId(null);
+  };
+
+  const handleLikeReply = (questionId: string, replyId: string) => {
+    const updated = qaList.map((item) => {
+      if (item.id === questionId) {
+        const newReplies = item.replies.map((r) => {
+          if (r.id === replyId) {
+            return { ...r, likes: r.likes + 1 };
+          }
+          return r;
+        });
+        return { ...item, replies: newReplies };
+      }
+      return item;
+    });
+    saveQAList(updated);
+  };
+
+  const handleDeleteQuestion = (id: string) => {
+    const updated = qaList.filter((item) => item.id !== id);
+    saveQAList(updated);
+  };
+
+  const filteredQAList = qaList.filter((item) => {
+    if (qaFilterTeacherOnly && !item.replies.some((r) => r.authorRole === "guru" || r.isVerified)) {
+      return false;
+    }
+    if (qaCategory === "Semua") return true;
+    return item.category === qaCategory;
+  });
 
   const handleLike = async () => {
     const newLikedState = !liked;
@@ -354,13 +502,6 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     } catch (err) {
       console.error("Error sharing", err);
     }
-  };
-
-  const handleAddComment = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newComment.trim()) return;
-    setComments([{ name: "Pelajar Fizik", text: newComment, time: "Baru sahaja" }, ...comments]);
-    setNewComment("");
   };
 
   return (
@@ -574,13 +715,18 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               </button>
               <button
                 onClick={() => setActiveTab("qa")}
-                className={`pb-3 whitespace-nowrap transition cursor-pointer ${
+                className={`pb-3 whitespace-nowrap transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === "qa"
-                    ? "border-b-2 border-red-500 text-white"
+                    ? "border-b-2 border-red-500 text-white font-bold"
                     : "text-slate-400 hover:text-slate-200"
                 }`}
               >
-                {t("tabQA")}
+                <span>{t("tabQA")}</span>
+                <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full transition ${
+                  activeTab === "qa" ? "bg-red-600 text-white" : "bg-slate-800 text-slate-300"
+                }`}>
+                  {qaList.length}
+                </span>
               </button>
             </div>
 
@@ -981,33 +1127,308 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
             })()}
 
             {activeTab === "qa" && (
-              <div className="p-5 rounded-2xl bg-[#111624] border border-slate-800 space-y-4">
-                <form onSubmit={handleAddComment} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Tanya soalan tentang video ini..."
-                    className="flex-1 px-4 py-2 bg-[#171e2e] border border-slate-700/60 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
-                  />
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl transition cursor-pointer"
-                  >
-                    Hantar
-                  </button>
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#111624] border border-slate-800 space-y-6 text-slate-200">
+                {/* Header & Stats Banner */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/90 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-red-600/20 text-red-400 border border-red-500/30 rounded-xl">
+                      <MessageSquare className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                        {lang === "bm" ? "Ruang Soal Jawab & Perbincangan Fizik" : "Physics Q&A & Discussion Forum"}
+                        <span className="px-2.5 py-0.5 bg-red-600/90 text-white text-xs font-bold rounded-full">
+                          {qaList.length} {lang === "bm" ? "Soalan" : "Questions"}
+                        </span>
+                      </h3>
+                      <p className="text-[11px] text-slate-400">
+                        {lang === "bm"
+                          ? "Ajukan sebarang kemusykilan tentang video ini untuk dijawab oleh Cikgu Halim & rakan pelajar."
+                          : "Ask any questions regarding this video lesson to be answered by Sir Halim & fellow students."}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Teacher Answered Counter */}
+                  <div className="flex items-center gap-2 self-start sm:self-auto">
+                    <span className="px-3 py-1 bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs font-semibold rounded-lg flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                      {qaList.filter(q => q.replies.some(r => r.authorRole === "guru" || r.isVerified)).length} {lang === "bm" ? "Dijawab Cikgu" : "Answered by Teacher"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Ask a Question Form */}
+                <form onSubmit={handleAddQuestion} className="p-4 bg-[#141a29] border border-slate-700/80 rounded-2xl space-y-3 shadow-inner">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                      <HelpCircle className="w-4 h-4 text-cyan-400" />
+                      {lang === "bm" ? "Tanya Soalan Baharu:" : "Ask a New Question:"}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-slate-400">{lang === "bm" ? "Kategori:" : "Category:"}</span>
+                      <select
+                        value={newQuestionCategory}
+                        onChange={(e) => setNewQuestionCategory(e.target.value as any)}
+                        className="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1 focus:outline-none focus:border-red-500"
+                      >
+                        <option value="Konsep">Konsep</option>
+                        <option value="Pengiraan">Pengiraan</option>
+                        <option value="SPM Kertas 2">SPM Kertas 2</option>
+                        <option value="SPM Kertas 1">SPM Kertas 1</option>
+                        <option value="Amali">Amali</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="relative">
+                    <textarea
+                      rows={3}
+                      value={newQuestionText}
+                      onChange={(e) => setNewQuestionText(e.target.value)}
+                      placeholder={
+                        lang === "bm"
+                          ? `Tulis soalan anda tentang topik ${currentLesson.titleBm} di sini... (Contoh: Mengapa formula v = √(2GM/R) tidak bergantung pada jisim roket?)`
+                          : `Type your question about ${currentLesson.titleDlp} here...`
+                      }
+                      className="w-full px-4 py-3 bg-[#0d121f] border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/50 resize-y"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1">
+                    <div className="flex items-center gap-2 text-[11px] text-slate-400">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-500 to-red-600 flex items-center justify-center text-white font-bold text-[10px]">
+                        {user?.displayName ? user.displayName.substring(0, 1).toUpperCase() : "P"}
+                      </div>
+                      <span>
+                        {user?.displayName || (user?.email ? user.email.split("@")[0] : (lang === "bm" ? "Pelajar Fizik SPM" : "Physics Student"))}
+                      </span>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={!newQuestionText.trim()}
+                      className="px-5 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-xs rounded-xl transition cursor-pointer flex items-center gap-1.5 shadow-lg shadow-red-600/30"
+                    >
+                      <Send className="w-3.5 h-3.5" />
+                      <span>{lang === "bm" ? "Hantar Soalan" : "Post Question"}</span>
+                    </button>
+                  </div>
                 </form>
 
-                <div className="space-y-3 pt-2">
-                  {comments.map((c, i) => (
-                    <div key={i} className="p-3 bg-[#161c2c] border border-slate-800 rounded-xl space-y-1">
-                      <div className="flex justify-between items-center text-[10px] text-slate-400">
-                        <span className="font-bold text-slate-200">{c.name}</span>
-                        <span>{c.time}</span>
-                      </div>
-                      <p className="text-xs text-slate-300">{c.text}</p>
-                    </div>
+                {/* Filter Tabs */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+                  <span className="text-[11px] text-slate-400 font-semibold flex items-center gap-1 shrink-0 mr-1">
+                    <Filter className="w-3.5 h-3.5 text-slate-400" />
+                    {lang === "bm" ? "Tapis:" : "Filter:"}
+                  </span>
+                  {(["Semua", "Konsep", "Pengiraan", "SPM Kertas 2", "SPM Kertas 1", "Amali"] as const).map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => {
+                        setQaCategory(cat);
+                        setQaFilterTeacherOnly(false);
+                      }}
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition shrink-0 cursor-pointer ${
+                        qaCategory === cat && !qaFilterTeacherOnly
+                          ? "bg-slate-700 text-white border border-slate-600"
+                          : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
+                      }`}
+                    >
+                      {cat}
+                    </button>
                   ))}
+                  <button
+                    onClick={() => setQaFilterTeacherOnly(!qaFilterTeacherOnly)}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition shrink-0 cursor-pointer flex items-center gap-1 ${
+                      qaFilterTeacherOnly
+                        ? "bg-emerald-900/80 text-emerald-200 border border-emerald-700"
+                        : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
+                    }`}
+                  >
+                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                    <span>{lang === "bm" ? "Jawapan Guru Sahaja" : "Teacher Answers Only"}</span>
+                  </button>
+                </div>
+
+                {/* Questions Feed */}
+                <div className="space-y-4 pt-1">
+                  {filteredQAList.length === 0 ? (
+                    <div className="p-8 text-center bg-slate-900/50 border border-slate-800/80 rounded-2xl space-y-2">
+                      <MessageSquare className="w-8 h-8 text-slate-600 mx-auto" />
+                      <p className="text-sm font-semibold text-slate-300">
+                        {lang === "bm" ? "Belum ada soalan dalam kategori ini." : "No questions in this category yet."}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {lang === "bm" ? "Jadilah yang pertama mengajukan soalan kepada Cikgu!" : "Be the first to ask a question!"}
+                      </p>
+                    </div>
+                  ) : (
+                    filteredQAList.map((item) => (
+                      <div
+                        key={item.id}
+                        className="p-4 sm:p-5 bg-[#141a29] border border-slate-800/90 rounded-2xl space-y-3.5 shadow-md transition hover:border-slate-700"
+                      >
+                        {/* Question Header */}
+                        <div className="flex items-start justify-between gap-2 flex-wrap">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-600 to-blue-700 flex items-center justify-center text-white font-bold text-xs border border-white/10 shrink-0">
+                              {item.authorAvatar ? (
+                                /* eslint-disable-next-line @next/next/no-img-element */
+                                <img src={item.authorAvatar} alt={item.authorName} className="w-full h-full rounded-full object-cover" />
+                              ) : (
+                                item.authorName.substring(0, 2).toUpperCase()
+                              )}
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-white text-xs sm:text-sm">{item.authorName}</span>
+                                {item.authorRole === "admin" && (
+                                  <span className="px-1.5 py-0.2 bg-red-950 text-red-400 border border-red-800 text-[9px] font-bold rounded">
+                                    Admin
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-[10px] text-slate-400">{item.timestamp}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 bg-slate-800/90 border border-slate-700 text-slate-300 text-[10px] font-bold rounded-md">
+                              {item.category}
+                            </span>
+                            {/* Delete button if user authored it */}
+                            {(item.authorName === (user?.displayName || user?.email?.split("@")[0]) || isSuperAdmin) && (
+                              <button
+                                onClick={() => handleDeleteQuestion(item.id)}
+                                className="p-1 text-slate-500 hover:text-red-400 rounded transition cursor-pointer"
+                                title="Padam Soalan"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Question Body */}
+                        <p className="text-xs sm:text-sm text-slate-200 leading-relaxed pl-1 font-medium">
+                          {item.question}
+                        </p>
+
+                        {/* Action Buttons: Like & Reply */}
+                        <div className="flex items-center gap-4 pt-1 text-xs border-t border-slate-800/80">
+                          <button
+                            onClick={() => handleLikeQuestion(item.id)}
+                            className={`flex items-center gap-1.5 font-semibold transition cursor-pointer ${
+                              item.isLiked ? "text-red-400" : "text-slate-400 hover:text-white"
+                            }`}
+                          >
+                            <ThumbsUp className={`w-3.5 h-3.5 ${item.isLiked ? "fill-red-400" : ""}`} />
+                            <span>{item.likes > 0 ? item.likes : (lang === "bm" ? "Suka" : "Like")}</span>
+                          </button>
+
+                          <button
+                            onClick={() => setActiveReplyId(activeReplyId === item.id ? null : item.id)}
+                            className="flex items-center gap-1.5 text-slate-400 hover:text-white font-semibold transition cursor-pointer"
+                          >
+                            <MessageCircle className="w-3.5 h-3.5" />
+                            <span>
+                              {lang === "bm" ? "Balas" : "Reply"} {item.replies.length > 0 && `(${item.replies.length})`}
+                            </span>
+                          </button>
+                        </div>
+
+                        {/* Replies Section */}
+                        {item.replies.length > 0 && (
+                          <div className="space-y-2.5 pt-2 pl-3 sm:pl-6 border-l-2 border-slate-800">
+                            {item.replies.map((reply) => {
+                              const isGuru = reply.authorRole === "guru" || reply.isVerified;
+                              return (
+                                <div
+                                  key={reply.id}
+                                  className={`p-3.5 rounded-xl space-y-2 transition ${
+                                    isGuru
+                                      ? "bg-[#0b1622] border border-emerald-700/60 shadow-md"
+                                      : "bg-[#0f1422] border border-slate-800"
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between flex-wrap gap-1">
+                                    <div className="flex items-center gap-2">
+                                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold ${
+                                        isGuru ? "bg-emerald-600" : "bg-slate-700"
+                                      }`}>
+                                        {isGuru ? "SH" : reply.authorName.substring(0, 1).toUpperCase()}
+                                      </div>
+                                      <span className={`text-xs font-bold ${isGuru ? "text-emerald-300" : "text-slate-200"}`}>
+                                        {reply.authorName}
+                                      </span>
+                                      {isGuru && (
+                                        <span className="px-2 py-0.2 bg-emerald-900/90 border border-emerald-600/80 text-emerald-200 text-[9px] font-extrabold rounded-full flex items-center gap-1">
+                                          <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
+                                          {lang === "bm" ? "Jawapan Rasmi Guru" : "Teacher Answer"}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="text-[10px] text-slate-500">{reply.timestamp}</span>
+                                  </div>
+
+                                  <p className="text-xs text-slate-200 leading-relaxed pl-8 whitespace-pre-line">
+                                    {reply.text}
+                                  </p>
+
+                                  <div className="flex items-center justify-end pl-8 pt-1">
+                                    <button
+                                      onClick={() => handleLikeReply(item.id, reply.id)}
+                                      className="text-[10px] text-slate-400 hover:text-emerald-400 flex items-center gap-1 font-semibold transition cursor-pointer"
+                                    >
+                                      <ThumbsUp className="w-3 h-3" />
+                                      <span>{reply.likes > 0 ? reply.likes : ""} Bermanfaat</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* Inline Reply Form */}
+                        {activeReplyId === item.id && (
+                          <div className="p-3 bg-[#0d121f] border border-slate-700/80 rounded-xl space-y-2 animate-in fade-in duration-200">
+                            <div className="flex items-center justify-between text-[11px] text-slate-400 font-semibold">
+                              <span>{lang === "bm" ? `Balas kepada ${item.authorName}:` : `Replying to ${item.authorName}:`}</span>
+                              <button onClick={() => setActiveReplyId(null)} className="hover:text-white">
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                autoFocus
+                                value={replyText}
+                                onChange={(e) => setReplyText(e.target.value)}
+                                placeholder={lang === "bm" ? "Tulis jawapan atau ulasan anda..." : "Write your response..."}
+                                className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    handleAddReply(item.id);
+                                  }
+                                }}
+                              />
+                              <button
+                                onClick={() => handleAddReply(item.id)}
+                                disabled={!replyText.trim()}
+                                className="px-4 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-bold text-xs rounded-lg transition cursor-pointer flex items-center gap-1"
+                              >
+                                <Send className="w-3 h-3" />
+                                <span>{lang === "bm" ? "Hantar" : "Send"}</span>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             )}
