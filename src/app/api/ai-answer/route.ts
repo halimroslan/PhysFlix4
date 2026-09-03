@@ -26,6 +26,37 @@ function isEnglishQuery(question: string, langSetting?: string): boolean {
   return enWords > bmWords && enWords >= 3;
 }
 
+// Helper for direct Google Gemini API call if key is configured
+async function callDirectGeminiAnswer(
+  apiKey: string,
+  systemPrompt: string,
+  userPrompt: string
+): Promise<string | null> {
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        generationConfig: {
+          temperature: 0.6,
+          maxOutputTokens: 1800,
+        },
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || null;
+  } catch (e) {
+    console.warn("Direct Gemini answer generation failed:", e);
+    return null;
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { question, lessonTitle, lessonTitleBm, lessonTitleDlp, chapterNum, form, lang } = await req.json();
@@ -34,28 +65,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Question is required" }, { status: 400 });
     }
 
-    const apiKeys = [
+    const openRouterKeys = [
       process.env.OPENROUTER_API_KEY,
       process.env.OPENROUTER_BACKUP_API_KEY,
     ].filter(Boolean) as string[];
 
-    const uniqueKeys = Array.from(new Set(apiKeys));
+    const uniqueOpenRouterKeys = Array.from(new Set(openRouterKeys));
+    const geminiDirectKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
     const isEnglish = isEnglishQuery(question, lang);
 
-    if (uniqueKeys.length === 0) {
-      return NextResponse.json(
-        {
-          answer: isEnglish
-            ? "Sorry, AI Tutor is temporarily offline. Please reach out to Sir Halim directly."
-            : "Harap maaf, sistem AI Tutor sedang offline sementara. Sila hubungi Sir Halim secara terus.",
-        },
-        { status: 200 }
-      );
-    }
-
     const systemPrompt = isEnglish
-      ? `You are 'Sir Halim (AI Tutor - Powered by Ox Alpha)', a friendly, casual, and expert SPM Physics teacher in Malaysia.
+      ? `You are 'Sir Halim (AI Tutor - Powered by Ox Alpha & Gemini)', a friendly, casual, and expert SPM Physics teacher in Malaysia.
 
 MALAYSIAN STYLE ENGLISH & FORMATTING RULES (STRICT):
 1. LANGUAGE STYLE: Use natural Malaysian style English (casual, warm, Malaysian DLP teacher style).
@@ -67,7 +88,7 @@ MALAYSIAN STYLE ENGLISH & FORMATTING RULES (STRICT):
 7. NO EM DASHES: DO NOT USE EM DASHES '—' OR HYPHENS '-' AS DASHES. Use commas or periods.
 8. SHORT & CRISP: 1 to 2 short paragraphs max, fast and straight to the point.
 9. COMPLETE THE ANSWER FULLY: Never stop mid-sentence. Always finish the thought completely with a full stop (.).`
-      : `Anda ialah 'Sir Halim (AI Tutor - Dikuasakan oleh Ox Alpha)', guru Fizik SPM yang sangat mesra, sempoi, dan berwibawa.
+      : `Anda ialah 'Sir Halim (AI Tutor - Dikuasakan oleh Ox Alpha & Gemini)', guru Fizik SPM yang sangat mesra, sempoi, dan berwibawa.
 
 SYARAT FORMAT & GAYA JAWAPAN (SANGAT KETAT):
 1. JANGAN GUNA SEBARANG SIMBOL ASTERISK '*' ATAU BOLD '**' LANGSUNG. Tulis teks biasa yang bersih sahaja.
@@ -100,38 +121,56 @@ Sila jawab soalan ini dengan lengkap (1-2 perenggan), santai guna short forms da
 
     let rawAnswer = "";
 
-    // Primary and Backup API Key iteration on Ox Alpha (z-ai/glm-5.3-flash)
-    for (const key of uniqueKeys) {
-      try {
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${key}`,
-            "HTTP-Referer": "https://physflix.vercel.app",
-            "X-Title": "PhysFlix SPM Physics AI Tutor (Ox Alpha)",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "z-ai/glm-5.3-flash",
-            messages: [
-              { role: "system", content: systemPrompt },
-              { role: "user", content: userPrompt },
-            ],
-            max_tokens: 1800,
-            temperature: 0.6,
-          }),
-        });
+    // Multi-tier Fallback Models:
+    // Tier 1: Ox Alpha (z-ai/glm-5.3-flash)
+    // Tier 2: Google Gemini 2.5 Flash on OpenRouter (ultra fast 700ms)
+    // Tier 3: Google Gemini 2.5 Flash Lite on OpenRouter
+    const fallbackModels = [
+      "z-ai/glm-5.3-flash",
+      "google/gemini-2.5-flash",
+      "google/gemini-2.5-flash-lite",
+    ];
 
-        if (response.ok) {
-          const data = await response.json();
-          rawAnswer = data.choices?.[0]?.message?.content?.trim() || "";
-          if (rawAnswer) break;
-        } else {
-          console.warn(`OpenRouter AI answer with key failed (status ${response.status}), trying backup key...`);
+    for (const model of fallbackModels) {
+      for (const key of uniqueOpenRouterKeys) {
+        try {
+          const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${key}`,
+              "HTTP-Referer": "https://physflix.vercel.app",
+              "X-Title": `PhysFlix SPM Physics AI Tutor (${model})`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model,
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userPrompt },
+              ],
+              max_tokens: 1800,
+              temperature: 0.6,
+            }),
+            signal: AbortSignal.timeout(9000),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            rawAnswer = data.choices?.[0]?.message?.content?.trim() || "";
+            if (rawAnswer) break;
+          } else {
+            console.warn(`Model ${model} with key failed (status ${response.status}), trying next fallback...`);
+          }
+        } catch (e) {
+          console.warn(`Request failed for model ${model}, trying next fallback...`, e);
         }
-      } catch (e) {
-        console.warn(`Model request failed on key, falling back...`, e);
       }
+      if (rawAnswer) break;
+    }
+
+    // Tier 4: Direct Google Gemini API (if key configured)
+    if (!rawAnswer && geminiDirectKey) {
+      rawAnswer = (await callDirectGeminiAnswer(geminiDirectKey, systemPrompt, userPrompt)) || "";
     }
 
     if (!rawAnswer) {

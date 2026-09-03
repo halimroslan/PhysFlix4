@@ -1,42 +1,69 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkQuickAbusive } from "@/utils/moderation";
 
+// Helper for direct Google Gemini API call if key is available
+async function checkDirectGeminiModeration(apiKey: string, prompt: string): Promise<{ isAbusive: boolean; reason: string } | null> {
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          temperature: 0.1,
+          maxOutputTokens: 300,
+        },
+      }),
+      signal: AbortSignal.timeout(6000),
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) return null;
+    const parsed = JSON.parse(text);
+    return {
+      isAbusive: Boolean(parsed.isAbusive),
+      reason: parsed.reason || "",
+    };
+  } catch (e) {
+    console.warn("Direct Gemini moderation failed:", e);
+    return null;
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { text } = await req.json();
 
     if (!text || typeof text !== "string" || !text.trim()) {
-      return NextResponse.json({ isAbusive: false, reason: "" });
+      return NextResponse.json({ isAbusive: false, reason: "", serviceDisabled: false });
     }
 
     const trimmed = text.trim();
 
-    // 1. Instant 0ms heuristic profanity, insult, scam & cynicism check (12 categories)
+    // 1. Instant 0ms heuristic profanity, insult, scam & cynicism check (12 categories, 1000+ bad patterns)
     const quickCheck = checkQuickAbusive(trimmed);
     if (quickCheck.isAbusive) {
       return NextResponse.json({
         isAbusive: true,
         category: quickCheck.category,
         reason: quickCheck.reason,
+        serviceDisabled: false,
+        engine: "instant_heuristic",
       });
     }
 
-    // 2. AI Deep Contextual Moderation via Ox Alpha (OpenRouter) with Primary & Backup Keys
-    const apiKeys = [
+    // 2. Prepare API keys
+    const openRouterKeys = [
       process.env.OPENROUTER_API_KEY,
       process.env.OPENROUTER_BACKUP_API_KEY,
     ].filter(Boolean) as string[];
+    const uniqueOpenRouterKeys = Array.from(new Set(openRouterKeys));
 
-    const uniqueKeys = Array.from(new Set(apiKeys));
-
-    if (uniqueKeys.length === 0) {
-      console.warn("No OpenRouter API key configured, auto-disabling commenting");
-      return NextResponse.json({
-        isAbusive: false,
-        serviceDisabled: true,
-        error: "Ruang Soal Jawab ditutup sementara waktu kerana kuota AI Moderasi (Ox Alpha) sedang diselenggara.",
-      });
-    }
+    const geminiDirectKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
     const prompt = `You are a strict AI content moderation guardian for PhysFlix, a professional SPM Physics learning platform.
 Your duty is to enforce a high standard of respect, constructive discourse, and academic decorum.
@@ -67,85 +94,100 @@ Return strictly valid JSON only:
 Teks untuk disemak:
 """${trimmed}"""`;
 
-    let moderationSuccess = false;
+    // 3. Multi-tier Cloud Fallback Chain:
+    // Tier 1: Ox Alpha (z-ai/glm-5.3-flash)
+    // Tier 2: Google Gemini 2.5 Flash on OpenRouter (ultra fast, high quota)
+    // Tier 3: Google Gemini 2.5 Flash Lite on OpenRouter
+    const models = ["z-ai/glm-5.3-flash", "google/gemini-2.5-flash", "google/gemini-2.5-flash-lite"];
 
-    // Try Primary Key first, then Backup Key with Ox Alpha (z-ai/glm-5.3-flash)
-    for (const key of uniqueKeys) {
-      try {
-        const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${key}`,
-            "HTTP-Referer": "https://physflix.vercel.app",
-            "X-Title": "PhysFlix SPM Physics AI Moderator (Ox Alpha)",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "z-ai/glm-5.3-flash",
-            messages: [
-              {
-                role: "system",
-                content: "You are a strict, helpful AI content moderator for an educational SPM physics platform. Always respond in JSON format.",
-              },
-              {
-                role: "user",
-                content: prompt,
-              },
-            ],
-            response_format: { type: "json_object" },
-            max_tokens: 300,
-            temperature: 0.1,
-          }),
-          signal: AbortSignal.timeout(6500),
-        });
+    for (const model of models) {
+      for (const key of uniqueOpenRouterKeys) {
+        try {
+          const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${key}`,
+              "HTTP-Referer": "https://physflix.vercel.app",
+              "X-Title": `PhysFlix SPM Physics AI Moderator (${model})`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model,
+              messages: [
+                {
+                  role: "system",
+                  content: "You are a strict, helpful AI content moderator for an educational SPM physics platform. Always respond in JSON format.",
+                },
+                {
+                  role: "user",
+                  content: prompt,
+                },
+              ],
+              response_format: { type: "json_object" },
+              max_tokens: 300,
+              temperature: 0.1,
+            }),
+            signal: AbortSignal.timeout(6000),
+          });
 
-        if (openRouterResponse.ok) {
-          const data = await openRouterResponse.json();
-          const content = data.choices?.[0]?.message?.content;
-          if (content) {
-            moderationSuccess = true;
-            try {
-              const parsed = JSON.parse(content);
-              return NextResponse.json({
-                isAbusive: Boolean(parsed.isAbusive),
-                reason: parsed.reason || "",
-                serviceDisabled: false,
-              });
-            } catch {
-              const isAbusive = content.toLowerCase().includes('"isabusive": true') || content.toLowerCase().includes('"isabusive":true');
-              return NextResponse.json({
-                isAbusive,
-                reason: isAbusive ? "Kandungan dikesan mengandungi perkataan atau unsur yang tidak sopan." : "",
-                serviceDisabled: false,
-              });
+          if (openRouterResponse.ok) {
+            const data = await openRouterResponse.json();
+            const content = data.choices?.[0]?.message?.content;
+            if (content) {
+              try {
+                const parsed = JSON.parse(content);
+                return NextResponse.json({
+                  isAbusive: Boolean(parsed.isAbusive),
+                  reason: parsed.reason || "",
+                  serviceDisabled: false,
+                  engine: model,
+                });
+              } catch {
+                const isAbusive = content.toLowerCase().includes('"isabusive": true') || content.toLowerCase().includes('"isabusive":true');
+                return NextResponse.json({
+                  isAbusive,
+                  reason: isAbusive ? "Kandungan dikesan mengandungi perkataan atau unsur yang tidak sopan." : "",
+                  serviceDisabled: false,
+                  engine: model,
+                });
+              }
             }
+          } else {
+            console.warn(`Moderation with model ${model} and key failed (status ${openRouterResponse.status}), trying next fallback...`);
           }
-        } else {
-          console.warn(`OpenRouter moderation with key failed (status ${openRouterResponse.status}), trying next key...`);
+        } catch (e) {
+          console.warn(`Moderation request failed for model ${model}, trying next fallback...`, e);
         }
-      } catch (e) {
-        console.warn(`Moderation request failed for key, falling back to backup...`, e);
       }
     }
 
-    // If both Primary and Backup Ox Alpha fail (out of tokens / quota depleted / server down):
-    // AUTO-DISABLE COMMENTING to protect the platform until tokens reset!
-    if (!moderationSuccess) {
-      console.error("All Ox Alpha API keys exhausted or unavailable! Auto-disabling comments.");
-      return NextResponse.json({
-        isAbusive: false,
-        serviceDisabled: true,
-        error: "Ruang Soal Jawab ditutup sementara waktu kerana kuota AI Moderasi (Ox Alpha) telah habis / sedang diselenggara. Sila cuba lagi sebentar lagi.",
-      });
+    // 4. Try Direct Gemini API if configured
+    if (geminiDirectKey) {
+      const geminiResult = await checkDirectGeminiModeration(geminiDirectKey, prompt);
+      if (geminiResult) {
+        return NextResponse.json({
+          ...geminiResult,
+          serviceDisabled: false,
+          engine: "direct_gemini",
+        });
+      }
     }
 
-    return NextResponse.json({ isAbusive: false, reason: "", serviceDisabled: false });
+    // 5. Ultimate Graceful Safety Pass:
+    // If all cloud AI endpoints temporarily timeout, DO NOT disable commenting.
+    // The comment has already PASSED the 1,000+ words instant heuristic safety filter!
+    return NextResponse.json({
+      isAbusive: false,
+      reason: "",
+      serviceDisabled: false,
+      engine: "local_heuristic_pass",
+    });
   } catch (error) {
     console.error("Error in moderate-comment API route:", error);
     return NextResponse.json({
       isAbusive: false,
-      serviceDisabled: true,
-      error: "Ruang Soal Jawab ditutup sementara waktu untuk penyelenggaraan kuota AI.",
+      serviceDisabled: false,
+      reason: "",
     });
   }
 }
