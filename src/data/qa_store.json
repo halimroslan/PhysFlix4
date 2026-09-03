@@ -23,5 +23,30 @@
         }
       ]
     }
+  ],
+  "AceZCzCckqc": [
+    {
+      "id": "qa-real-6-6a-concave-mirror",
+      "videoId": "AceZCzCckqc",
+      "authorName": "Hola Pal",
+      "authorRole": "pelajar",
+      "timestamp": "Baru sahaja",
+      "createdAt": 1787925000000,
+      "category": "Konsep",
+      "question": "Sir, can you please answer in English because I am in DLP class. If I stand in front of a concave mirror and slowly walk towards it, at one point my face becomes inverted, but when I get very close to the mirror, my face suddenly becomes upright and enlarged. Why does my face “flip” upside down and then flip back up again? 😂",
+      "likes": 1,
+      "replies": [
+        {
+          "id": "reply-ai-6-6a-concave-mirror",
+          "authorName": "Sir Halim",
+          "authorRole": "guru",
+          "isVerified": true,
+          "text": "Haha, this is classic concave mirror behaviour lah, and u just discovered it live with your own face! When u stand far away, u are beyond the centre of curvature C, so the mirror forms a real, inverted and diminished image. As u walk closer but still beyond the focal point F, the image stays real and inverted, that is why your face looks upside down. The moment u cross the principal focus F, something dramatic happens, the image position jumps to infinity, so at exactly F u see no clear image at all, just blur!\n\nThen when u get very close, between F and the pole P, the mirror switches to forming a virtual, upright and magnified image behind the mirror, so suddenly your face flips back up and looks big, kan? So it is not magic lah, u simply crossed the focal point, and that is the exact boundary where a concave mirror changes from real inverted image to virtual upright image. Try it slowly one more time and watch the flip happen right at F, very satisfying! 😄",
+          "timestamp": "Baru sahaja",
+          "createdAt": 1787925001000,
+          "likes": 2
+        }
+      ]
+    }
   ]
 }

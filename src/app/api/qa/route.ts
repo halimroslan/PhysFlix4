@@ -4,6 +4,7 @@ import path from "path";
 import { checkQuickAbusive } from "@/utils/moderation";
 
 const STORE_PATH = path.join(process.cwd(), "src/data/qa_store.json");
+const MASTER_BACKUP_PATH = "/Users/halimroslan/NEW CIDS SUITES PRO/physics-spm-flix-backup/qa_comments_archive/qa_store_master_backup.json";
 
 const SUPERADMIN_EMAILS = [
   "ahalimroslan@gmail.com",
@@ -38,18 +39,62 @@ export interface QAItem {
 // In-memory cache + file sync
 let qaStoreCache: Record<string, QAItem[]> | null = null;
 
+// Lossless store merger: ensures no question or Ox Alpha reply is ever lost
+function mergeStores(
+  primary: Record<string, QAItem[]>,
+  secondary: Record<string, QAItem[]>
+): Record<string, QAItem[]> {
+  const merged: Record<string, QAItem[]> = { ...secondary, ...primary };
+  for (const [vid, items] of Object.entries(secondary)) {
+    if (primary[vid]) {
+      const primaryQuestionIds = new Set(primary[vid].map((q) => q.id));
+      const missingQuestions = items.filter((q) => !primaryQuestionIds.has(q.id));
+
+      const updatedPrimary = primary[vid].map((pq) => {
+        const secQ = items.find((sq) => sq.id === pq.id);
+        if (secQ && Array.isArray(secQ.replies)) {
+          const existingReplyIds = new Set(pq.replies.map((r) => r.id));
+          const missingReplies = secQ.replies.filter((r) => !existingReplyIds.has(r.id));
+          if (missingReplies.length > 0) {
+            return { ...pq, replies: [...pq.replies, ...missingReplies] };
+          }
+        }
+        return pq;
+      });
+
+      merged[vid] = [...updatedPrimary, ...missingQuestions];
+    } else {
+      merged[vid] = items;
+    }
+  }
+  return merged;
+}
+
 function loadStore(): Record<string, QAItem[]> {
   if (qaStoreCache) return qaStoreCache;
+  let primaryStore: Record<string, QAItem[]> = {};
+
   try {
     if (fs.existsSync(STORE_PATH)) {
       const data = fs.readFileSync(STORE_PATH, "utf-8");
-      qaStoreCache = JSON.parse(data);
-      return qaStoreCache || {};
+      primaryStore = JSON.parse(data) || {};
     }
   } catch (err) {
     console.warn("Failed to read qa_store.json, initializing empty store:", err);
   }
-  qaStoreCache = {};
+
+  // Failsafe preservation: merge with master backup if available
+  try {
+    if (fs.existsSync(MASTER_BACKUP_PATH)) {
+      const backupData = fs.readFileSync(MASTER_BACKUP_PATH, "utf-8");
+      const backupStore = JSON.parse(backupData) || {};
+      primaryStore = mergeStores(primaryStore, backupStore);
+    }
+  } catch {
+    // Ignore in environments where external folder is not present
+  }
+
+  qaStoreCache = primaryStore;
   return qaStoreCache;
 }
 
@@ -63,6 +108,16 @@ function saveStore(store: Record<string, QAItem[]>) {
     fs.writeFileSync(STORE_PATH, JSON.stringify(store, null, 2), "utf-8");
   } catch (err) {
     console.error("Failed to write to qa_store.json:", err);
+  }
+
+  // Automatically preserve to external master backup folder
+  try {
+    const backupDir = path.dirname(MASTER_BACKUP_PATH);
+    if (fs.existsSync(backupDir)) {
+      fs.writeFileSync(MASTER_BACKUP_PATH, JSON.stringify(store, null, 2), "utf-8");
+    }
+  } catch {
+    // Ignore in read-only / cloud environments
   }
 }
 
