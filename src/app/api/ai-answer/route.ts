@@ -150,6 +150,7 @@ Sila jawab soalan ini dengan lengkap (1-2 perenggan), santai guna short forms da
               ],
               max_tokens: 1800,
               temperature: 0.6,
+              ...(model.includes("glm") ? { reasoning: { max_tokens: 120 } } : {}),
             }),
             signal: AbortSignal.timeout(9000),
           });

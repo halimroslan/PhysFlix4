@@ -126,8 +126,9 @@ Teks untuk disemak:
               response_format: { type: "json_object" },
               max_tokens: 300,
               temperature: 0.1,
+              ...(model.includes("glm") ? { reasoning: { max_tokens: 60 } } : {}),
             }),
-            signal: AbortSignal.timeout(6000),
+            signal: AbortSignal.timeout(6500),
           });
 
           if (openRouterResponse.ok) {
