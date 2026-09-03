@@ -96,6 +96,7 @@ Teks untuk disemak:
             max_tokens: 300,
             temperature: 0.1,
           }),
+          signal: AbortSignal.timeout(6500),
         });
 
         if (openRouterResponse.ok) {

@@ -32,7 +32,8 @@ import {
   Filter,
   ShieldAlert,
   ShieldCheck,
-  Loader2
+  Loader2,
+  RefreshCw
 } from "lucide-react";
 import QuizComponent from "./QuizComponent";
 import { useLanguage } from "@/context/LanguageContext";
@@ -442,6 +443,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     if (!newQuestionText.trim() || isModerating) return;
 
     setModerationError(null);
+    setIsCommentServiceDisabled(false);
 
     // 1. Instant heuristic check (0ms latency)
     const instantCheck = checkQuickAbusive(newQuestionText.trim());
@@ -571,6 +573,7 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     if (!replyText.trim() || isModerating) return;
 
     setModerationError(null);
+    setIsCommentServiceDisabled(false);
 
     // 1. Instant heuristic check (0ms latency)
     const instantCheck = checkQuickAbusive(replyText.trim());
@@ -1471,18 +1474,31 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
 
                 {/* AI Service Disabled Maintenance Warning Banner */}
                 {isCommentServiceDisabled && (
-                  <div className="p-4 bg-amber-950/60 border border-amber-500/80 rounded-2xl text-amber-200 text-xs flex items-start gap-3 animate-in fade-in shadow-lg shadow-amber-950/40">
-                    <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-                    <div className="space-y-1 flex-1">
-                      <p className="font-bold text-amber-300 text-xs sm:text-sm">
-                        {lang === "bm" ? "Ruang Soal Jawab Ditutup Sementara Waktu:" : "Q&A Section Temporarily Closed:"}
-                      </p>
-                      <p className="text-amber-200/90 leading-relaxed">
-                        {lang === "bm"
-                          ? "Fungsi menghantar soalan dan balasan baharu ditutup secara automatik sementara kuota AI Moderasi (Ox Alpha) diselenggara / diisi semula. Semua soalan dan jawapan sedia ada tetap boleh dibaca seperti biasa."
-                          : "Posting new questions is automatically paused while Ox Alpha AI moderation quota is maintained. Existing Q&A remains readable."}
-                      </p>
+                  <div className="p-4 bg-amber-950/60 border border-amber-500/80 rounded-2xl text-amber-200 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-in fade-in shadow-lg shadow-amber-950/40">
+                    <div className="flex items-start gap-3 flex-1">
+                      <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                      <div className="space-y-1">
+                        <p className="font-bold text-amber-300 text-xs sm:text-sm">
+                          {lang === "bm" ? "Ruang Soal Jawab Ditutup Sementara Waktu:" : "Q&A Section Temporarily Closed:"}
+                        </p>
+                        <p className="text-amber-200/90 leading-relaxed">
+                          {lang === "bm"
+                            ? "Fungsi menghantar soalan dan balasan baharu ditutup secara automatik sementara kuota AI Moderasi (Ox Alpha) diselenggara / diisi semula. Semua soalan dan jawapan sedia ada tetap boleh dibaca seperti biasa."
+                            : "Posting new questions is automatically paused while Ox Alpha AI moderation quota is maintained. Existing Q&A remains readable."}
+                        </p>
+                      </div>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCommentServiceDisabled(false);
+                        setModerationError(null);
+                      }}
+                      className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/50 rounded-xl text-xs font-semibold shrink-0 transition-colors flex items-center gap-1.5 self-end sm:self-center"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      {lang === "bm" ? "Semak Semula" : "Retry"}
+                    </button>
                   </div>
                 )}
 
