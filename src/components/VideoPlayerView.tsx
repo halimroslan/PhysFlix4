@@ -393,6 +393,8 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
         body: JSON.stringify({
           question: targetQuestion.question,
           lessonTitle: currentLesson.titleBm || currentLesson.titleDlp,
+          lessonTitleBm: currentLesson.titleBm,
+          lessonTitleDlp: currentLesson.titleDlp,
           chapterNum: currentLesson.chapterNum,
           form: currentLesson.form,
           lang,
