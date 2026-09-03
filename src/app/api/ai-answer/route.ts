@@ -65,7 +65,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Question is required" }, { status: 400 });
     }
 
+    // Prioritize OPENROUTER_API_KEY3 and OPENROUTER_BACKUP_API_KEY3
     const openRouterKeys = [
+      process.env.OPENROUTER_API_KEY3,
+      process.env.OPENROUTER_BACKUP_API_KEY3,
       process.env.OPENROUTER_API_KEY,
       process.env.OPENROUTER_BACKUP_API_KEY,
     ].filter(Boolean) as string[];

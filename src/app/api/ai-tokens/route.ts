@@ -115,8 +115,8 @@ async function fetchOpenRouterKeyDetails(key: string | undefined): Promise<KeyIn
 
 export async function GET() {
   try {
-    const primaryKey = process.env.OPENROUTER_API_KEY;
-    const backupKey = process.env.OPENROUTER_BACKUP_API_KEY;
+    const primaryKey = process.env.OPENROUTER_API_KEY3 || process.env.OPENROUTER_API_KEY;
+    const backupKey = process.env.OPENROUTER_BACKUP_API_KEY3 || process.env.OPENROUTER_BACKUP_API_KEY;
     const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
     const [primaryInfo, backupInfo] = await Promise.all([
