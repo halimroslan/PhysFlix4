@@ -48,5 +48,30 @@
         }
       ]
     }
+  ],
+  "3Wy8-kNGrcc": [
+    {
+      "id": "qa-real-6-1-pembiasan-cahaya",
+      "videoId": "3Wy8-kNGrcc",
+      "authorName": "Halim Roslan 2",
+      "authorRole": "pelajar",
+      "timestamp": "Baru sahaja",
+      "createdAt": 1787930000000,
+      "category": "Konsep",
+      "question": "cikgu, kalau cahaya bergerak paling laju, kenapa air boleh buat dia jadi perlahan?",
+      "likes": 0,
+      "replies": [
+        {
+          "id": "reply-ai-6-1-pembiasan-cahaya",
+          "authorName": "Sir Halim",
+          "authorRole": "guru",
+          "isVerified": true,
+          "text": "Ha, soalan yang best ni! Sebenarnya, kelajuan cahaya yang paling laju tu adalah dalam vakum, iaitu 3 x 10^8 m/s. Bila cahaya masuk ke dalam medium yang lebih tumpat spt air atau kaca, dia akan jadi perlahan sebab zarah2 cahaya tu berinteraksi dgn molekul2 dalam air tu, jadi dia lambat sikit perjalanannya.\n\nSebab tu la berlaku pembiasan cahaya. Bila kelajuan cahaya berubah bila dia pindah drpd satu medium ke medium lain yang berbeza ketumpatan optik, arah sinar cahaya pun akan bengkok. Ingat, makin tumpat medium tu, makin perlahan cahaya bergerak, dan indeks pembiasan pun makin besar. Faham kan awak, konsep ni penting sgt utk bab 6.1 ni!",
+          "timestamp": "Baru sahaja",
+          "createdAt": 1787930001000,
+          "likes": 1
+        }
+      ]
+    }
   ]
 }

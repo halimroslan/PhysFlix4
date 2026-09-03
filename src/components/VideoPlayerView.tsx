@@ -365,19 +365,69 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
   const userEmail = user?.email?.toLowerCase().trim() || "";
   const isSuperAdmin = ["ahalimroslan@gmail.com", "abdulhalimroslan@gmail.com"].includes(userEmail);
 
-  // Public Real-Time Q&A Synchronization
+  // Public Real-Time Q&A Synchronization with Lossless Merging & Auto-Healing
   const fetchPublicQA = useCallback(async () => {
     try {
       const vid = currentLesson.id || currentLesson.youtubeId || currentLesson.driveId;
       if (!vid) return;
+
+      // 1. Read existing local questions from localStorage
+      const storageKey = `physflix_qa_${vid}`;
+      let localItems: QAItem[] = [];
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) localItems = JSON.parse(saved);
+      } catch {}
+
       const res = await fetch(`/api/qa?videoId=${encodeURIComponent(vid)}`);
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data.questions)) {
-          setQaList(data.questions);
-          try {
-            localStorage.setItem(`physflix_qa_${vid}`, JSON.stringify(data.questions));
-          } catch {}
+        const serverQuestions: QAItem[] = Array.isArray(data.questions) ? data.questions : [];
+
+        // Lossless Merge: Combine server questions + local questions so nothing is ever lost
+        const mergedMap = new Map<string, QAItem>();
+
+        // Add local items first
+        localItems.forEach((q) => mergedMap.set(q.id, q));
+
+        // Overlay server items
+        serverQuestions.forEach((serverQ) => {
+          const localQ = mergedMap.get(serverQ.id);
+          if (localQ) {
+            // Merge replies
+            const replyMap = new Map<string, QAReply>();
+            (localQ.replies || []).forEach((r) => replyMap.set(r.id, r));
+            (serverQ.replies || []).forEach((r) => replyMap.set(r.id, r));
+            mergedMap.set(serverQ.id, {
+              ...localQ,
+              ...serverQ,
+              replies: Array.from(replyMap.values()),
+            });
+          } else {
+            mergedMap.set(serverQ.id, serverQ);
+          }
+        });
+
+        const mergedList = Array.from(mergedMap.values());
+        setQaList(mergedList);
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(mergedList));
+        } catch {}
+
+        // Check if client has questions that server is missing (e.g. after Vercel redeploy)
+        const serverIds = new Set(serverQuestions.map((q) => q.id));
+        const missingOnServer = localItems.filter((lq) => !serverIds.has(lq.id));
+        if (missingOnServer.length > 0) {
+          // Auto-heal: Push missing items to server!
+          fetch("/api/qa", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              action: "sync_local_items",
+              videoId: vid,
+              items: missingOnServer,
+            }),
+          }).catch((e) => console.warn("Background auto-heal sync error:", e));
         }
       }
     } catch (err) {

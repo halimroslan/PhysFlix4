@@ -268,6 +268,41 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, questions: store[videoId] });
     }
 
+    if (action === "sync_local_items") {
+      const { items } = body;
+      if (Array.isArray(items) && items.length > 0) {
+        const existingIds = new Set(store[videoId].map((q) => q.id));
+        let changed = false;
+
+        for (const localQ of items) {
+          if (!localQ || !localQ.id) continue;
+          if (!existingIds.has(localQ.id)) {
+            store[videoId].unshift(localQ);
+            existingIds.add(localQ.id);
+            changed = true;
+          } else {
+            // Merge missing replies
+            const targetQ = store[videoId].find((q) => q.id === localQ.id);
+            if (targetQ && Array.isArray(localQ.replies)) {
+              const replyIds = new Set(targetQ.replies.map((r) => r.id));
+              for (const rep of localQ.replies) {
+                if (!replyIds.has(rep.id)) {
+                  targetQ.replies.push(rep);
+                  replyIds.add(rep.id);
+                  changed = true;
+                }
+              }
+            }
+          }
+        }
+
+        if (changed) {
+          saveStore(store);
+        }
+      }
+      return NextResponse.json({ success: true, questions: store[videoId] });
+    }
+
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   } catch (err) {
     console.error("Error in POST /api/qa:", err);
