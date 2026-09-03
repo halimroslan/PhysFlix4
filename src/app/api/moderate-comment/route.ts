@@ -4,7 +4,7 @@ import { checkQuickAbusive } from "@/utils/moderation";
 // Helper for direct Google Gemini API call if key is available
 async function checkDirectGeminiModeration(apiKey: string, prompt: string): Promise<{ isAbusive: boolean; reason: string } | null> {
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
