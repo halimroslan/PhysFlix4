@@ -14,6 +14,7 @@ interface NavbarProps {
   onOpenDict?: () => void;
   onOpenQuiz?: () => void;
   onOpenCalc?: () => void;
+  onNavigateToQaReply?: (videoId: string, questionId: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ 
@@ -23,7 +24,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenFormula,
   onOpenDict,
   onOpenQuiz,
-  onOpenCalc
+  onOpenCalc,
+  onNavigateToQaReply
 }) => {
   const { lang, toggleLang, t } = useLanguage();
   const { user, logout } = useAuth();
@@ -200,6 +202,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               onOpenCheatNote={() => {
                 setIsNotificationsOpen(false);
                 if (onTabChange) onTabChange("home");
+              }}
+              onNavigateToQaReply={(videoId, questionId) => {
+                setIsNotificationsOpen(false);
+                if (onNavigateToQaReply) onNavigateToQaReply(videoId, questionId);
               }}
               onUnreadCountChange={(count) => setUnreadCount(count)}
             />

@@ -49,17 +49,26 @@ import { deobfuscateId } from "@/utils/security";
 import { useUserActivity } from "@/context/UserActivityContext";
 import { useAuth } from "@/context/AuthContext";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import {
+  addAIReplyNotification,
+  recordPendingQuestion,
+  removePendingQuestion
+} from "@/utils/notificationStore";
 
 interface VideoPlayerViewProps {
   currentLesson: VideoLesson;
   onBack: () => void;
   onSelectLesson: (lesson: VideoLesson) => void;
+  initialTab?: "overview" | "notes" | "qa";
+  highlightQuestionId?: string | null;
 }
 
 export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
   currentLesson,
   onBack,
-  onSelectLesson
+  onSelectLesson,
+  initialTab = "overview",
+  highlightQuestionId = null
 }) => {
   const { lang, t } = useLanguage();
   const { isBookmarked, toggleBookmark, addToHistory, videoStats, updateResumeTime } = useUserActivity();
@@ -190,7 +199,23 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLesson, currentStartSeconds, watchableDuration]);
 
-  const [activeTab, setActiveTab] = useState<"overview" | "notes" | "qa">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "notes" | "qa">(
+    initialTab || (highlightQuestionId ? "qa" : "overview")
+  );
+
+  // Auto-scroll and highlight target question from bell notification
+  useEffect(() => {
+    if (highlightQuestionId) {
+      setActiveTab("qa");
+      const scrollTimer = setTimeout(() => {
+        const el = document.getElementById(`qa-item-${highlightQuestionId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 400);
+      return () => clearTimeout(scrollTimer);
+    }
+  }, [highlightQuestionId]);
   const [sidebarTab, setSidebarTab] = useState<"playlist" | "tools" | "quiz">("playlist");
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
@@ -428,6 +453,19 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                 localStorage.setItem(`physflix_qa_${vid}`, JSON.stringify(saveData.questions));
               } catch {}
             }
+
+            // Raise notification in the bell icon for student
+            addAIReplyNotification({
+              videoId: vid,
+              questionId: targetQuestion.id,
+              lessonTitleBm: currentLesson.titleBm,
+              lessonTitleDlp: currentLesson.titleDlp,
+              questionText: targetQuestion.question,
+              replyText: data.answer,
+              timestamp: "Baru sahaja",
+              createdAt: Date.now(),
+            });
+            removePendingQuestion(targetQuestion.id);
           }
         }
       }
@@ -525,6 +563,15 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
         setIsModerating(false);
 
         if (data.item) {
+          // Record pending so background sync catches AI reply if user navigates away
+          recordPendingQuestion({
+            questionId: data.item.id,
+            videoId: vid,
+            questionText: data.item.question,
+            lessonTitleBm: currentLesson.titleBm,
+            lessonTitleDlp: currentLesson.titleDlp,
+            askedAt: Date.now(),
+          });
           // Automatically trigger conversational AI tutor explanation from Sir Halim AI
           triggerAIAnswer(data.item);
         }
@@ -1653,11 +1700,24 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                       </div>
                     </div>
                   ) : (
-                    filteredQAList.map((item) => (
-                      <div
-                        key={item.id}
-                        className="p-4 sm:p-5 bg-[#141a29] border border-slate-800/90 rounded-2xl space-y-3.5 shadow-md transition hover:border-slate-700"
-                      >
+                    filteredQAList.map((item) => {
+                      const isTargetHighlight = highlightQuestionId === item.id;
+                      return (
+                        <div
+                          key={item.id}
+                          id={`qa-item-${item.id}`}
+                          className={`p-4 sm:p-5 rounded-2xl space-y-3.5 shadow-md transition-all duration-500 ${
+                            isTargetHighlight
+                              ? "bg-[#0c1e38] border-2 border-cyan-400 shadow-2xl shadow-cyan-500/30 ring-4 ring-cyan-500/20"
+                              : "bg-[#141a29] border border-slate-800/90 hover:border-slate-700"
+                          }`}
+                        >
+                          {isTargetHighlight && (
+                            <div className="flex items-center gap-1.5 px-3 py-1 bg-cyan-950/90 border border-cyan-500/80 rounded-lg text-cyan-300 text-xs font-bold w-fit animate-pulse">
+                              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                              <span>{lang === "bm" ? "Soalan Terpilih Dari Pemberitahuan Loceng" : "Selected from Bell Notification"}</span>
+                            </div>
+                          )}
                         {/* Question Header */}
                         <div className="flex items-start justify-between gap-2 flex-wrap">
                           <div className="flex items-center gap-2.5">
@@ -1872,7 +1932,8 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                           </div>
                         )}
                       </div>
-                    ))
+                    );
+                  })
                   )}
                 </div>
               </div>

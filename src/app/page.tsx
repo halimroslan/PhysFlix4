@@ -32,12 +32,27 @@ function MainDashboard() {
   const [currentTab, setCurrentTab] = useState("home");
   const [selectedLesson, setSelectedLesson] = useState<VideoLesson | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [highlightQuestionId, setHighlightQuestionId] = useState<string | null>(null);
+  const [initialPlayerTab, setInitialPlayerTab] = useState<"overview" | "notes" | "qa">("overview");
 
   // Modals
   const [isFormulaOpen, setIsFormulaOpen] = useState(false);
   const [isDictOpen, setIsDictOpen] = useState(false);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isCalcOpen, setIsCalcOpen] = useState(false);
+
+  const handleNavigateToQaReply = (videoId: string, questionId: string) => {
+    const lesson = allVideoLessons.find(
+      (l) => l.id === videoId || l.youtubeId === videoId || l.driveId === videoId
+    );
+    if (lesson) {
+      setSelectedLesson(lesson);
+      setHighlightQuestionId(questionId);
+      setInitialPlayerTab("qa");
+      setCurrentTab("playing");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   // If Auth Loading
   if (loading) {
@@ -205,12 +220,17 @@ function MainDashboard() {
         currentTab={currentTab}
         onTabChange={(tab) => {
           setCurrentTab(tab);
-          if (tab !== "playing") setSelectedLesson(null);
+          if (tab !== "playing") {
+            setSelectedLesson(null);
+            setHighlightQuestionId(null);
+            setInitialPlayerTab("overview");
+          }
         }}
         onOpenFormula={() => setIsFormulaOpen(true)}
         onOpenDict={() => setIsDictOpen(true)}
         onOpenQuiz={() => setIsQuizOpen(true)}
         onOpenCalc={() => setIsCalcOpen(true)}
+        onNavigateToQaReply={handleNavigateToQaReply}
       />
 
       <div className="flex-1 flex">
@@ -220,10 +240,20 @@ function MainDashboard() {
           {/* Active View Switch */}
           {currentTab === "playing" && selectedLesson ? (
             <VideoPlayerView
-              key={selectedLesson.id}
+              key={`${selectedLesson.id}-${highlightQuestionId || 'normal'}`}
               currentLesson={selectedLesson}
-              onBack={() => setCurrentTab("home")}
-              onSelectLesson={(lesson) => setSelectedLesson(lesson)}
+              initialTab={initialPlayerTab}
+              highlightQuestionId={highlightQuestionId}
+              onBack={() => {
+                setCurrentTab("home");
+                setHighlightQuestionId(null);
+                setInitialPlayerTab("overview");
+              }}
+              onSelectLesson={(lesson) => {
+                setSelectedLesson(lesson);
+                setHighlightQuestionId(null);
+                setInitialPlayerTab("overview");
+              }}
             />
           ) : searchQuery.trim() !== "" ? (
             <div className="space-y-6">
