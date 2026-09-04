@@ -144,6 +144,47 @@ async function deleteQuestionFromSupabase(videoId: string, questionId: string): 
   }
 }
 
+async function fetchAllSupabaseQuestions(): Promise<QAItem[]> {
+  if (!isSupabaseConfigured) return [];
+  try {
+    const { data, error } = await supabase
+      .from("video_stats")
+      .select("id")
+      .like("id", "qa_q:%");
+
+    if (error || !data) {
+      console.warn("Supabase fetch all warning:", error?.message);
+      return [];
+    }
+
+    const items: QAItem[] = [];
+    for (const row of data) {
+      try {
+        const parts = row.id.split(":");
+        // row.id format: qa_q:videoId:questionId:JSON
+        if (parts.length >= 4) {
+          const firstColon = row.id.indexOf(":");
+          const secondColon = row.id.indexOf(":", firstColon + 1);
+          const thirdColon = row.id.indexOf(":", secondColon + 1);
+          if (thirdColon !== -1) {
+            const jsonStr = row.id.substring(thirdColon + 1);
+            const parsed = JSON.parse(jsonStr) as QAItem;
+            if (parsed && parsed.id) {
+              items.push(parsed);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Error parsing Supabase QA row in all:", err);
+      }
+    }
+    return items;
+  } catch (err) {
+    console.warn("Supabase fetch all exception:", err);
+    return [];
+  }
+}
+
 // 2. Local & Bundled Store Loader
 function loadStore(): Record<string, QAItem[]> {
   if (qaStoreCache) return qaStoreCache;
@@ -205,11 +246,63 @@ function saveStore(store: Record<string, QAItem[]>) {
   }
 }
 
-// GET: Retrieve public Q&A for a specific video
+// GET: Retrieve public Q&A for a specific video or all videos across the app
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const videoId = searchParams.get("videoId");
+    const isAll = searchParams.get("all") === "true" || videoId === "all";
+
+    if (isAll) {
+      // 1. Get baseline questions from bundled / local seed
+      const store = loadStore();
+      const localAll: QAItem[] = [];
+      for (const items of Object.values(store)) {
+        for (const item of items) {
+          if (
+            item.id &&
+            !item.id.startsWith("qa-gen-") &&
+            !item.id.startsWith("qa-1-") &&
+            !item.id.startsWith("qa-2-") &&
+            !item.id.startsWith("qa-3-") &&
+            !item.id.startsWith("qa-4-") &&
+            !item.id.startsWith("qa-5-") &&
+            !checkQuickAbusive(item.question).isAbusive
+          ) {
+            localAll.push(item);
+          }
+        }
+      }
+
+      // 2. Fetch all live persistent questions from Supabase cloud database
+      const cloudAll = await fetchAllSupabaseQuestions();
+
+      // 3. Lossless merge: Cloud questions + Local baseline questions
+      const mergedMap = new Map<string, QAItem>();
+      for (const q of localAll) {
+        mergedMap.set(q.id, q);
+      }
+      for (const cq of cloudAll) {
+        const existing = mergedMap.get(cq.id);
+        if (existing) {
+          const replyMap = new Map<string, QAReply>();
+          (existing.replies || []).forEach((r) => replyMap.set(r.id, r));
+          (cq.replies || []).forEach((r) => replyMap.set(r.id, r));
+          mergedMap.set(cq.id, {
+            ...existing,
+            ...cq,
+            replies: Array.from(replyMap.values()),
+          });
+        } else {
+          mergedMap.set(cq.id, cq);
+        }
+      }
+
+      const allQuestions = Array.from(mergedMap.values());
+      allQuestions.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+      return NextResponse.json({ questions: allQuestions, total: allQuestions.length });
+    }
 
     if (!videoId) {
       return NextResponse.json({ error: "videoId is required" }, { status: 400 });

@@ -313,7 +313,7 @@ function MainDashboard() {
               )}
             </div>
           ) : currentTab === "analytics" && isSuperAdmin ? (
-            <AnalyticBoard />
+            <AnalyticBoard onNavigateToQaReply={handleNavigateToQaReply} />
           ) : currentTab === "scoreboard" ? (
             <ScoreBoardView onPlayLesson={handlePlayLesson} />
           ) : currentTab === "topics" ? (

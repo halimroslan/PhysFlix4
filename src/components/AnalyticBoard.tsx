@@ -5,6 +5,7 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { allVideoLessons } from "@/data/physicsData";
+import { QAItem } from "@/app/api/qa/route";
 import {
   Users,
   Eye,
@@ -21,6 +22,19 @@ import {
   KeyRound,
   ShieldCheck,
   CheckCircle2,
+  MessageSquare,
+  MessageCircleQuestion,
+  ExternalLink,
+  Search,
+  Filter,
+  CheckCircle,
+  AlertCircle,
+  Play,
+  UserCheck,
+  Bot,
+  HelpCircle,
+  ArrowRight,
+  BookOpen
 } from "lucide-react";
 
 interface UserData {
@@ -36,9 +50,13 @@ interface VideoStat {
   likes: number;
 }
 
+interface AnalyticBoardProps {
+  onNavigateToQaReply?: (videoId: string, questionId: string) => void;
+}
+
 const SUPERADMIN_EMAILS = ["ahalimroslan@gmail.com", "abdulhalimroslan@gmail.com"];
 
-export const AnalyticBoard: React.FC = () => {
+export const AnalyticBoard: React.FC<AnalyticBoardProps> = ({ onNavigateToQaReply }) => {
   const { user } = useAuth();
   const [users, setUsers] = useState<UserData[]>([]);
   const [stats, setStats] = useState<VideoStat[]>([]);
@@ -47,6 +65,12 @@ export const AnalyticBoard: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [aiTokens, setAiTokens] = useState<any>(null);
   const [aiLoading, setAiLoading] = useState(false);
+
+  // Q&A Monitoring State
+  const [qaQuestions, setQaQuestions] = useState<QAItem[]>([]);
+  const [qaLoading, setQaLoading] = useState(false);
+  const [qaSearch, setQaSearch] = useState("");
+  const [qaFilter, setQaFilter] = useState<"semua" | "perlu_guru" | "sudah_ai" | "t4" | "t5">("semua");
 
   const userEmail = user?.email?.toLowerCase().trim() || "";
   const isSuperAdmin = SUPERADMIN_EMAILS.includes(userEmail);
@@ -69,10 +93,11 @@ export const AnalyticBoard: React.FC = () => {
           lastLogin: p.last_login ? new Date(p.last_login).toLocaleString("ms-MY") : "Tiada Rekod",
         }));
 
-        // Fetch Video Stats from public.video_stats
+        // Fetch Video Stats from public.video_stats (excluding qa_ records)
         const { data: videoStatsData, error: statsErr } = await supabase
           .from("video_stats")
           .select("id, views, likes")
+          .not("id", "like", "qa_%")
           .order("views", { ascending: false });
 
         if (statsErr) throw statsErr;
@@ -111,6 +136,23 @@ export const AnalyticBoard: React.FC = () => {
     }
   };
 
+  const fetchQaQuestions = async () => {
+    setQaLoading(true);
+    try {
+      const res = await fetch("/api/qa?all=true");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.questions)) {
+          setQaQuestions(data.questions);
+        }
+      }
+    } catch (e) {
+      console.error("Error fetching all QA questions:", e);
+    } finally {
+      setQaLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!isSuperAdmin) {
       setLoading(false);
@@ -118,17 +160,19 @@ export const AnalyticBoard: React.FC = () => {
     }
     fetchData();
     fetchAiTokens();
+    fetchQaQuestions();
   }, []);
 
   const handleResetVideoStats = async () => {
-    if (!confirm("Adakah anda ingin menetapkan semula (reset) semua kiraan views dan likes ke 0 dalam database?")) return;
+    if (!confirm("Adakah anda ingin menetapkan semula (reset) semua kiraan views dan likes ke 0 dalam database? Soalan & jawapan murid TIDAK AKAN dipadam.")) return;
     setIsResetting(true);
     try {
       if (isSupabaseConfigured) {
-        const { error } = await supabase.from("video_stats").delete().neq("id", "___none___");
+        // SAFEGUARD: Only delete view/like stats, NEVER touch qa_% questions!
+        const { error } = await supabase.from("video_stats").delete().not("id", "like", "qa_%");
         if (error) throw error;
         setStats([]);
-        alert("Statistik video berjaya ditetapkan semula ke 0!");
+        alert("Statistik tontonan video berjaya ditetapkan semula ke 0!");
       }
     } catch (e: any) {
       alert("Ralat menetapkan semula statistik: " + e.message);
@@ -136,6 +180,75 @@ export const AnalyticBoard: React.FC = () => {
       setIsResetting(false);
     }
   };
+
+  const getLessonInfo = (videoId: string) => {
+    const lesson = allVideoLessons.find(
+      (l) => l.id === videoId || l.youtubeId === videoId || l.driveId === videoId
+    );
+    if (!lesson) {
+      return {
+        titleBm: `Topik Fizik (${videoId})`,
+        titleDlp: `Physics Topic (${videoId})`,
+        chapterBm: "Fizik SPM",
+        chapterNum: 0,
+        form: 4,
+        week: "-",
+      };
+    }
+    return lesson;
+  };
+
+  // Filtered QA list
+  const filteredQa = qaQuestions.filter((q) => {
+    const lesson = getLessonInfo(q.videoId);
+    const searchLower = qaSearch.toLowerCase().trim();
+    const matchesSearch =
+      searchLower === "" ||
+      q.question.toLowerCase().includes(searchLower) ||
+      q.authorName.toLowerCase().includes(searchLower) ||
+      lesson.titleBm.toLowerCase().includes(searchLower) ||
+      lesson.chapterBm.toLowerCase().includes(searchLower);
+
+    if (!matchesSearch) return false;
+
+    const hasGuruReply = (q.replies || []).some(
+      (r) => r.authorRole === "guru" || r.isVerified
+    );
+    const hasAiReply = (q.replies || []).some(
+      (r) =>
+        r.id?.startsWith("reply-ai-") ||
+        r.authorName?.includes("AI Tutor") ||
+        r.authorName?.includes("Sir Halim")
+    );
+
+    if (qaFilter === "perlu_guru") {
+      return !hasGuruReply;
+    }
+    if (qaFilter === "sudah_ai") {
+      return hasAiReply;
+    }
+    if (qaFilter === "t4") {
+      return lesson.form === 4;
+    }
+    if (qaFilter === "t5") {
+      return lesson.form === 5;
+    }
+    return true;
+  });
+
+  const totalQaCount = qaQuestions.length;
+  const answeredByAiCount = qaQuestions.filter((q) =>
+    (q.replies || []).some(
+      (r) =>
+        r.id?.startsWith("reply-ai-") ||
+        r.authorName?.includes("AI Tutor") ||
+        r.authorName?.includes("Sir Halim")
+    )
+  ).length;
+  const answeredByGuruCount = qaQuestions.filter((q) =>
+    (q.replies || []).some((r) => r.authorRole === "guru" || r.isVerified)
+  ).length;
+  const pendingGuruCount = Math.max(0, totalQaCount - answeredByGuruCount);
 
   if (!isSuperAdmin) {
     return (
@@ -184,7 +297,6 @@ export const AnalyticBoard: React.FC = () => {
       const title = lesson ? lesson.titleBm : `Video ${s.id}`;
       return {
         id: s.id,
-        // Short name for Y-axis
         name: title.length > 25 ? title.substring(0, 23) + "…" : title,
         fullTitle: title,
         chapter: lesson ? `Tingkatan ${lesson.form} - Bab ${lesson.chapterNum}: ${lesson.chapterBm}` : "",
@@ -197,6 +309,7 @@ export const AnalyticBoard: React.FC = () => {
 
   return (
     <div className="space-y-8 pb-12 animate-in fade-in duration-500">
+      {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
         <div className="flex items-center space-x-3">
           <Activity className="w-8 h-8 text-emerald-400" />
@@ -206,14 +319,28 @@ export const AnalyticBoard: React.FC = () => {
           </div>
         </div>
 
-        <button
-          onClick={handleResetVideoStats}
-          disabled={isResetting}
-          className="flex items-center space-x-2 px-3 py-2 text-xs font-semibold bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg transition"
-        >
-          <RotateCcw className={`w-3.5 h-3.5 ${isResetting ? "animate-spin" : ""}`} />
-          <span>{isResetting ? "Menetapkan Semula..." : "Reset Data Views/Likes"}</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              fetchData();
+              fetchAiTokens();
+              fetchQaQuestions();
+            }}
+            className="flex items-center space-x-2 px-3.5 py-2 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition"
+          >
+            <RefreshCw className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Muat Semula Papan</span>
+          </button>
+
+          <button
+            onClick={handleResetVideoStats}
+            disabled={isResetting}
+            className="flex items-center space-x-2 px-3 py-2 text-xs font-semibold bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg transition"
+          >
+            <RotateCcw className={`w-3.5 h-3.5 ${isResetting ? "animate-spin" : ""}`} />
+            <span>{isResetting ? "Menetapkan Semula..." : "Reset Views/Likes"}</span>
+          </button>
+        </div>
       </div>
 
       {/* Summary Cards */}
@@ -250,7 +377,270 @@ export const AnalyticBoard: React.FC = () => {
       </div>
 
       {/* ========================================================================= */}
-      {/* DEDICATED DEVELOPER AI TOKEN & QUOTA MONITOR (OX ALPHA & GEMINI)         */}
+      {/* 1. DEDICATED Q&A & STUDENT COMMENTS MONITORING & DIRECT RESPONSE SECTION */}
+      {/* ========================================================================= */}
+      <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-cyan-950/40 border border-cyan-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden">
+        {/* Glow accent */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
+
+        {/* Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-cyan-500/20 pb-5 relative z-10">
+          <div className="flex items-center space-x-3.5">
+            <div className="p-3 bg-gradient-to-tr from-cyan-600 to-blue-500 rounded-2xl shadow-lg shadow-cyan-600/30 text-white">
+              <MessageCircleQuestion className="w-7 h-7" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  Pusat Pemantauan Soalan & Komen Pelajar
+                </h3>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-cyan-500/20 border border-cyan-400/40 text-cyan-300">
+                  Guru Response Hub
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 font-medium mt-0.5">
+                Pantau semua soalan murid, semak respons AI Tutor, dan klik mana-mana soalan untuk terus masuk ke ruangan komen video.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={fetchQaQuestions}
+            disabled={qaLoading}
+            className="flex items-center space-x-2 px-3.5 py-2 text-xs font-bold bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/40 rounded-xl transition shadow-sm cursor-pointer shrink-0"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${qaLoading ? "animate-spin" : ""}`} />
+            <span>{qaLoading ? "Memuatkan..." : "Segerak Soalan"}</span>
+          </button>
+        </div>
+
+        {/* Metrics Row */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 relative z-10">
+          <div className="bg-slate-950/70 border border-slate-800 p-4 rounded-2xl">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-400">Jumlah Soalan Ditanya</span>
+              <MessageSquare className="w-4 h-4 text-cyan-400" />
+            </div>
+            <p className="text-2xl font-black text-white mt-1">{totalQaCount}</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">Semua Topik Fizik SPM</p>
+          </div>
+
+          <div className="bg-slate-950/70 border border-slate-800 p-4 rounded-2xl">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-400">Sudah Dibalas AI Tutor</span>
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+            </div>
+            <p className="text-2xl font-black text-emerald-400 mt-1">{answeredByAiCount}</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">Sir Halim AI (Ox Alpha)</p>
+          </div>
+
+          <div className="bg-slate-950/70 border border-slate-800 p-4 rounded-2xl">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-400">Disahkan / Dibalas Guru</span>
+              <UserCheck className="w-4 h-4 text-sky-400" />
+            </div>
+            <p className="text-2xl font-black text-sky-400 mt-1">{answeredByGuruCount}</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">Respons Rasmi Cikgu</p>
+          </div>
+
+          <div className="bg-slate-950/70 border border-slate-800 p-4 rounded-2xl">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-400">Menunggu Tindakan Guru</span>
+              <AlertCircle className="w-4 h-4 text-amber-400" />
+            </div>
+            <p className="text-2xl font-black text-amber-400 mt-1">{pendingGuruCount}</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">Belum Disemak Guru</p>
+          </div>
+        </div>
+
+        {/* Filter & Search Toolbar */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 relative z-10 pt-1">
+          {/* Search Box */}
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={qaSearch}
+              onChange={(e) => setQaSearch(e.target.value)}
+              placeholder="Cari mengikut soalan, nama murid, atau tajuk topik..."
+              className="w-full bg-slate-950/90 border border-slate-800 focus:border-cyan-500 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none transition shadow-inner"
+            />
+          </div>
+
+          {/* Filter Tabs */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+            {[
+              { id: "semua", label: "Semua Soalan" },
+              { id: "perlu_guru", label: "Perlu Tindakan Guru" },
+              { id: "sudah_ai", label: "Sudah Dibalas AI" },
+              { id: "t4", label: "Tingkatan 4" },
+              { id: "t5", label: "Tingkatan 5" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setQaFilter(tab.id as any)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition whitespace-nowrap cursor-pointer ${
+                  qaFilter === tab.id
+                    ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20"
+                    : "bg-slate-950/80 text-slate-400 hover:text-white border border-slate-800"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Questions Feed */}
+        <div className="space-y-3.5 relative z-10">
+          {qaLoading ? (
+            <div className="p-12 text-center bg-slate-950/40 border border-slate-800/80 rounded-2xl">
+              <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mx-auto mb-2" />
+              <p className="text-xs text-slate-400 font-semibold">Menyelaraskan soalan terkini dari Supabase Cloud...</p>
+            </div>
+          ) : filteredQa.length === 0 ? (
+            <div className="p-12 text-center bg-slate-950/40 border border-slate-800/80 rounded-2xl space-y-2">
+              <MessageSquare className="w-8 h-8 text-slate-500 mx-auto" />
+              <h4 className="text-sm font-bold text-slate-300">Tiada soalan ditemui</h4>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                {qaSearch ? "Tiada soalan menepati carian kata kunci anda." : "Belum ada soalan yang diajukan dalam kategori ini."}
+              </p>
+            </div>
+          ) : (
+            filteredQa.map((q) => {
+              const lesson = getLessonInfo(q.videoId);
+              const aiReply = (q.replies || []).find(
+                (r) =>
+                  r.id?.startsWith("reply-ai-") ||
+                  r.authorName?.includes("AI Tutor") ||
+                  r.authorName?.includes("Sir Halim")
+              );
+              const guruReply = (q.replies || []).find(
+                (r) => (r.authorRole === "guru" || r.isVerified) && !r.id?.startsWith("reply-ai-")
+              );
+
+              return (
+                <div
+                  key={q.id}
+                  className="bg-slate-950/80 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-4 sm:p-5 transition-all duration-300 space-y-3.5 shadow-lg group"
+                >
+                  {/* Top Lesson & Category Header */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="px-2.5 py-0.5 rounded-md bg-cyan-950/80 border border-cyan-700/60 text-cyan-300 text-[11px] font-bold">
+                        Tingkatan {lesson.form}
+                      </span>
+                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                        <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>{lesson.chapterBm}</span>
+                        <span className="text-slate-500">•</span>
+                        <span className="text-slate-300 font-semibold">{lesson.titleBm}</span>
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 bg-slate-900 border border-slate-700 text-slate-300 text-[10px] font-bold rounded">
+                        {q.category}
+                      </span>
+                      <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-slate-500" />
+                        <span>{q.timestamp || "Terkini"}</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Student Question Row */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center text-white text-xs font-bold shrink-0 shadow">
+                        {q.authorName.substring(0, 2).toUpperCase()}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-white">{q.authorName}</span>
+                        <span className="px-1.5 py-0.2 bg-slate-800 text-slate-400 text-[9px] font-semibold rounded">
+                          {q.authorRole === "guru" ? "Guru" : "Pelajar"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <p className="text-sm font-medium text-slate-100 pl-9 pr-2 leading-relaxed bg-slate-900/40 p-3 rounded-xl border border-slate-800/60 italic">
+                      "{q.question}"
+                    </p>
+                  </div>
+
+                  {/* Replies Summary / Preview */}
+                  <div className="space-y-2 pl-9">
+                    {/* AI Tutor Reply Preview */}
+                    {aiReply && (
+                      <div className="bg-emerald-950/30 border border-emerald-500/30 rounded-xl p-3 space-y-1 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-emerald-300 flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                            <span>Balasan AI Tutor (Sir Halim AI)</span>
+                          </span>
+                          <span className="px-2 py-0.2 bg-emerald-900/60 text-emerald-300 text-[10px] font-bold rounded">
+                            Terjawab
+                          </span>
+                        </div>
+                        <p className="text-slate-300 line-clamp-2 leading-relaxed font-sans pt-0.5">
+                          {aiReply.text}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Teacher Human Reply Preview */}
+                    {guruReply && (
+                      <div className="bg-sky-950/30 border border-sky-500/30 rounded-xl p-3 space-y-1 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-sky-300 flex items-center gap-1.5">
+                            <UserCheck className="w-3.5 h-3.5 text-sky-400" />
+                            <span>Balasan Guru ({guruReply.authorName})</span>
+                          </span>
+                          <span className="px-2 py-0.2 bg-sky-900/60 text-sky-300 text-[10px] font-bold rounded">
+                            Disahkan Guru
+                          </span>
+                        </div>
+                        <p className="text-slate-300 line-clamp-2 leading-relaxed font-sans pt-0.5">
+                          {guruReply.text}
+                        </p>
+                      </div>
+                    )}
+
+                    {!aiReply && !guruReply && (
+                      <div className="bg-amber-950/20 border border-amber-500/30 rounded-xl p-2.5 text-xs text-amber-300 flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                        <span>Belum ada sebarang jawapan. Sedia untuk dibalas oleh Sir Halim.</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Footer & Direct Jump Action Button */}
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 pl-9 flex-wrap gap-2">
+                    <div className="flex items-center gap-3 text-xs text-slate-400">
+                      <span>{q.replies?.length || 0} Balasan</span>
+                      <span>•</span>
+                      <span>{q.likes || 0} Suka</span>
+                    </div>
+
+                    <button
+                      onClick={() => onNavigateToQaReply?.(q.videoId, q.id)}
+                      className="flex items-center space-x-2 px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 hover:text-white border border-cyan-500/40 hover:border-cyan-400 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer group-hover:scale-[1.02]"
+                    >
+                      <Play className="w-3.5 h-3.5 fill-cyan-400 text-cyan-400" />
+                      <span>Buka Video & Balas Komen</span>
+                      <ExternalLink className="w-3.5 h-3.5 ml-0.5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 2. DEDICATED DEVELOPER AI TOKEN & QUOTA MONITOR (OX ALPHA & GEMINI)       */}
       {/* ========================================================================= */}
       <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden">
         {/* Glow accent */}
@@ -282,7 +672,7 @@ export const AnalyticBoard: React.FC = () => {
             <button
               onClick={fetchAiTokens}
               disabled={aiLoading}
-              className="flex items-center space-x-2 px-3.5 py-2 text-xs font-bold bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/40 rounded-xl transition shadow-sm"
+              className="flex items-center space-x-2 px-3.5 py-2 text-xs font-bold bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/40 rounded-xl transition shadow-sm cursor-pointer"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${aiLoading ? "animate-spin" : ""}`} />
               <span>{aiLoading ? "Menyemak..." : "Semak Semula Kuota"}</span>
@@ -474,7 +864,7 @@ export const AnalyticBoard: React.FC = () => {
         </div>
       </div>
 
-      {/* Charts Section */}
+      {/* 3. Charts Section */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <h3 className="text-xl font-bold text-white">Top 10 Video Paling Banyak Ditonton</h3>
@@ -534,7 +924,7 @@ export const AnalyticBoard: React.FC = () => {
         )}
       </div>
 
-      {/* User Table Section */}
+      {/* 4. User Table Section */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
         <div className="p-6 border-b border-slate-800 flex justify-between items-center">
           <h3 className="text-xl font-bold text-white">Senarai Pelajar Berdaftar (Supabase Profiles)</h3>
