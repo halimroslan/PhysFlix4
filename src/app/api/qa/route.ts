@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { checkQuickAbusive } from "@/utils/moderation";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import defaultQaStore from "@/data/qa_store.json";
 
 const STORE_PATH = path.join(process.cwd(), "src/data/qa_store.json");
 const MASTER_BACKUP_PATH = "/Users/halimroslan/NEW CIDS SUITES PRO/physics-spm-flix-backup/qa_comments_archive/qa_store_master_backup.json";
@@ -36,10 +38,10 @@ export interface QAItem {
   replies: QAReply[];
 }
 
-// In-memory cache + file sync
+// In-memory cache
 let qaStoreCache: Record<string, QAItem[]> | null = null;
 
-// Lossless store merger: ensures no question or Ox Alpha reply is ever lost
+// Lossless store merger: ensures no question or AI reply is ever lost
 function mergeStores(
   primary: Record<string, QAItem[]>,
   secondary: Record<string, QAItem[]>
@@ -70,17 +72,99 @@ function mergeStores(
   return merged;
 }
 
+// 1. Supabase Cloud Persistence Engine
+async function fetchSupabaseQuestions(videoId: string): Promise<QAItem[]> {
+  if (!isSupabaseConfigured) return [];
+  try {
+    const { data, error } = await supabase
+      .from("video_stats")
+      .select("id")
+      .like("id", `qa_q:${videoId}:%`);
+
+    if (error || !data) {
+      console.warn("Supabase fetch warning:", error?.message);
+      return [];
+    }
+
+    const items: QAItem[] = [];
+    for (const row of data) {
+      try {
+        const prefix = `qa_q:${videoId}:`;
+        const rest = row.id.substring(prefix.length);
+        const colonIdx = rest.indexOf(":");
+        if (colonIdx !== -1) {
+          const jsonStr = rest.substring(colonIdx + 1);
+          const parsed = JSON.parse(jsonStr) as QAItem;
+          if (parsed && parsed.id) {
+            items.push(parsed);
+          }
+        }
+      } catch (err) {
+        console.warn("Error parsing Supabase QA row:", err);
+      }
+    }
+    items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    return items;
+  } catch (err) {
+    console.warn("Supabase fetch exception:", err);
+    return [];
+  }
+}
+
+async function persistQuestionToSupabase(videoId: string, item: QAItem): Promise<void> {
+  if (!isSupabaseConfigured) return;
+  try {
+    // Delete any older version of this question in Supabase
+    await supabase
+      .from("video_stats")
+      .delete()
+      .like("id", `qa_q:${videoId}:${item.id}:%`);
+
+    const rowId = `qa_q:${videoId}:${item.id}:` + JSON.stringify(item);
+    await supabase.from("video_stats").upsert({
+      id: rowId,
+      likes: item.likes || 0,
+      views: 0,
+      updated_at: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.warn("Failed to persist question to Supabase:", err);
+  }
+}
+
+async function deleteQuestionFromSupabase(videoId: string, questionId: string): Promise<void> {
+  if (!isSupabaseConfigured) return;
+  try {
+    await supabase
+      .from("video_stats")
+      .delete()
+      .like("id", `qa_q:${videoId}:${questionId}:%`);
+  } catch (err) {
+    console.warn("Failed to delete question from Supabase:", err);
+  }
+}
+
+// 2. Local & Bundled Store Loader
 function loadStore(): Record<string, QAItem[]> {
   if (qaStoreCache) return qaStoreCache;
   let primaryStore: Record<string, QAItem[]> = {};
 
+  // Seed with bundled default store (guaranteed in Vercel function bundle)
+  try {
+    primaryStore = JSON.parse(JSON.stringify(defaultQaStore)) || {};
+  } catch {
+    primaryStore = {};
+  }
+
+  // Overlay local disk file if exists
   try {
     if (fs.existsSync(STORE_PATH)) {
       const data = fs.readFileSync(STORE_PATH, "utf-8");
-      primaryStore = JSON.parse(data) || {};
+      const diskStore = JSON.parse(data) || {};
+      primaryStore = mergeStores(primaryStore, diskStore);
     }
   } catch (err) {
-    console.warn("Failed to read qa_store.json, initializing empty store:", err);
+    console.warn("Failed to read qa_store.json, using bundled store:", err);
   }
 
   // Failsafe preservation: merge with master backup if available
@@ -91,7 +175,7 @@ function loadStore(): Record<string, QAItem[]> {
       primaryStore = mergeStores(primaryStore, backupStore);
     }
   } catch {
-    // Ignore in environments where external folder is not present
+    // Ignore in cloud / read-only environments
   }
 
   qaStoreCache = primaryStore;
@@ -131,11 +215,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "videoId is required" }, { status: 400 });
     }
 
+    // 1. Get baseline questions from bundled / local seed
     const store = loadStore();
-    const items = store[videoId] || [];
-
-    // Filter out abusive or legacy dummy questions
-    const cleanItems = items.filter(
+    const localBaseline = (store[videoId] || []).filter(
       (item) =>
         item.id &&
         !item.id.startsWith("qa-gen-") &&
@@ -147,6 +229,41 @@ export async function GET(req: NextRequest) {
         !checkQuickAbusive(item.question).isAbusive
     );
 
+    // 2. Fetch live persistent questions from Supabase cloud database
+    const cloudQuestions = await fetchSupabaseQuestions(videoId);
+
+    // 3. Lossless merge: Cloud questions + Local baseline questions
+    const mergedMap = new Map<string, QAItem>();
+
+    // Baseline first
+    for (const q of localBaseline) {
+      mergedMap.set(q.id, q);
+    }
+
+    // Overlay Cloud (has real-time replies, student submissions, and likes)
+    for (const cq of cloudQuestions) {
+      const existing = mergedMap.get(cq.id);
+      if (existing) {
+        const replyMap = new Map<string, QAReply>();
+        (existing.replies || []).forEach((r) => replyMap.set(r.id, r));
+        (cq.replies || []).forEach((r) => replyMap.set(r.id, r));
+        mergedMap.set(cq.id, {
+          ...existing,
+          ...cq,
+          replies: Array.from(replyMap.values()),
+        });
+      } else {
+        mergedMap.set(cq.id, cq);
+      }
+    }
+
+    const cleanItems = Array.from(mergedMap.values());
+    cleanItems.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+    // Keep in-memory cache synchronized
+    if (!store[videoId]) store[videoId] = [];
+    store[videoId] = cleanItems;
+
     return NextResponse.json({ questions: cleanItems });
   } catch (err) {
     console.error("Error in GET /api/qa:", err);
@@ -154,7 +271,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST: Add question, add reply, or like
+// POST: Add question, add reply, like, or sync local items
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -199,6 +316,9 @@ export async function POST(req: NextRequest) {
       store[videoId].unshift(newItem);
       saveStore(store);
 
+      // Instantly persist and register in Supabase Cloud database
+      await persistQuestionToSupabase(videoId, newItem);
+
       return NextResponse.json({ success: true, item: newItem, questions: store[videoId] });
     }
 
@@ -227,44 +347,69 @@ export async function POST(req: NextRequest) {
         likes: 0,
       };
 
+      let targetQuestion: QAItem | null = null;
       store[videoId] = store[videoId].map((q) => {
         if (q.id === questionId) {
-          return {
+          const updated = {
             ...q,
             replies: [...q.replies, newReply],
           };
+          targetQuestion = updated;
+          return updated;
         }
         return q;
       });
 
       saveStore(store);
+
+      // Instantly register updated reply in Supabase Cloud database
+      if (targetQuestion) {
+        await persistQuestionToSupabase(videoId, targetQuestion);
+      }
+
       return NextResponse.json({ success: true, reply: newReply, questions: store[videoId] });
     }
 
     if (action === "like_question") {
       const { questionId } = body;
+      let targetQuestion: QAItem | null = null;
       store[videoId] = store[videoId].map((q) => {
         if (q.id === questionId) {
-          return { ...q, likes: q.likes + 1 };
+          const updated = { ...q, likes: q.likes + 1 };
+          targetQuestion = updated;
+          return updated;
         }
         return q;
       });
       saveStore(store);
+
+      if (targetQuestion) {
+        await persistQuestionToSupabase(videoId, targetQuestion);
+      }
+
       return NextResponse.json({ success: true, questions: store[videoId] });
     }
 
     if (action === "like_reply") {
       const { questionId, replyId } = body;
+      let targetQuestion: QAItem | null = null;
       store[videoId] = store[videoId].map((q) => {
         if (q.id === questionId) {
-          return {
+          const updated = {
             ...q,
             replies: q.replies.map((r) => (r.id === replyId ? { ...r, likes: r.likes + 1 } : r)),
           };
+          targetQuestion = updated;
+          return updated;
         }
         return q;
       });
       saveStore(store);
+
+      if (targetQuestion) {
+        await persistQuestionToSupabase(videoId, targetQuestion);
+      }
+
       return NextResponse.json({ success: true, questions: store[videoId] });
     }
 
@@ -280,17 +425,24 @@ export async function POST(req: NextRequest) {
             store[videoId].unshift(localQ);
             existingIds.add(localQ.id);
             changed = true;
+            // Register missing local item to cloud
+            await persistQuestionToSupabase(videoId, localQ);
           } else {
             // Merge missing replies
             const targetQ = store[videoId].find((q) => q.id === localQ.id);
             if (targetQ && Array.isArray(localQ.replies)) {
               const replyIds = new Set(targetQ.replies.map((r) => r.id));
+              let repliesChanged = false;
               for (const rep of localQ.replies) {
                 if (!replyIds.has(rep.id)) {
                   targetQ.replies.push(rep);
                   replyIds.add(rep.id);
+                  repliesChanged = true;
                   changed = true;
                 }
+              }
+              if (repliesChanged) {
+                await persistQuestionToSupabase(videoId, targetQ);
               }
             }
           }
@@ -334,18 +486,25 @@ export async function DELETE(req: NextRequest) {
 
     if (replyId) {
       // Delete reply
+      let targetQ: QAItem | null = null;
       store[videoId] = store[videoId].map((q) => {
         if (q.id === questionId) {
-          return {
+          const updated = {
             ...q,
             replies: q.replies.filter((r) => r.id !== replyId),
           };
+          targetQ = updated;
+          return updated;
         }
         return q;
       });
+      if (targetQ) {
+        await persistQuestionToSupabase(videoId, targetQ);
+      }
     } else {
       // Delete whole question
       store[videoId] = store[videoId].filter((q) => q.id !== questionId);
+      await deleteQuestionFromSupabase(videoId, questionId);
     }
 
     saveStore(store);
