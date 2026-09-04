@@ -8,35 +8,14 @@ import defaultQaStore from "@/data/qa_store.json";
 const STORE_PATH = path.join(process.cwd(), "src/data/qa_store.json");
 const MASTER_BACKUP_PATH = "/Users/halimroslan/NEW CIDS SUITES PRO/physics-spm-flix-backup/qa_comments_archive/qa_store_master_backup.json";
 
-const SUPERADMIN_EMAILS = [
-  "ahalimroslan@gmail.com",
-  "abdulhalimroslan@gmail.com",
-];
-
-export interface QAReply {
-  id: string;
-  authorName: string;
-  authorRole: "pelajar" | "guru" | "rakan";
-  isVerified?: boolean;
-  text: string;
-  timestamp: string;
-  createdAt?: number;
-  likes: number;
-}
-
-export interface QAItem {
-  id: string;
-  videoId: string;
-  authorName: string;
-  authorRole: "pelajar" | "guru" | "rakan";
-  timestamp: string;
-  createdAt: number;
-  category: "Konsep" | "Pengiraan" | "SPM Kertas 2" | "SPM Kertas 1" | "Amali";
-  question: string;
-  likes: number;
-  isLiked?: boolean;
-  replies: QAReply[];
-}
+export {
+  SUPERADMIN_EMAILS,
+  type QAReply,
+  type QAItem,
+  isSuperadminReply,
+  isAiTutorReply,
+} from "@/types/qa";
+import { SUPERADMIN_EMAILS, QAReply, QAItem } from "@/types/qa";
 
 // In-memory cache
 let qaStoreCache: Record<string, QAItem[]> | null = null;
@@ -416,7 +395,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (action === "add_reply") {
-      const { questionId, text, authorName, authorRole, isVerified } = body;
+      const { questionId, text, authorName, authorRole, isVerified, authorEmail, isAi } = body;
       if (!questionId || !text || !text.trim()) {
         return NextResponse.json({ error: "questionId and text are required" }, { status: 400 });
       }
@@ -429,11 +408,19 @@ export async function POST(req: NextRequest) {
         }, { status: 400 });
       }
 
+      const normalizedEmail = (authorEmail || "").toLowerCase().trim();
+      const isSuperAdminEmail = SUPERADMIN_EMAILS.includes(normalizedEmail);
+      const isAiFlag = Boolean(isAi) || authorName?.includes("AI Tutor") || normalizedEmail === "ai@physflix.internal";
+
       const newReply: QAReply = {
-        id: `reply-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-        authorName: authorName || "Pelajar",
-        authorRole: authorRole || "pelajar",
-        isVerified: Boolean(isVerified),
+        id: isAiFlag
+          ? `reply-ai-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`
+          : `reply-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+        authorName: authorName || (isSuperAdminEmail ? "Abdul Halim Roslan" : "Pelajar"),
+        authorRole: isSuperAdminEmail ? "guru" : (authorRole || "pelajar"),
+        authorEmail: normalizedEmail || (isAiFlag ? "ai@physflix.internal" : undefined),
+        isAi: isAiFlag,
+        isVerified: isSuperAdminEmail ? true : Boolean(isVerified),
         text: text.trim(),
         timestamp: "Baru sahaja",
         createdAt: Date.now(),

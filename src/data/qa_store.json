@@ -19,7 +19,9 @@
           "text": "Ha, interference ni mudah je faham. Ia berlaku bila dua gelombang koheren (frekuensi sama, fasa tetap) bertemu dan bertindih, kita panggil prinsip superposisi. Bila puncak bertemu puncak atau lembah bertemu lembah, gelombang tu jadi kuat, ni lah interferens membina (constructive interference). Tapi bila puncak bertemu lembah, diorang cancel antara satu sama lain, jadi lemah atau hilang terus, tu pulak interferens membinasa (destructive interference).",
           "timestamp": "Baru sahaja",
           "createdAt": 1787920001000,
-          "likes": 0
+          "likes": 0,
+          "isAi": true,
+          "authorEmail": "ai@physflix.internal"
         }
       ]
     }
@@ -44,7 +46,9 @@
           "text": "Haha, this is classic concave mirror behaviour lah, and u just discovered it live with your own face! When u stand far away, u are beyond the centre of curvature C, so the mirror forms a real, inverted and diminished image. As u walk closer but still beyond the focal point F, the image stays real and inverted, that is why your face looks upside down. The moment u cross the principal focus F, something dramatic happens, the image position jumps to infinity, so at exactly F u see no clear image at all, just blur!\n\nThen when u get very close, between F and the pole P, the mirror switches to forming a virtual, upright and magnified image behind the mirror, so suddenly your face flips back up and looks big, kan? So it is not magic lah, u simply crossed the focal point, and that is the exact boundary where a concave mirror changes from real inverted image to virtual upright image. Try it slowly one more time and watch the flip happen right at F, very satisfying! 😄",
           "timestamp": "Baru sahaja",
           "createdAt": 1787925001000,
-          "likes": 2
+          "likes": 2,
+          "isAi": true,
+          "authorEmail": "ai@physflix.internal"
         }
       ]
     }
@@ -69,7 +73,9 @@
           "text": "Ha, soalan yang best ni! Sebenarnya, kelajuan cahaya yang paling laju tu adalah dalam vakum, iaitu 3 x 10^8 m/s. Bila cahaya masuk ke dalam medium yang lebih tumpat spt air atau kaca, dia akan jadi perlahan sebab zarah2 cahaya tu berinteraksi dgn molekul2 dalam air tu, jadi dia lambat sikit perjalanannya.\n\nSebab tu la berlaku pembiasan cahaya. Bila kelajuan cahaya berubah bila dia pindah drpd satu medium ke medium lain yang berbeza ketumpatan optik, arah sinar cahaya pun akan bengkok. Ingat, makin tumpat medium tu, makin perlahan cahaya bergerak, dan indeks pembiasan pun makin besar. Faham kan awak, konsep ni penting sgt utk bab 6.1 ni!",
           "timestamp": "Baru sahaja",
           "createdAt": 1787930001000,
-          "likes": 1
+          "likes": 1,
+          "isAi": true,
+          "authorEmail": "ai@physflix.internal"
         }
       ]
     }
@@ -94,7 +100,21 @@
           "text": "Soalan asas yang sangat penting! Kuantiti asas ialah kuantiti fizik yang tak boleh diterbitkan daripada kuantiti fizik yang lain, macam panjang (m), jisim (kg), dan masa (s). Manakala kuantiti terbitan pula ialah gabungan kuantiti asas melalui darab atau bahagi, contohnya laju (panjang dibahagi masa) atau daya (F = ma).\n\nAwak boleh bayangkan kuantiti asas ni macam bahan mentah seperti telur dan tepung. Bila kita gaul dan masak, jadilah kek iaitu kuantiti terbitan. Faham kan awak, senang je nak skor bab 1 ni!",
           "timestamp": "Baru sahaja",
           "createdAt": 1787931001000,
-          "likes": 2
+          "likes": 2,
+          "isAi": true,
+          "authorEmail": "ai@physflix.internal"
+        },
+        {
+          "id": "reply-1788491556625-gimoo",
+          "authorName": "Abdul Halim Roslan",
+          "authorRole": "guru",
+          "isVerified": true,
+          "authorEmail": "abdulhalimroslan@gmail.com",
+          "isAi": false,
+          "text": "Hi Nurul Izzah, antara cara utk mudah ingat sekurang-kurangnya 5 kuantiti asas ialah \"JiMPAS\" iaitu Jisim, Masa, Panjang, Arus, Suhu. Harap bermanfaat!",
+          "timestamp": "Baru sahaja",
+          "createdAt": 1788491556625,
+          "likes": 0
         }
       ]
     }
@@ -119,7 +139,9 @@
           "text": "Bagus soalan ni! Jarak ialah kuantiti skalar yang ukur jumlah panjang lintasan yang dilalui tanpa kira arah. Manakala sesaran ialah kuantiti vektor, iaitu jarak terpendek antara titik awal ke titik akhir mengikut garis lurus dengan mengambil kira arah.\n\nDalam graf halaju-masa (v-t), luas di bawah graf mewakili sesaran. Kalau graf berada di bawah paksi-t (halaju negatif), luas tu bernilai negatif dan menolak sesaran keseluruhan. Jadi kena peka dengan arah pergerakan objek ya awak!",
           "timestamp": "Baru sahaja",
           "createdAt": 1787932001000,
-          "likes": 3
+          "likes": 3,
+          "isAi": true,
+          "authorEmail": "ai@physflix.internal"
         }
       ]
     }
@@ -144,7 +166,9 @@
           "text": "Great question! Under Newton’s Law of Universal Gravitation, F = (G * m1 * m2) / r^2. The gravitational force depends directly on the product of the two masses and inversely on the square of the distance between their centres of mass.\n\nAs long as the objects are treated as point masses or spherically symmetric bodies, their geometric shape does not affect the calculation. So whether it is a sphere or a cube with the same mass, at large distances r, the gravitational pull remains identical. Keep up the sharp analytical thinking!",
           "timestamp": "Baru sahaja",
           "createdAt": 1787933001000,
-          "likes": 2
+          "likes": 2,
+          "isAi": true,
+          "authorEmail": "ai@physflix.internal"
         }
       ]
     }
@@ -169,7 +193,9 @@
           "text": "Wah, ini soalan klasik SPM tentang haba pendam tentu! Bila cecair mendidih pada takat didihnya, tenaga haba yang diserap tidak digunakan untuk menaikkan suhu (tenaga kinetik zarah tak bertambah).\n\nSebaliknya, tenaga haba tu digunakan sepenuhnya untuk mengatasi daya tarikan antara zarah-zarah cecair supaya ia dapat bebas menjadi gas. Kita panggil ini haba pendam tentu pengewapan. Bila semua cecair dah bertukar jadi wap, barulah suhunya boleh naik semula. Faham kan konsep ni awak?",
           "timestamp": "Baru sahaja",
           "createdAt": 1787934001000,
-          "likes": 3
+          "likes": 3,
+          "isAi": true,
+          "authorEmail": "ai@physflix.internal"
         }
       ]
     }
@@ -194,7 +220,9 @@
           "text": "Mudah sahaja! Bila dua daya berserenjang (90 darjah), awak boleh gunakan Teorem Pythagoras untuk cari magnitud daya paduan, iaitu F = punca kuasa (F1^2 + F2^2).\n\nUntuk arah pula, gunakan fungsi trigonometri tan θ = F_y / F_x untuk cari sudut arah dari paksi rujukan. Awak lukis rajah segi tiga daya dulu, pasti nampak jelas dan yakin nak selesaikan soalan Kertas 2!",
           "timestamp": "Baru sahaja",
           "createdAt": 1787935001000,
-          "likes": 2
+          "likes": 2,
+          "isAi": true,
+          "authorEmail": "ai@physflix.internal"
         }
       ]
     }

@@ -2,6 +2,8 @@ export interface QAReply {
   id: string;
   authorName: string;
   authorRole: "guru" | "pelajar" | "admin";
+  authorEmail?: string;
+  isAi?: boolean;
   authorAvatar?: string;
   text: string;
   timestamp: string;

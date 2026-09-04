@@ -492,6 +492,8 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
               authorName: "Sir Halim",
               authorRole: "guru",
               isVerified: true,
+              isAi: true,
+              authorEmail: "ai@physflix.internal",
             }),
           });
 
@@ -737,6 +739,8 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
           authorName,
           authorRole,
           isVerified: isSuperAdmin,
+          authorEmail: user?.email || "",
+          isAi: false,
         }),
       });
 
@@ -1860,15 +1864,22 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                         {item.replies.length > 0 && (
                           <div className="space-y-2.5 pt-2 pl-3 sm:pl-6 border-l-2 border-slate-800">
                             {item.replies.map((reply) => {
-                              const isAITutor = reply.id.startsWith("reply-ai-") || reply.authorName.includes("AI Tutor") || reply.authorName === "Sir Halim";
-                              const isGuru = reply.authorRole === "guru" || reply.isVerified || isAITutor;
-                              const displayAuthorName = reply.authorName.replace(/\s*\(AI Tutor\)/gi, "").trim() || "Sir Halim";
+                              const isAITutor = reply.isAi || reply.id.startsWith("reply-ai-") || reply.id === "reply-1788479876660-hzkyo" || reply.authorEmail === "ai@physflix.internal" || reply.authorName.includes("AI Tutor");
+                              const isSuperAdminUser = !isAITutor && (
+                                ["ahalimroslan@gmail.com", "abdulhalimroslan@gmail.com"].includes((reply.authorEmail || "").toLowerCase().trim()) ||
+                                reply.authorName === "Abdul Halim Roslan" ||
+                                reply.authorName === "Sir Halim (Guru Fizik)"
+                              );
+                              const isGuru = isSuperAdminUser || (reply.authorRole === "guru" && !isAITutor);
+                              const displayAuthorName = isAITutor ? "Sir Halim (AI Tutor)" : reply.authorName;
                               return (
                                 <div
                                   key={reply.id}
                                   className={`p-3.5 rounded-xl space-y-2 transition ${
                                     isAITutor
                                       ? "bg-[#0a1828] border border-cyan-600/70 shadow-lg shadow-cyan-950/50"
+                                      : isSuperAdminUser
+                                      ? "bg-[#081b2a] border border-sky-500/70 shadow-lg shadow-sky-950/40"
                                       : isGuru
                                       ? "bg-[#0b1622] border border-emerald-700/60 shadow-md"
                                       : "bg-[#0f1422] border border-slate-800"
@@ -1879,19 +1890,26 @@ export const VideoPlayerView: React.FC<VideoPlayerViewProps> = ({
                                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold ${
                                         isAITutor
                                           ? "bg-gradient-to-br from-cyan-500 to-blue-600 shadow-md shadow-cyan-500/30"
+                                          : isSuperAdminUser
+                                          ? "bg-gradient-to-br from-sky-500 to-blue-600 shadow-md shadow-sky-500/30"
                                           : isGuru
                                           ? "bg-emerald-600"
                                           : "bg-slate-700"
                                       }`}>
-                                        {isAITutor ? "SH" : (isGuru ? "SH" : displayAuthorName.substring(0, 1).toUpperCase())}
+                                        {isAITutor ? "AI" : (isSuperAdminUser ? "SH" : (isGuru ? "G" : displayAuthorName.substring(0, 1).toUpperCase()))}
                                       </div>
-                                      <span className={`text-xs font-bold ${isAITutor ? "text-cyan-300" : (isGuru ? "text-emerald-300" : "text-slate-200")}`}>
+                                      <span className={`text-xs font-bold ${isAITutor ? "text-cyan-300" : (isSuperAdminUser ? "text-sky-300" : (isGuru ? "text-emerald-300" : "text-slate-200"))}`}>
                                         {displayAuthorName}
                                       </span>
                                       {isAITutor ? (
                                         <span className="px-2 py-0.5 bg-gradient-to-r from-cyan-900/90 to-blue-900/90 border border-cyan-500/80 text-cyan-200 text-[9px] font-extrabold rounded-full flex items-center gap-1 shadow-sm">
                                           <Sparkles className="w-2.5 h-2.5 text-cyan-300" />
                                           AI Tutor
+                                        </span>
+                                      ) : isSuperAdminUser ? (
+                                        <span className="px-2 py-0.5 bg-sky-900/90 border border-sky-500/80 text-sky-200 text-[9px] font-extrabold rounded-full flex items-center gap-1 shadow-sm">
+                                          <CheckCircle2 className="w-2.5 h-2.5 text-sky-400" />
+                                          {lang === "bm" ? "Guru (Superadmin)" : "Teacher (Superadmin)"}
                                         </span>
                                       ) : isGuru ? (
                                         <span className="px-2 py-0.5 bg-emerald-900/90 border border-emerald-600/80 text-emerald-200 text-[9px] font-extrabold rounded-full flex items-center gap-1">

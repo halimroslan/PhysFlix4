@@ -5,7 +5,7 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { allVideoLessons } from "@/data/physicsData";
-import { QAItem } from "@/app/api/qa/route";
+import { QAItem, QAReply, isSuperadminReply } from "@/types/qa";
 import {
   Users,
   Eye,
@@ -70,7 +70,7 @@ export const AnalyticBoard: React.FC<AnalyticBoardProps> = ({ onNavigateToQaRepl
   const [qaQuestions, setQaQuestions] = useState<QAItem[]>([]);
   const [qaLoading, setQaLoading] = useState(false);
   const [qaSearch, setQaSearch] = useState("");
-  const [qaFilter, setQaFilter] = useState<"semua" | "perlu_guru" | "sudah_ai" | "t4" | "t5">("semua");
+  const [qaFilter, setQaFilter] = useState<"semua" | "perlu_guru" | "dibalas_guru" | "sudah_ai" | "t4" | "t5">("semua");
 
   const userEmail = user?.email?.toLowerCase().trim() || "";
   const isSuperAdmin = SUPERADMIN_EMAILS.includes(userEmail);
@@ -198,6 +198,18 @@ export const AnalyticBoard: React.FC<AnalyticBoardProps> = ({ onNavigateToQaRepl
     return lesson;
   };
 
+  const isAiTutorReply = (reply: QAReply | any): boolean => {
+    if (!reply) return false;
+    return (
+      reply.isAi === true ||
+      reply.id?.startsWith("reply-ai-") ||
+      reply.id === "reply-1788479876660-hzkyo" ||
+      reply.authorEmail === "ai@physflix.internal" ||
+      reply.authorName?.includes("AI Tutor") ||
+      (reply.authorName === "Sir Halim" && !SUPERADMIN_EMAILS.includes((reply.authorEmail || "").toLowerCase().trim()))
+    );
+  };
+
   // Filtered QA list
   const filteredQa = qaQuestions.filter((q) => {
     const lesson = getLessonInfo(q.videoId);
@@ -211,18 +223,15 @@ export const AnalyticBoard: React.FC<AnalyticBoardProps> = ({ onNavigateToQaRepl
 
     if (!matchesSearch) return false;
 
-    const hasGuruReply = (q.replies || []).some(
-      (r) => r.authorRole === "guru" || r.isVerified
-    );
-    const hasAiReply = (q.replies || []).some(
-      (r) =>
-        r.id?.startsWith("reply-ai-") ||
-        r.authorName?.includes("AI Tutor") ||
-        r.authorName?.includes("Sir Halim")
-    );
+    // A question is answered by teacher ONLY if replied by superadmin (abdulhalimroslan@gmail.com / ahalimroslan@gmail.com)
+    const hasGuruReply = (q.replies || []).some(isSuperadminReply);
+    const hasAiReply = (q.replies || []).some(isAiTutorReply);
 
     if (qaFilter === "perlu_guru") {
       return !hasGuruReply;
+    }
+    if (qaFilter === "dibalas_guru") {
+      return hasGuruReply;
     }
     if (qaFilter === "sudah_ai") {
       return hasAiReply;
@@ -238,15 +247,11 @@ export const AnalyticBoard: React.FC<AnalyticBoardProps> = ({ onNavigateToQaRepl
 
   const totalQaCount = qaQuestions.length;
   const answeredByAiCount = qaQuestions.filter((q) =>
-    (q.replies || []).some(
-      (r) =>
-        r.id?.startsWith("reply-ai-") ||
-        r.authorName?.includes("AI Tutor") ||
-        r.authorName?.includes("Sir Halim")
-    )
+    (q.replies || []).some(isAiTutorReply)
   ).length;
+  // STRICT CHECK: Only count if replied by superadmin (abdulhalimroslan@gmail.com / ahalimroslan@gmail.com)
   const answeredByGuruCount = qaQuestions.filter((q) =>
-    (q.replies || []).some((r) => r.authorRole === "guru" || r.isVerified)
+    (q.replies || []).some(isSuperadminReply)
   ).length;
   const pendingGuruCount = Math.max(0, totalQaCount - answeredByGuruCount);
 
@@ -441,7 +446,7 @@ export const AnalyticBoard: React.FC<AnalyticBoardProps> = ({ onNavigateToQaRepl
               <UserCheck className="w-4 h-4 text-sky-400" />
             </div>
             <p className="text-2xl font-black text-sky-400 mt-1">{answeredByGuruCount}</p>
-            <p className="text-[11px] text-slate-400 mt-0.5">Respons Rasmi Cikgu</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">abdulhalimroslan@gmail.com / ahalimroslan@gmail.com</p>
           </div>
 
           <div className="bg-slate-950/70 border border-slate-800 p-4 rounded-2xl">
@@ -450,7 +455,7 @@ export const AnalyticBoard: React.FC<AnalyticBoardProps> = ({ onNavigateToQaRepl
               <AlertCircle className="w-4 h-4 text-amber-400" />
             </div>
             <p className="text-2xl font-black text-amber-400 mt-1">{pendingGuruCount}</p>
-            <p className="text-[11px] text-slate-400 mt-0.5">Belum Disemak Guru</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">Belum Dibalas Superadmin</p>
           </div>
         </div>
 
@@ -473,6 +478,7 @@ export const AnalyticBoard: React.FC<AnalyticBoardProps> = ({ onNavigateToQaRepl
             {[
               { id: "semua", label: "Semua Soalan" },
               { id: "perlu_guru", label: "Perlu Tindakan Guru" },
+              { id: "dibalas_guru", label: "Dibalas Superadmin" },
               { id: "sudah_ai", label: "Sudah Dibalas AI" },
               { id: "t4", label: "Tingkatan 4" },
               { id: "t5", label: "Tingkatan 5" },
@@ -510,15 +516,9 @@ export const AnalyticBoard: React.FC<AnalyticBoardProps> = ({ onNavigateToQaRepl
           ) : (
             filteredQa.map((q) => {
               const lesson = getLessonInfo(q.videoId);
-              const aiReply = (q.replies || []).find(
-                (r) =>
-                  r.id?.startsWith("reply-ai-") ||
-                  r.authorName?.includes("AI Tutor") ||
-                  r.authorName?.includes("Sir Halim")
-              );
-              const guruReply = (q.replies || []).find(
-                (r) => (r.authorRole === "guru" || r.isVerified) && !r.id?.startsWith("reply-ai-")
-              );
+              const aiReply = (q.replies || []).find(isAiTutorReply);
+              const superadminReply = (q.replies || []).find(isSuperadminReply);
+              const hasSuperadminReply = Boolean(superadminReply);
 
               return (
                 <div
@@ -547,6 +547,17 @@ export const AnalyticBoard: React.FC<AnalyticBoardProps> = ({ onNavigateToQaRepl
                         <Clock className="w-3 h-3 text-slate-500" />
                         <span>{q.timestamp || "Terkini"}</span>
                       </span>
+                      {hasSuperadminReply ? (
+                        <span className="px-2 py-0.5 bg-sky-500/15 border border-sky-500/40 text-sky-300 text-[10px] font-bold rounded flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3 text-sky-400" />
+                          Dibalas Guru
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 bg-amber-500/15 border border-amber-500/40 text-amber-300 text-[10px] font-bold rounded flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3 text-amber-400" />
+                          Menunggu Tindakan Guru
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -580,7 +591,7 @@ export const AnalyticBoard: React.FC<AnalyticBoardProps> = ({ onNavigateToQaRepl
                             <span>Balasan AI Tutor (Sir Halim AI)</span>
                           </span>
                           <span className="px-2 py-0.2 bg-emerald-900/60 text-emerald-300 text-[10px] font-bold rounded">
-                            Terjawab
+                            Terjawab AI
                           </span>
                         </div>
                         <p className="text-slate-300 line-clamp-2 leading-relaxed font-sans pt-0.5">
@@ -590,27 +601,25 @@ export const AnalyticBoard: React.FC<AnalyticBoardProps> = ({ onNavigateToQaRepl
                     )}
 
                     {/* Teacher Human Reply Preview */}
-                    {guruReply && (
-                      <div className="bg-sky-950/30 border border-sky-500/30 rounded-xl p-3 space-y-1 text-xs">
+                    {superadminReply ? (
+                      <div className="bg-sky-950/40 border border-sky-500/40 rounded-xl p-3 space-y-1 text-xs">
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-sky-300 flex items-center gap-1.5">
                             <UserCheck className="w-3.5 h-3.5 text-sky-400" />
-                            <span>Balasan Guru ({guruReply.authorName})</span>
+                            <span>Balasan Rasmi Guru ({superadminReply.authorName})</span>
                           </span>
-                          <span className="px-2 py-0.2 bg-sky-900/60 text-sky-300 text-[10px] font-bold rounded">
-                            Disahkan Guru
+                          <span className="px-2 py-0.2 bg-sky-900/70 text-sky-300 text-[10px] font-bold rounded">
+                            Superadmin ({superadminReply.authorEmail || "abdulhalimroslan@gmail.com"})
                           </span>
                         </div>
-                        <p className="text-slate-300 line-clamp-2 leading-relaxed font-sans pt-0.5">
-                          {guruReply.text}
+                        <p className="text-slate-200 line-clamp-3 leading-relaxed font-sans pt-0.5">
+                          {superadminReply.text}
                         </p>
                       </div>
-                    )}
-
-                    {!aiReply && !guruReply && (
+                    ) : (
                       <div className="bg-amber-950/20 border border-amber-500/30 rounded-xl p-2.5 text-xs text-amber-300 flex items-center gap-2">
                         <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                        <span>Belum ada sebarang jawapan. Sedia untuk dibalas oleh Sir Halim.</span>
+                        <span>Belum dibalas oleh superadmin (abdulhalimroslan@gmail.com / ahalimroslan@gmail.com). Sedia untuk disemak guru.</span>
                       </div>
                     )}
                   </div>
